@@ -1,0 +1,124 @@
+@import 'mixins';
+
+:host {
+  // margin-top: 80px;
+  position: relative;
+}
+
+.main {
+  flex-direction: column;
+
+  &-logo {
+    height: 19dvh;
+    margin-top: 13dvh;
+    color: $prime-blue;
+    flex-direction: column;
+
+    img {
+      height: 100%;
+    }
+  }
+
+  &-text {
+    display: inline-flex;
+    align-items: center;
+    @include fszV(2.5);
+    font-weight: 500;
+    height: 4dvh;
+    color: $prime-blue;
+
+
+    span {
+      @include fszV(2.5);
+      font-weight: 500;
+      color: $text-color;
+    }
+  }
+
+  &-registration {
+    margin-top: 4dvh;
+    max-width: 300px;
+    font-size: 16px;
+    margin-bottom: 15dvh;
+
+    &_form {  
+      font-size: 14px;
+
+      &--label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 3.5dvh;
+        margin-bottom: 4px;
+        color: $text-color;
+      }
+
+      input {
+        min-width: 300px;
+        margin-bottom: 6px;
+        min-height: 4dvh;
+        font-size: min(2dvh, 40px);
+      }
+      
+      p {
+        height: 7dvh;
+        font-size: 3dvh;
+
+        a {
+          font-size: 3dvh;
+          color: $prime-green;
+          cursor: pointer;
+        }
+
+        button {
+          min-width: 200px;
+        }
+      }
+    }
+  }
+
+  &-first {
+    position: relative;
+    background: $prime-blue;
+    min-height: 50dvh;
+    width: 100%;
+
+    &_text {
+      color: $white;
+      @include fszV(3, 18);
+      padding: 16px;
+    }
+
+    h3 {
+      position: absolute;
+      top: -10dvh;
+      color: $prime-blue;
+      @include fszV(4);
+      left: calc(50dvw - 450px + 16px);
+    }
+  }
+  &-second {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    min-height: 50dvh;
+    width: 100%;
+
+    .benefits {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 16px;
+
+      &-item {
+        width: 40%;
+      }
+    }
+  }
+  &-third {
+    background: $prime-grey;
+    min-height: 50dvh;
+    width: 100%;
+  }
+}

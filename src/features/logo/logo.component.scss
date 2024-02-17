@@ -1,0 +1,24 @@
+@import 'mixins';
+
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  @include unselectable;
+
+  p {
+    // @include unselectable;
+    // font-weight: bold;
+    // color: $prime-blue;
+  }
+
+  &-title {
+    height: 40%;
+    cursor: pointer;
+  }
+  &-img {
+    height: 60%;
+    cursor: pointer;
+  }
+}

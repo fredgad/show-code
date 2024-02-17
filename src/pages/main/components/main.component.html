@@ -1,0 +1,83 @@
+<org-header></org-header>
+
+<div class="main flex">
+  <img class="main-logo" [srcPath]="'msr-logo-phone.svg'"/>
+  <p class="main-text">
+    MOBILE SECURITY <span>&nbsp;REMOTE&nbsp;</span> RECORDER
+  </p>
+  <!-- <div class="main-logo flex">
+    <img [srcPath]="'msr-logo-title.svg'">
+    <img [srcPath]="'msr-logo.svg'">
+    <h1 class="main-logo_title">MSR<span>R</span></h1> 
+  </div> -->
+
+  <div class="main-registration flex">
+    <form (submit)="submitUserName($event)" class="main-registration_form">
+      <label class="main-registration_form--label">Registration</label>
+      <input [(ngModel)]="userName" class="" placeholder="Enter your username" type="username" name="name">
+      <p>
+        @if (userName.length) {
+          <button type="submit" class="mainButton">Create Account</button> or
+        } @else {
+          Already registered?
+        }
+        <a> Sign in.</a>
+      </p>
+    </form>
+  </div>
+
+  <div class="main-first flex wrapper">
+    <h3>
+      <b>MSR:</b>
+      Your Partner in Personal Safety
+    </h3>
+    <p class="main-first_text container" [text]="text">
+      Mobile Security Remote Recorder is an innovative safety solution designed to empower
+      individuals with the ability to discreetly initiate video and audio recordings from their phone,
+      instantly uploading the footage to a secure server. This cutting-edge system is tailored for moments
+      when capturing and preserving real-time events is crucial for security and evidence purposes.
+      Whether you're facing a threat, witnessing a critical incident, or simply want to ensure your
+      safety in uncertain situations,MSR provides an immediate and secure way to record and store evidence
+      without drawing attention.
+    </p>
+  </div>
+  <div class="main-second flex container">
+    <div class="benefits-title">Who Can Benefit from MSR?</div>
+
+    <div class="benefits">
+      <div class="benefits-item">
+        <div class="benefits-item_title">For Everyday Heroes</div>
+        <div class="text">
+          Whether you're a concerned citizen witnessing an injustice or someone who frequently finds
+          themselves in situations where safety is a concern, MSR empowers you to act swiftly and securely.
+        </div>
+      </div>
+      <div class="benefits-item">
+        <div class="benefits-item_title">For Professionals in the Field</div>
+        <div class="text">
+          Journalists, private investigators, and security personnel can utilize MSR to discreetly gather
+          evidence and record events without compromising their position or safety.
+        </div>
+      </div>
+      <div class="benefits-item">
+        <div class="benefits-item_title">For Adventure Seekers</div>
+        <div class="text">
+          Adventurers and explorers venturing into remote or potentially risky environments can rely on
+          MSR for documenting encounters and ensuring a digital footprint of their journey is securely preserved.
+        </div>
+      </div>
+      <div class="benefits-item">
+        <div class="benefits-item_title">For the Safety-Conscious Individual</div>
+        <div class="text">
+          Anyone who values personal safety and the peace of mind knowing they can discreetly
+          record situations that feel unsafe or threatening will find MSR indispensable.
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="main-third flex">
+
+  </div>
+  <org-footer></org-footer>
+</div>

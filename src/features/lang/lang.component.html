@@ -1,0 +1,13 @@
+<div class="lang">
+  <p class="lang-select">{{currentLang$i()}}</p>
+
+  <div class="lang-options">
+    @for (language of languageList; track language) {
+      <span 
+        (click)="setLanguage(language)" 
+        class="lang-options_item"
+        [class.--current]="currentLang$i() === language"
+      >{{ language }}</span>
+    }
+  </div>
+</div>

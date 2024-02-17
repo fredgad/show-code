@@ -1,0 +1,76 @@
+@import 'mixins';
+
+:host {
+  position: fixed;
+  z-index: 99;
+  top: 0;
+  width: 100dvw;
+  height: 10dvh;
+  background-color: rgba(228, 228, 228, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    height: 8vh;
+    width: 900px;
+    max-width: 90dvw;
+
+    &-buttons {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      button {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        @include fszV(1.8);
+        border: none;
+        background: transparent;
+        padding-top: .3dvh;
+        cursor: pointer;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -4px;
+          left: 50%;
+          width: 0%;
+          height: 1px;
+          background-color: $second-green;
+          transition: .3s;
+        }
+
+        &:hover::after {
+          left: 0%;
+          width: 100%;
+        }
+      }
+
+
+      &_reg {
+        position: relative;
+        color: $prime-blue;
+
+        &::after {
+          background-color: $prime-blue !important;
+        }
+      }
+
+      &_auth {
+        color: $prime-green;
+      }
+
+      org-lang {
+        margin-left: 2dvw;
+      }
+    }
+  }
+}
