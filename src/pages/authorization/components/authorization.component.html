@@ -1,0 +1,29 @@
+<org-header></org-header>
+
+<div class="wrapper">
+  <div class="container">
+    <h2>Registration</h2>
+
+    <form [formGroup]="authForm" (ngSubmit)="onSubmit()" (keyup.enter)="onSubmit()">
+      <div class="form-group">
+        <label for="name">Username or email</label>
+        <input type="text" id="name" formControlName="login"
+          [class.validation-error]="isValidControl('login')">
+          @if (isValidControl('login')) {
+            <p class="error-message">{{getErrorMessage('login')}}</p>
+          }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input #password type="password" id="password" formControlName="password"
+          [class.validation-error]="isValidControl('password')">
+          @if (isValidControl('password')) {
+            <p class="error-message">{{getErrorMessage('password')}}</p>
+          }
+      </div>
+
+      <button type="submit" class="btn btn-primary">Log in</button>
+    </form>
+  </div>
+</div>

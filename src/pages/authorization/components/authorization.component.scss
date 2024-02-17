@@ -1,0 +1,66 @@
+@import "mixins";
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
+  width: 100%;
+  margin: 0 0 10dvh 0;
+
+  .container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 30px;
+    border: 1px solid $prime-grey;
+    border-radius: 5px;
+    background-color: $white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+  
+    form {
+      display: flex;
+      flex-direction: column;
+  
+      .form-group {
+        margin-bottom: 20px;
+  
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+          width: 100%;
+          padding: 6px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+        }
+      }
+  
+      .form-check {
+        margin-bottom: 5px;
+  
+        .form-check-input {
+          margin-right: 5px;
+        }
+      }
+  
+      button {
+        padding: 10px;
+        background-color: $prime-blue;
+        color: $white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+  
+        &:hover {
+          background-color: $second-blue;
+        }
+      }
+    }
+  }
+}

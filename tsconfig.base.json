@@ -1,0 +1,38 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2022",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@features": ["src/features"],
+      "@features/lang": ["src/features/lang"],
+      "@features/login": ["src/features/login"],
+      "@features/logo": ["src/features/logo"],
+      "@pages": ["src/pages"],
+      "@pages/authorization": ["src/pages/authorization"],
+      "@pages/main": ["src/pages/main"],
+      "@pages/profile": ["src/pages/profile"],
+      "@pages/registration": ["src/pages/registration"],
+      "@shared": ["src/shared/index.ts"],
+      "@shared/directives": ["src/shared/directives"],
+      "@shared/helpers": ["src/shared/helpers"],
+      "@shared/services": ["src/shared/services"],
+      "@shared/interfaces": ["src/shared/interfaces"],
+      "@widgets": ["src/widgets"],
+      "@widgets/footer": ["src/widgets/footer"],
+      "@widgets/header": ["src/widgets/header"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

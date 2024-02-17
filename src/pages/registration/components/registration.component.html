@@ -1,0 +1,71 @@
+<org-header></org-header>
+
+<div class="wrapper">
+  <div class="container">
+    <h2 [text]="{
+      ENG: 'Registration',
+      ESP: 'Ddfsrdы',
+      RUS: 'Регистрация',
+    }">Registration</h2>
+
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" (keyup.enter)="onSubmit()">
+      <div class="form-group">
+        <label for="name" [text]="{
+          ENG: 'Username:',
+          ESP: 'Ddfsrd:',
+          RUS: 'Логин:',
+        }">Username:</label>
+        <input type="text" id="name" formControlName="name"
+          [class.validation-error]="isValidControl('name')">
+          @if (isValidControl('name')) {
+            <p class="error-message">{{getErrorMessage('name')}}</p>
+          }
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" formControlName="email" #emailInput
+          [class.validation-error]="isValidControl('email')">
+          @if (isValidControl('email')) {
+            <p class="error-message">{{getErrorMessage('email')}}</p>
+          }
+      </div>
+
+      <div class="form-group">
+        <label for="password" [text]="{
+          ENG: 'Password (min: 6):',
+          ESP: ' (min: 6):',
+          RUS: 'Пароль (минимум: 6):',
+        }">Password (min: 6):</label>
+        <input type="password" id="password" formControlName="password"
+          [class.validation-error]="isValidControl('password')">
+          @if (isValidControl('password')) {
+            <p class="error-message">{{getErrorMessage('password')}}</p>
+          }
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" id="agreement" formControlName="agreement">
+        <label class="form-check-label" for="agreement" [text]="{
+          ENG: 'I agree to the terms and conditions',
+          ESP: '',
+          RUS: 'Согласен с условиями договора',
+        }">I agree to the terms and conditions</label>
+        @if (isValidControl('agreement')) {
+          <p class="error-message" [text]="{
+              ENG: 'Agreement is required.',
+              ESP: '',
+              RUS: 'Соглашение обязательно',
+          }">Agreement is required.</p>
+        }
+      </div>
+      <button type="submit" class="btn btn-primary"
+        [text]="{
+          ENG: 'Register',
+          ESP: '',
+          RUS: 'Регистрация',
+        }">Register
+      </button>
+    </form>
+  </div>
+</div>
