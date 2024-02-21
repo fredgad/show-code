@@ -1,37 +1,68 @@
 <org-header></org-header>
 
 <div class="main flex">
-  <img class="main-logo" [srcPath]="'msr-logo-phone.svg'"/>
+  <img class="main-logo" [srcPath]="'msr-logo-phone-no-title.svg'"/>
+  <img class="main-title" [srcPath]="logoTitle$i()"/>
+ 
   <p class="main-text">
-    MOBILE SECURITY <span>&nbsp;REMOTE&nbsp;</span> RECORDER
+    <span [text]="{
+      ENG: 'MOBILE SECURITY',
+      ESP: 'Есп',
+      RUS: 'МОБИЛЬНЫЙ',
+    }">MOBILE SECURITY</span>&nbsp;
+    <span class="grey" [text]="{
+      ENG: 'REMOTE',
+      ESP: 'Есп',
+      RUS: 'УДАЛЁННЫЙ',
+    }">REMOTE</span>&nbsp;
+    <span [text]="{
+      ENG: 'RECORDER',
+      ESP: 'Есп',
+      RUS: 'РЕГИСТРАТОР',
+    }">RECORDER</span>
   </p>
-  <!-- <div class="main-logo flex">
-    <img [srcPath]="'msr-logo-title.svg'">
-    <img [srcPath]="'msr-logo.svg'">
-    <h1 class="main-logo_title">MSR<span>R</span></h1> 
-  </div> -->
 
   <div class="main-registration flex">
     <form (submit)="submitUserName($event)" class="main-registration_form">
-      <label class="main-registration_form--label">Registration</label>
-      <input [(ngModel)]="userName" class="" placeholder="Enter your username" type="username" name="name">
+      <label class="main-registration_form--label" [text]="{
+        ENG: 'Registration',
+        ESP: 'Ddfsrdы',
+        RUS: 'Регистрация',
+      }">Registration</label>
+      <input [(ngModel)]="userName" class="" [placeholder]="inputPlaceholder()" type="username" name="name">
       <p>
         @if (userName.length) {
           <button type="submit" class="mainButton">Create Account</button> or
         } @else {
-          Already registered?
+          <span [text]="{
+            ENG: 'Already registered?',
+            ESP: 'Espni ыфвы фв?',
+            RUS: 'Уже зарегистрирован?',
+          }">Already registered?</span> 
         }
-        <a> Sign in.</a>
+        <a routerLink="/auth" [text]="{
+          ENG: ' Sign in.',
+          ESP: ' Есп',
+          RUS: ' Войти.',
+        }"> Sign in.</a>
       </p>
     </form>
   </div>
 
   <div class="main-first flex wrapper">
     <h3>
-      <b>MSR:</b>
-      Your Partner in Personal Safety
+      <b [text]="{
+        ENG: 'MSR:',
+        ESP: 'MSR:',
+        RUS: 'МУР:',
+      }">MSR:</b>
+      <span [text]="{
+        ENG: 'Your Partner in Personal Safety',
+        ESP: 'Ddfsrdы',
+        RUS: 'Ваш партнёр в персональной безопасности',
+      }">Your Partner in Personal Safety</span>
     </h3>
-    <p class="main-first_text container" [text]="text">
+    <p class="main-first_text container" [text]="text['innovative']">
       Mobile Security Remote Recorder is an innovative safety solution designed to empower
       individuals with the ability to discreetly initiate video and audio recordings from their phone,
       instantly uploading the footage to a secure server. This cutting-edge system is tailored for moments
@@ -42,33 +73,54 @@
     </p>
   </div>
   <div class="main-second flex container">
-    <div class="benefits-title">Who Can Benefit from MSR?</div>
+
+    <h3 class="benefits-title" [text]="{
+      ENG: 'Who Can Benefit from MSR?',
+      ESP: 'Ddfsrdы ыф фыаы фв',
+      RUS: 'Кому необходимо наше приложение?',
+    }">Who Can Benefit from MSR?</h3>
 
     <div class="benefits">
       <div class="benefits-item">
-        <div class="benefits-item_title">For Everyday Heroes</div>
-        <div class="text">
+        <div class="benefits-item_title" [text]="{
+          ENG: 'For Everyday Heroes',
+          ESP: 'Ddfsrdы ыф фыаы фв',
+          RUS: 'Для повседневных героев',
+        }">For Everyday Heroes</div>
+        <div class="benefits-item_text" [text]="text['citizen']">
           Whether you're a concerned citizen witnessing an injustice or someone who frequently finds
           themselves in situations where safety is a concern, MSR empowers you to act swiftly and securely.
         </div>
       </div>
       <div class="benefits-item">
-        <div class="benefits-item_title">For Professionals in the Field</div>
-        <div class="text">
+        <div class="benefits-item_title" [text]="{
+          ENG: 'For Professionals in the Field',
+          ESP: 'Ddfsrdы ыф фыаы фв',
+          RUS: 'Для профессионалов в опасных профессиях',
+        }">For Professionals in the Field</div>
+        <div class="benefits-item_text" [text]="text['journalists']">
           Journalists, private investigators, and security personnel can utilize MSR to discreetly gather
           evidence and record events without compromising their position or safety.
         </div>
       </div>
       <div class="benefits-item">
-        <div class="benefits-item_title">For Adventure Seekers</div>
-        <div class="text">
+        <div class="benefits-item_title" [text]="{
+          ENG: 'For Adventure Seekers',
+          ESP: 'Ddfsrdы ыф фыаы фв',
+          RUS: 'Для искателей приключений',
+        }">For Adventure Seekers</div>
+        <div class="benefits-item_text" [text]="text['adventurers']">
           Adventurers and explorers venturing into remote or potentially risky environments can rely on
           MSR for documenting encounters and ensuring a digital footprint of their journey is securely preserved.
         </div>
       </div>
       <div class="benefits-item">
-        <div class="benefits-item_title">For the Safety-Conscious Individual</div>
-        <div class="text">
+        <div class="benefits-item_title" [text]="{
+          ENG: 'For the Safety-Conscious Individual',
+          ESP: 'Ddfsrdы ыф фыаы фв',
+          RUS: 'Для людей, заботящихся о персональной безопасности',
+        }">For the Safety-Conscious Individual</div>
+        <div class="benefits-item_text" [text]="text['anyone']">
           Anyone who values personal safety and the peace of mind knowing they can discreetly
           record situations that feel unsafe or threatening will find MSR indispensable.
         </div>

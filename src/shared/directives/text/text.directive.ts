@@ -9,6 +9,7 @@ import { LangEnum, LangTextI } from '../../interfaces';
 export class TextDirective {
   private langService = inject(LangService);
   private el = inject(ElementRef);
+
   public newLanguage$i: Signal<LangEnum> = this.langService.getLang$i;
 
   @Input('text') text!: LangTextI;
@@ -22,11 +23,5 @@ export class TextDirective {
   public ngOnInit(): void {
     this.langService.getLang$i()
     this.newLanguage$i = this.langService.getLang$i;
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['text']) {
-      // this.el.nativeElement.textContent = this.text[this.newLanguage$i() as LangEnum];
-    }
   }
 }

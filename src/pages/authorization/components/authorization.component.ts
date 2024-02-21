@@ -5,11 +5,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { LangService, UserNameService } from '@shared/services';
 import { getFormControlErrorMessage, isValidFormControl } from '@shared/helpers';
 import { LangEnum } from '@shared/interfaces';
+import { TextDirective } from '@shared/directives';
 
 @Component({
   selector: 'org-authorization',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, ReactiveFormsModule],
+  imports: [CommonModule, HeaderComponent, ReactiveFormsModule, TextDirective],
   templateUrl: './authorization.component.html',
   styleUrl: './authorization.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

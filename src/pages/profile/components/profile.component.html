@@ -1,1 +1,55 @@
-<p>profile works!</p>
+<org-header></org-header>
+
+<div class="wrapper">
+  <div class="profile container">
+    <div class="profile-header">
+      <div class="profile-header_image"><img [srcPath]="'camera.svg'"/></div>
+      
+      <div class="profile-header_data">
+        <div class="profile-header_data--name">
+          Fred Gad
+        </div>
+        <div class="profile-header_data--email">
+         fred11&#64;mail.ru
+        </div>
+        <div class="profile-header_data--tarif">
+          <span>Tarif:</span>
+          <span>Basic</span>
+        </div>
+      </div>
+
+      <button class="profile-header_settings btn-primary" routerLink="/profile/settings" [text]="{
+        ENG: 'Profile settings',
+        ESP: 'Configuración de perfil',
+        RUS: 'Настройки профиля',
+      }">Profile settings</button>
+    </div>
+    
+    <div class="profile-body">
+      <div class="profile-body_menu">
+        <button routerLink="/profile/saved-media" routerLinkActive="active" [text]="{
+          ENG: 'Saved media',
+          ESP: 'Medios guardados',
+          RUS: 'Сохранённые медиа',
+        }">Saved media</button>
+        <button routerLink="/profile/trusted-people" routerLinkActive="active" [text]="{
+          ENG: 'Trusted people',
+          ESP: 'Gente de confianza',
+          RUS: 'Доверенные люди',
+        }">Trusted people</button>
+        <button routerLink="/profile/notification-settings" routerLinkActive="active" [text]="{
+          ENG: 'Notification settings',
+          ESP: 'Configuración de alerta',
+          RUS: 'Настройки оповещений',
+        }">Notification settings</button>
+      </div>
+
+      <div class="profile-body_sections">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<org-footer></org-footer>

@@ -1,4 +1,4 @@
-import { Component, Signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LangService } from '@shared/services';
 import { LangEnum } from '@shared/interfaces';
@@ -9,6 +9,7 @@ import { LangEnum } from '@shared/interfaces';
   imports: [CommonModule],
   templateUrl: './lang.component.html',
   styleUrl: './lang.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LangComponent {
   public langService = inject(LangService);

@@ -1,0 +1,100 @@
+@import 'mixins';
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12dvh;
+  min-height: 86dvh;
+  margin-bottom: 2dvh;
+  box-sizing: border-box;
+  @include org-border;
+
+  &-header {
+    display: flex;
+    flex-direction: row;
+    height: auto;
+    border-bottom: 1px solid $transparent-grey;
+    padding-bottom: 10px;
+
+    &_image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: $transparent-grey;
+      margin-right: 30px;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      transition: .3s;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $prime-grey;
+      }
+    }
+
+    &_data {
+
+      &--name {
+
+      }
+      &--email {
+
+      }
+      &--tarif {
+
+      }
+    }
+    
+    &_settings {
+      margin-left: auto;
+    }
+  }
+
+  &-body {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+
+    &_menu {
+      display: flex;
+      flex-direction: column;
+      width: 250px;
+      margin-top: 10px;
+
+      button {
+        @include fszP(18px,18px);
+        background-color: transparent;
+        border: none;
+        text-align: left;
+        padding: 8px;
+        border-radius: 5px 0 0 5px; 
+        box-sizing: border-box;
+        cursor: pointer;
+
+        &.active {
+          background-color: $transparent-grey;
+          
+        }
+
+        &:hover:not(.active) {
+          border-left: 3px solid $transparent-grey;
+          transform: translateX(-3px);
+        }
+      }
+    }
+    &_sections {
+      min-height: calc(86dvh - 160px);
+      padding-left: 10px;
+      border-left: 1px solid $transparent-grey;
+    }
+  }
+  
+}

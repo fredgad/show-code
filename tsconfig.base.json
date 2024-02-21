@@ -27,11 +27,14 @@
       "@shared": ["src/shared/index.ts"],
       "@shared/directives": ["src/shared/directives"],
       "@shared/helpers": ["src/shared/helpers"],
-      "@shared/services": ["src/shared/services"],
       "@shared/interfaces": ["src/shared/interfaces"],
+      "@shared/services": ["src/shared/services"],
       "@widgets": ["src/widgets"],
       "@widgets/footer": ["src/widgets/footer"],
-      "@widgets/header": ["src/widgets/header"]
+      "@widgets/header": ["src/widgets/header"],
+      "@widgets/saved-media": ["src/widgets/saved-media"],
+      "@widgets/trusted-people": ["src/widgets/trusted-people"],
+      "@widgets/notification-settings": ["src/widgets/notification-settings"],
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -19,6 +19,12 @@
     }
   }
 
+  &-title {
+    position: absolute;
+    top: 27dvh;
+    height: 3.5dvh;
+  }
+
   &-text {
     display: inline-flex;
     align-items: center;
@@ -31,7 +37,10 @@
     span {
       @include fszV(2.5);
       font-weight: 500;
-      color: $text-color;
+      
+      &.grey {
+        color: $text-color;
+      }
     }
   }
 
@@ -62,12 +71,15 @@
       
       p {
         height: 7dvh;
-        font-size: 3dvh;
 
         a {
-          font-size: 3dvh;
+          @include fszV(3);
           color: $prime-green;
           cursor: pointer;
+        }
+        
+        span {
+          @include fszV(3);
         }
 
         button {
@@ -83,18 +95,27 @@
     min-height: 50dvh;
     width: 100%;
 
-    &_text {
-      color: $white;
-      @include fszV(3, 18);
-      padding: 16px;
-    }
-
     h3 {
       position: absolute;
       top: -10dvh;
       color: $prime-blue;
-      @include fszV(4);
       left: calc(50dvw - 450px + 16px);
+
+      b {
+        @include fszV(4);
+        margin-right: 5px;
+      }
+
+      span {
+        @include fszV(3.5);
+
+      }
+    }
+
+    &_text {
+      color: $white;
+      @include fszV(2, 16);
+      padding: 16px;
     }
   }
   &-second {
@@ -103,6 +124,10 @@
     background: #ffffff;
     min-height: 50dvh;
     width: 100%;
+
+    h3 {
+      @include fszV(3.5);
+    }
 
     .benefits {
       display: flex;
@@ -113,6 +138,26 @@
 
       &-item {
         width: 40%;
+        margin-bottom: 30px;
+        transition: .2s;
+        padding: 10px;
+        
+        // &:nth-child(1), &:nth-child(2) {
+        //   margin-bottom: 30px;
+        // }
+
+        &:hover {
+          padding: 10px;
+        }
+
+        &_title {
+          margin-bottom: 10px;
+          @include fszV(2.2, 20);
+        }
+
+        &_text {
+          @include fszV(2, 16);
+        }
       }
     }
   }

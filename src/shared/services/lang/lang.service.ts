@@ -1,5 +1,5 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
-import { LangEnum } from '../../interfaces';
+import { LangEnum, LangTextI } from '../../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -12,17 +12,8 @@ export class LangService {
   });
 
   public setLanguage(lang: LangEnum): void {
-    console.log('set, ' ,lang)
     window.localStorage.setItem('lang', lang);
     this._lang$i.set(lang);
-
-    // if (true) {
-    //   this._lang$i.update((value) => {
-    //     const nextLang = value === LangEnum.ENG ? LangEnum.RUS : LangEnum.ENG;
-    //     window.localStorage.setItem('lang', nextLang);
-    //     return nextLang;
-    //   });
-    // }
   }
 
   public setStorageLanguage(): void {
@@ -31,5 +22,9 @@ export class LangService {
     if (storageLang) {
       this._lang$i.set(storageLang);
     }
+  }
+
+  public textByLanguage(text: LangTextI): Signal<string> {
+    return computed(() => text[this._lang$i()]);
   }
 }
