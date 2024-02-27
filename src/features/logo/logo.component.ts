@@ -16,6 +16,7 @@ export class LogoComponent {
   private langService = inject(LangService);
   
   @Input() public linkToMain: boolean = false;
+  @Input() public isTitle: boolean = true;
   
   private router = inject(Router);
 

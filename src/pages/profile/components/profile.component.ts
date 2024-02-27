@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent, FooterComponent  } from '@widgets';
 import { ImageDirective, TextDirective } from '@shared/directives';
 import { RouterModule } from '@angular/router';
+import { LangService, LocalStorageService, WindowEventsService } from '@shared/services';
 
 @Component({
   selector: 'org-profile',
@@ -12,4 +13,28 @@ import { RouterModule } from '@angular/router';
   styleUrl: './profile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProfileComponent {}
+export class ProfileComponent implements OnInit {
+  private langService = inject(LangService);
+  private storage = inject(LocalStorageService);
+  
+  public isMobile$ = inject(WindowEventsService).isMobile$;
+
+  public abbrTitle: Signal<string> = this.langService.textByLanguage({
+    ENG: 'Profile settings',
+    ESP: 'Configuración de perfil',
+    RUS: 'Настройки профиля',
+  });
+
+  public isMenuOpen: boolean = true;
+
+  public ngOnInit(): void {
+    if (this.storage.getItem('HBH/profile')) {
+      this.isMenuOpen = false;
+    }
+    this.storage.setItem('HBH/profile', 'true');
+  }
+
+  public onMenuClick(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+}

@@ -4,7 +4,7 @@
   <img class="main-logo" [srcPath]="'msr-logo-phone-no-title.svg'"/>
   <img class="main-title" [srcPath]="logoTitle$i()"/>
  
-  <p class="main-text">
+  <p class="main-text" (click)="getUsers()">
     <span [text]="{
       ENG: 'MOBILE SECURITY',
       ESP: 'Есп',

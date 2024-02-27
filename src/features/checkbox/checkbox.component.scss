@@ -1,0 +1,54 @@
+@import 'mixins';
+
+.checkbox-wrapper {
+  @include unselectable;
+  cursor: pointer;
+
+  label {
+    background: white;
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    height: 20px;
+    padding: 8px;
+    position: relative;
+    transition: transform 300ms ease;
+    width: 45px;
+    outline: 1px solid grey;
+
+    &:after {
+      content: '';
+      background: $prime-grey;
+      border-radius: 50%;
+      left: 8px;
+      outline: none;
+      position: absolute;
+      transition: 100ms linear;
+      width: 16px;
+      height: 16px;
+      left: 2px;
+      top: 2px;
+    }
+
+    &:active {
+      transform: scale(1.15);
+    }
+  }
+
+  input {
+    display: none;
+
+    + label {
+      transition: .3s;
+    }
+
+    &:checked + label {
+      background: $prime-green;
+
+      &:after {
+        background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13.5' height='13.5' viewBox='0 0 24 24'%3E%3Cpath stroke='rgb(76, 175, 80)' fill='rgb(76, 175, 80)' stroke-linecap='round' d='M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z'/%3E%3C/svg%3E") no-repeat center;
+        left: 27px;
+      }
+    }
+  }
+}

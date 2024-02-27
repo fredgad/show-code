@@ -1,10 +1,13 @@
-import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
+import { Injectable, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
 import { LangEnum, LangTextI } from '../../interfaces';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LangService {
+  private storage = inject(LocalStorageService);
+
   private _lang$i: WritableSignal<LangEnum> = signal(LangEnum.ENG);
 
   public getLang$i: Signal<LangEnum> = computed((): LangEnum => {
@@ -12,12 +15,12 @@ export class LangService {
   });
 
   public setLanguage(lang: LangEnum): void {
-    window.localStorage.setItem('lang', lang);
+    this.storage.setItem('lang', lang);
     this._lang$i.set(lang);
   }
 
   public setStorageLanguage(): void {
-    const storageLang = window.localStorage.getItem('lang') as LangEnum; 
+    const storageLang = this.storage.getItem('lang') as LangEnum; 
 
     if (storageLang) {
       this._lang$i.set(storageLang);

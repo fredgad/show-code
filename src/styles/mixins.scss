@@ -77,7 +77,6 @@
   border: 1px solid #808080; // $prime-grey
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 30px;
 }
 
 @mixin unselectable {
@@ -110,3 +109,12 @@
 @function dvh($px) {
   @return unquote($px + 'dvh');
 }
+
+
+$small-width: 768px;
+@mixin w-mobile {
+  @media screen and (max-width: $small-width) {
+    @content;
+  }
+}
+

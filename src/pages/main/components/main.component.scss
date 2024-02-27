@@ -65,8 +65,7 @@
       input {
         min-width: 300px;
         margin-bottom: 6px;
-        min-height: 4dvh;
-        font-size: min(2dvh, 40px);
+        font-size: 16px;
       }
       
       p {
@@ -92,14 +91,15 @@
   &-first {
     position: relative;
     background: $prime-blue;
-    min-height: 50dvh;
     width: 100%;
 
     h3 {
       position: absolute;
       top: -10dvh;
       color: $prime-blue;
-      left: calc(50dvw - 450px + 16px);
+      width: 100%;
+      max-width: 900px;
+      padding-left: 16px;
 
       b {
         @include fszV(4);
@@ -122,7 +122,6 @@
     display: flex;
     flex-direction: column;
     background: #ffffff;
-    min-height: 50dvh;
     width: 100%;
 
     h3 {
@@ -163,7 +162,6 @@
   }
   &-third {
     background: $prime-grey;
-    min-height: 50dvh;
     width: 100%;
   }
 }

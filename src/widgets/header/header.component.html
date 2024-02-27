@@ -1,5 +1,5 @@
 <div class="header">
-  <org-logo [linkToMain]="true"></org-logo>
+  <org-logo [linkToMain]="true" [isTitle]="(isMobile$ | async) === false"></org-logo>
   <div class="header-buttons">
     <button class="header-buttons_reg" (click)="goToPath('/registration')" [text]="{
       ENG: 'REGISTRATION',
@@ -15,7 +15,7 @@
     <button class="header-buttons_auth" (click)="goToPath('/profile')" [text]="{
       ENG: 'Profile',
       ESP: '',
-      RUS: 'Личный кабинет'
+      RUS: 'Л/К'
     }">Profile</button>
     
     <org-lang></org-lang>

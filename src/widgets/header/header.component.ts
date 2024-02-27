@@ -4,6 +4,7 @@ import { LogoComponent } from '@features/logo';
 import { Router, UrlTree } from '@angular/router';
 import { LangComponent } from '@features/lang';
 import { TextDirective } from '@shared/directives';
+import { WindowEventsService } from '@shared/services';
 
 
 @Component({
@@ -17,7 +18,11 @@ import { TextDirective } from '@shared/directives';
 export class HeaderComponent {
   private router = inject(Router);
 
+  public isMobile$ = inject(WindowEventsService).isMobile$;
+
   public goToPath(path: string | UrlTree): void {
     this.router.navigateByUrl(path)
   }
+
+  
 }

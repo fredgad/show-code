@@ -1,0 +1,33 @@
+
+
+
+<div class="audio">
+  <audio controls>
+    <source [src]="audioPath" type="audio/mp3">
+    Ваш браузер не поддерживает аудио элемент.
+  </audio>
+
+  <div class="audio-text">
+    <div class="audio-text_data">
+      <span [text]="{
+        ENG: 'Date of download: ',
+        ESP: 'Date of download: ',
+        RUS: 'Дата загрузки: ',
+      }">Date of download: </span>
+      <p>25.12.2026</p>
+    </div>
+    <div class="audio-text_duration">
+      <span [text]="{
+        ENG: 'Duration: ',
+        ESP: 'Duration: ',
+        RUS: 'Продолжительность: ',
+      }">Duration: </span>
+      <p>1m. 27s.</p>
+    </div>
+    <button class="audio-text_download btn-primary" [text]="{
+      ENG: 'Download',
+      ESP: 'Download',
+      RUS: 'Загрузить',
+    }">Загрузить</button>
+  </div>
+</div>

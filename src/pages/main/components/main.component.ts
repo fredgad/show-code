@@ -8,6 +8,7 @@ import { LangService, UserNameService } from '@shared/services';
 import { ImageDirective, TextDirective } from '@shared/directives';
 import { LangTextI } from '@shared/interfaces';
 import { TEXT_MAIN } from '../common/main.text';
+import { AuthService } from '@shared/services';
 
 @Component({
   selector: 'org-main',
@@ -24,16 +25,23 @@ export class MainComponent {
   private router = inject(Router);
   private userNameService = inject(UserNameService);
   private langService = inject(LangService);
+  private authService = inject(AuthService);
 
   public userName: string = '';
 
   public inputPlaceholder: Signal<string> = this.langService.textByLanguage({
     ENG: 'Enter your username',
-    ESP: 'Esp',
+    ESP: 'Ingrese su nombre de usuario',
     RUS: 'Введите логин'
   });
 
   public logoTitle$i: Signal<string> = this.langService.textByLanguage({
+    ENG: 'msr-logo-title.svg',
+    ESP: 'msr-logo-title.svg',
+    RUS: 'msr-logo-title-ru.svg'
+  });
+
+  public logoText$i: Signal<string> = this.langService.textByLanguage({
     ENG: 'msr-logo-title.svg',
     ESP: 'msr-logo-title.svg',
     RUS: 'msr-logo-title-ru.svg'
@@ -45,5 +53,11 @@ export class MainComponent {
     e.preventDefault();
     this.userNameService.setUserName = this.userName;
     this.router.navigate(['/registration']);
+  }
+
+  public getUsers(): void {
+    this.authService.getUsers().subscribe(x => {
+      console.log(x, 'getUsers x');
+    })
   }
 }

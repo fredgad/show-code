@@ -192,3 +192,9 @@ org-root {
     background-color: #388E3C; // $second-green
   }
 }
+
+.empty-image {
+  background: #80808040 !important; // $transparent-grey
+  height: 30px;
+  width: 30px;
+}

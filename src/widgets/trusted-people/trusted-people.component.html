@@ -1,1 +1,34 @@
-<p>trusted-people works!</p>
+<div class="people">
+  <div class="people-title" [text]="{
+    ENG: 'You receive notifications from these users',
+    ESP: 'Recibes notificaciones de estos usuarios',
+    RUS: 'Вы получаете уведомления от этих пользователей',
+  }">You receive notifications from these users</div>
+
+  @for (person of trustedPeopleList; track person.id) {
+    <div class="person">
+      @if (person.image) {
+        <img class="person-image" [srcPath]="person.image">
+      } @else {
+        <org-empty-avatar [id]="person.id"></org-empty-avatar>
+      }
+
+      <div class="person-text">
+        <div class="person-text_name">{{person.username}}</div>
+        <div class="person-text_email">{{person.email}}</div>
+        <div class="person-text_checkbox">
+          <p class="person-text_checkbox--text" [text]="{
+            ENG: 'This user receives notifications from you',
+            ESP: 'Este usuario recibe notificaciones tuyas',
+            RUS: 'Этот пользователь получает уведомления от вас',
+          }">This user receives notifications from you</p>
+          <org-checkbox (change)="onCheckboxChange($event)" [initialValue]="person.activeListener"></org-checkbox>
+        </div>
+      </div>
+
+      <div class="person-delete">
+        <org-delete-button></org-delete-button>
+      </div>
+    </div>
+  }
+</div>

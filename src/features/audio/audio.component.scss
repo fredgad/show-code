@@ -1,0 +1,37 @@
+@import 'mixins';
+
+.audio {
+  display: flex;
+  flex-direction: column;
+  margin: 16px;
+
+  audio {
+    min-width: 256px;
+    width: 100%;
+    margin-right: 10px;
+    border: 1px solid $prime-blue;
+    border-radius: 50px;
+  }
+
+  &-text {
+    width: 100%;
+
+    &_data {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid $transparent-grey;
+    }
+
+    &_duration {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid $transparent-grey;
+    }
+
+    &_download {
+      display: flex;
+      margin-top: 15px;
+      margin-left: auto;
+    }
+  }
+}

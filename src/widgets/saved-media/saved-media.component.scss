@@ -1,0 +1,28 @@
+@import 'mixins';
+
+.saved {
+
+  &-buttons {
+
+    button {
+      height: 45px;
+      width: 50%;
+      background: transparent;
+      outline: none;
+      border: none;
+      cursor: pointer;
+
+      &.active {
+        color: $prime-green;
+      }
+    }
+  
+    &_video {
+      border-right: 1px solid $transparent-grey !important;
+    }
+  }
+
+  &-audios {
+    background: transparent;
+  }
+}

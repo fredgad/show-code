@@ -1,1 +1,17 @@
-<p>saved-media works!</p>
+<div class="saved container">
+
+  <div class="saved-buttons">
+    <button class="saved-buttons_video" routerLink="/profile/saved-media/video" routerLinkActive="active" [text]="{
+      ENG: 'Video',
+      ESP: 'Video',
+      RUS: 'Видео',
+    }">Video</button>
+    <button routerLink="/profile/saved-media/audio" routerLinkActive="active" [text]="{
+      ENG: 'Audio',
+      ESP: 'Audio',
+      RUS: 'Аудио',
+    }">Audio</button>
+  </div>
+
+  <router-outlet></router-outlet>
+</div>

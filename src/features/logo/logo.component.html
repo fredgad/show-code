@@ -1,4 +1,6 @@
 <div class="logo" (click)="goToMain()">
-  <img class="logo-title" [srcPath]="logoTitlePath$i()">
+  @if (isTitle) {
+    <img class="logo-title" [srcPath]="logoTitlePath$i()">
+  }
   <img class="logo-img" [srcPath]="'msr-logo.svg'">
 </div>

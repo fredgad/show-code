@@ -1,0 +1,42 @@
+<org-header></org-header>
+
+<div class="capture wrapper">
+  <video #videoElement autoplay muted></video>
+
+  <div class="capture-controls">
+    <div class="capture-controls_camera">{{currentDeviceLabel$i()}}</div>
+
+    <!-- @if (isRecording) {
+      <div class="capture-controls_timer">
+        <span [text]="{
+          ENG: 'Record: ',
+          ESP: 'Registro: ',
+          RUS: 'Запись: '
+        }">Record: </span>
+        <p>{{currentVideoTimer$i()}}</p>
+      </div>
+    } -->
+  
+    <div class="capture-controls_buttons">
+      @if (!isRecording) {
+        <abbr (click)="switchCamera()" class="capture-controls_buttons--switch" [title]="abbrTitle$i()">
+          <img [srcPath]="'camera-switch-icon.svg'">
+        </abbr>
+      }
+
+      @if (isRecording) {
+        <button (click)="stopRecording()" class="btn-primary" [text]="{
+          ENG: 'Stop recording',
+          ESP: 'Para de grabar',
+          RUS: 'Остановить запись',
+        }">Stop recording</button>
+      } @else {
+        <button (click)="startRecording()" class="btn-secondary" [text]="{
+          ENG: 'Start recording on a remote server',
+          ESP: 'Comience a grabar en un servidor remoto',
+          RUS: 'Начать запись на удалённый сервер',
+        }">Start recording on a remote server</button>
+      }
+    </div>
+  </div>
+</div>

@@ -1,10 +1,10 @@
 <org-header></org-header>
 
-<div class="wrapper">
+<div class="wrapper" [class.--mobile]="isMobile$ | async">
   <div class="profile container">
+
     <div class="profile-header">
       <div class="profile-header_image"><img [srcPath]="'camera.svg'"/></div>
-      
       <div class="profile-header_data">
         <div class="profile-header_data--name">
           Fred Gad
@@ -18,15 +18,19 @@
         </div>
       </div>
 
-      <button class="profile-header_settings btn-primary" routerLink="/profile/settings" [text]="{
-        ENG: 'Profile settings',
-        ESP: 'Configuración de perfil',
-        RUS: 'Настройки профиля',
-      }">Profile settings</button>
+      <button class="profile-header_settings" routerLink="/capture">
+        <abbr [title]="abbrTitle()">
+          <img [srcPath]="'settings-icon.svg'">
+        </abbr>
+      </button>
+
+      <button class="profile-header_record" routerLink="/cu">
+      </button>
     </div>
     
     <div class="profile-body">
-      <div class="profile-body_menu">
+      <div class="profile-body_menu" (click)="onMenuClick()" [class.--openMenu]="isMenuOpen">
+        <div class="profile-body_menu--arrow"></div>
         <button routerLink="/profile/saved-media" routerLinkActive="active" [text]="{
           ENG: 'Saved media',
           ESP: 'Medios guardados',

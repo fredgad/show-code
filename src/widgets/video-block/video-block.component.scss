@@ -1,0 +1,11 @@
+@import 'mixins';
+
+.saved-videos {
+  org-video {
+    display: grid;
+
+    &:nth-child(odd) {
+      background: $super-transparent-grey;
+    }
+  }
+}

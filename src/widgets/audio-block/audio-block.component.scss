@@ -1,0 +1,11 @@
+@import 'mixins';
+
+.saved-audios {
+  org-audio {
+    display: grid;
+
+    &:nth-child(odd) {
+      background: $super-transparent-grey;
+    }
+  }
+}

@@ -1,0 +1,85 @@
+@import 'mixins';
+
+.people {
+  display: flex;
+  flex-direction: column;
+
+  &-title {
+    font-size: 18px;
+    text-align: center;
+    margin: 5px;
+  }
+
+  .person {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    padding: 16px;
+
+    &:nth-child(2n) {
+      background: $super-transparent-grey;
+    }
+
+    &-image {
+      width: 60px;
+      min-width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: contain;
+      cursor: pointer;
+    }
+    org-empty-avatar {
+      width: 60px;
+      min-width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    &-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-left: 10px;
+      width: 100%;
+
+
+      &_name {
+        cursor: pointer;
+      }
+
+      &_email {
+        cursor: pointer;
+      }
+  
+      &_checkbox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+        width: 100%;
+        margin-top: 15px;
+        border-radius: 5px;
+        padding: 5px;
+        border: 1px solid $transparent-grey;
+
+        &--text {
+          margin-right: 5px;
+        }
+      }
+    }
+
+    &-delete {
+      position: absolute;
+      right: 16px;
+      
+      margin-left: auto;
+      width: 30px;
+      height: 30px;
+
+      org-delete-button{
+        height: 100%;
+      }
+    }
+  }
+}

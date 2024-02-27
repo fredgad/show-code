@@ -1,0 +1,30 @@
+<div class="video">
+  <video width="200" height="auto" controls>
+    <source [src]="videoPath" type="video/mp4">
+    Ваш браузер не поддерживает видео тег.
+  </video>
+
+  <div class="video-text">
+    <div class="video-text_data">
+      <span [text]="{
+        ENG: 'Date of download: ',
+        ESP: 'Date of download: ',
+        RUS: 'Дата загрузки: ',
+      }">Date of download: </span>
+      <p>25.12.2026</p>
+    </div>
+    <div class="video-text_duration">
+      <span [text]="{
+        ENG: 'Duration: ',
+        ESP: 'Duration: ',
+        RUS: 'Продолжительность: ',
+      }">Duration: </span>
+      <p>1m. 27s.</p>
+    </div>
+    <button class="video-text_download btn-primary" [text]="{
+      ENG: 'Download',
+      ESP: 'Download',
+      RUS: 'Загрузить',
+    }">Загрузить</button>
+  </div>
+</div>

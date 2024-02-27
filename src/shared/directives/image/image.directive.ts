@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, SimpleChanges, inject } from '@angular/core';
+import { Directive, ElementRef, Input, SimpleChanges} from '@angular/core';
 
 @Directive({
   selector: '[srcPath]',
@@ -8,6 +8,8 @@ export class ImageDirective {
   @Input() public srcPath: string = '';
 
   private baseImagesPath = 'assets/images/';
+
+  private skeletonPath = 'skeleton-image.svg';
 
   private readonly element = this.elementRef;
 
@@ -19,7 +21,8 @@ export class ImageDirective {
 
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes['srcPath']) {
-      this.element.nativeElement.src = this.baseImagesPath + this.srcPath;
+      const imageFullPath = this.srcPath ? this.baseImagesPath + this.srcPath : this.baseImagesPath + this.skeletonPath;
+      this.element.nativeElement.src = imageFullPath;
     }
   }
 }
