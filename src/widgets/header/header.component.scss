@@ -67,6 +67,11 @@
 
       &_auth {
         color: $prime-green;
+        margin-left: 10px;
+
+        img {
+          width: 22px;
+        }
       }
 
       org-lang {

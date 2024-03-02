@@ -1,0 +1,75 @@
+<org-header></org-header>
+
+<div class="settings container">
+  <h2 [text]="{
+    ENG: 'Profile settings',
+    ESP: 'Configuración de perfil',
+    RUS: 'Настройки профиля',
+  }">Profile settings</h2>
+  
+
+  <div class="settings-avatar">
+    <div class="settings-avatar_image">
+      @if (imageUrl) {
+        <img [src]="imageUrl" class="--avatar" (click)="imageModal.show()">
+        <org-image-modal #imageModal [imageUrl]="imageUrl"></org-image-modal>
+      } @else {
+        <img [srcPath]="'camera.svg'"/>
+      }
+    </div>
+
+    <div class="settings-upload">
+      <input type="file" #fileInput hidden (change)="onFileSelected($event)">
+
+      @if (imageUrl) {
+        <button (click)="triggerFileInput()" class="btn-secondary" [text]="{
+          ENG: 'Change avatar',
+          ESP: 'Cambiar avatar',
+          RUS: 'Изменить аватарку',
+        }">Change avatar</button>
+      } @else {
+        <button (click)="triggerFileInput()" class="btn-secondary" [text]="{
+          ENG: 'Add avatar',
+          ESP: 'Agregar avatar',
+          RUS: 'Добавить аватарку',
+        }">Add avatar</button>
+      }
+    </div>
+  </div>
+
+  <div class="settings-login">
+    <p [text]="{
+      ENG: 'Change your login:',
+      ESP: 'Cambia tu inicio de sesión:',
+      RUS: 'Изменить логин:',
+    }">Change your login:</p>
+    <input type="text" value="Fred Gad">
+    <img class="--pencil" [srcPath]="'pencil-edit.svg'">
+  </div>
+
+  <div class="settings-email">
+    <p [text]="{
+      ENG: 'Change your email:',
+      ESP: 'Cambia tu correo electrónico:',
+      RUS: 'Изменить email:',
+    }">Change your email:</p>
+    <input type="text" value="fred11@mail.ru">
+    <img class="--pencil" [srcPath]="'pencil-edit.svg'">
+  </div>
+
+  <div class="settings-password">
+    <p [text]="{
+      ENG: 'Change your password:',
+      ESP: 'Cambia tu inicio de sesión:',
+      RUS: 'Изменить пароль:',
+    }">Change your password:</p>
+    <input type="password" value="214ывфып123">
+
+    <img class="--pencil" [srcPath]="'pencil-edit.svg'">
+  </div>
+
+</div>
+
+<org-footer></org-footer>
+
+<!-- <org-checkbox (change)="onCheckboxChange($event)" [initialValue]="false"></org-checkbox> -->

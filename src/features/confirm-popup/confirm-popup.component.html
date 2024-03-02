@@ -1,0 +1,20 @@
+@if (isVisible$ | async) {
+  <div class="overlay">
+    <div class="dialog">
+      <p class="dialog-message">{{ message$ | async }}</p>
+
+      <div class="dialog-buttons">
+        <button (click)="confirm()" class="btn-secondary" [text]="{
+          ENG: 'Yes',
+          ESP: 'Sí',
+          RUS: 'Да',
+        }">Yes</button>
+        <button (click)="decline()" class="btn-err" [text]="{
+          ENG: 'No',
+          ESP: 'No',
+          RUS: 'Нет',
+        }">No</button>
+      </div>
+    </div>
+  </div>
+}

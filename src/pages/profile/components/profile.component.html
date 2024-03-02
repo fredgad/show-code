@@ -18,14 +18,20 @@
         </div>
       </div>
 
-      <button class="profile-header_settings" routerLink="/capture">
-        <abbr [title]="abbrTitle()">
-          <img [srcPath]="'settings-icon.svg'">
-        </abbr>
-      </button>
 
-      <button class="profile-header_record" routerLink="/cu">
-      </button>
+      <div class="profile-header_buttons">
+        <button class="profile-header_buttons--settings" routerLink="/settings">
+          <abbr [title]="abbrTitle()">
+            <img [srcPath]="'settings-icon.svg'">
+          </abbr>
+        </button>
+
+        <button class="profile-header_buttons--record btn-primary" routerLink="/capture" [text]="{
+          ENG: 'Make an entry',
+          ESP: 'Hacer una entrada',
+          RUS: 'Сделать запись',
+        }">Make an entry</button>
+      </div>
     </div>
     
     <div class="profile-body">

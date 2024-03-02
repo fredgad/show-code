@@ -1,0 +1,19 @@
+
+.modal {
+  position: fixed;
+  z-index: 99999999999999;
+  left: 0;
+  top: 0;
+  width: 100dvw;
+  height: 100dvh;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &-image {
+    max-width: 80%;
+    max-height: 80%;
+  }
+}

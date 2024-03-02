@@ -1,0 +1,101 @@
+@import 'mixins';
+
+
+// .file-upload input[type="file"] {
+//   display: none;
+// }
+
+
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  .--pencil {
+    width: 30px;
+    cursor: pointer;
+  }
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12dvh;
+  min-height: 86dvh;
+  margin-bottom: 2dvh;
+  box-sizing: border-box;
+  padding: 30px;
+  @include w-mobile {
+    padding: 8px;
+    border: none;
+    box-shadow: none;
+  }
+  @include org-border;
+
+  &-upload {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  > div {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid grey;
+    margin: 15px 0;
+
+    p {
+      font-size: 18px;
+    }
+
+    input {
+      margin-left: 15px;
+      border: none;
+    }
+
+    .--pencil {
+      margin-left: auto;
+    }
+  }
+
+  &-avatar {
+    display: flex;
+    align-items: center;
+
+    &_image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: $transparent-grey;
+      margin-right: 30px;
+      @include w-mobile {
+        margin-right: 10px;
+      }
+      margin-bottom: 5px;
+      margin-top: 5px;
+      border-radius: 50%;
+      min-width: 80px;
+      width: 80px;
+      height: 80px;
+      transition: .3s;
+      overflow: hidden;
+      cursor: pointer;
+
+      .--avatar {
+        height: 100%;
+        object-fit: contain;
+      }
+
+      &:hover {
+        background: grey;
+      }
+    }
+  }
+
+  h2 {
+    font-size: 20px;
+    text-align: center;
+  }
+}

@@ -10,10 +10,6 @@
   height: 10dvh;
   @include unselectable;
 
-  // &:hover {
-  //   color: $text-color;
-  // }
-
   &-select {
     color: $prime-grey;
   }
@@ -27,7 +23,7 @@
   &-options {
     visibility: hidden; /* Элемент невидим, но все еще занимает место в макете */
     opacity: 0; /* Полностью прозрачный */
-    transition: visibility 0s 2s, opacity 2s linear;
+    transition: visibility 0s 1.5s, opacity 2s linear;
 
     display: flex;
     flex-direction: column;

@@ -1,0 +1,35 @@
+<org-header></org-header>
+
+
+  <div class="trusted container">
+    <div class="trusted-header">
+      <div class="trusted-header_image"><img [srcPath]="'camera.svg'"/></div>
+      <div class="trusted-header_data">
+        <div class="trusted-header_data--name">
+          Trusted User
+        </div>
+        <div class="trusted-header_data--email">
+         user22&#64;mail.ru
+        </div>
+      </div>
+    </div>
+
+    <div class="trusted-body">
+      <div class="trusted-body_buttons">
+        <button class="trusted-body_buttons--video" routerLink="/trusted-profile/video" routerLinkActive="active" [text]="{
+          ENG: 'Video',
+          ESP: 'Video',
+          RUS: 'Видео',
+        }">Video</button>
+        <button routerLink="/trusted-profile/audio" routerLinkActive="active" [text]="{
+          ENG: 'Audio',
+          ESP: 'Audio',
+          RUS: 'Аудио',
+        }">Audio</button>
+      </div>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+
+<org-footer></org-footer>

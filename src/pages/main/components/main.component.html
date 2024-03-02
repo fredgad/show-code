@@ -26,42 +26,51 @@
     <form (submit)="submitUserName($event)" class="main-registration_form">
       <label class="main-registration_form--label" [text]="{
         ENG: 'Registration',
-        ESP: 'Ddfsrdы',
+        ESP: 'Registro',
         RUS: 'Регистрация',
       }">Registration</label>
       <input [(ngModel)]="userName" class="" [placeholder]="inputPlaceholder()" type="username" name="name">
       <p>
         @if (userName.length) {
-          <button type="submit" class="mainButton">Create Account</button> or
+          <button type="submit" class="mainButton" [text]="{
+            ENG: 'Create Account',
+            ESP: 'Crear una cuenta',
+            RUS: 'Создать аккаунт',
+          }">Create Account</button> 
+          <span [text]="{
+            ENG: 'or',
+            ESP: 'o',
+            RUS: 'или',
+          }">or</span>
         } @else {
           <span [text]="{
             ENG: 'Already registered?',
-            ESP: 'Espni ыфвы фв?',
+            ESP: '¿Ya registrado?',
             RUS: 'Уже зарегистрирован?',
           }">Already registered?</span> 
         }
         <a routerLink="/auth" [text]="{
           ENG: ' Sign in.',
-          ESP: ' Есп',
+          ESP: ' Iniciar sesión.',
           RUS: ' Войти.',
         }"> Sign in.</a>
       </p>
     </form>
   </div>
 
+  <h3 class="main-first_title container">
+    <b [text]="{
+      ENG: 'MSR:',
+      ESP: 'MSR:',
+      RUS: 'МУР:',
+    }">MSR:</b>
+    <span [text]="{
+      ENG: 'Your Partner in Personal Safety',
+      ESP: 'Ddfsrdы',
+      RUS: 'Ваш партнёр в персональной безопасности',
+    }">Your Partner in Personal Safety</span>
+  </h3>
   <div class="main-first flex wrapper">
-    <h3>
-      <b [text]="{
-        ENG: 'MSR:',
-        ESP: 'MSR:',
-        RUS: 'МУР:',
-      }">MSR:</b>
-      <span [text]="{
-        ENG: 'Your Partner in Personal Safety',
-        ESP: 'Ddfsrdы',
-        RUS: 'Ваш партнёр в персональной безопасности',
-      }">Your Partner in Personal Safety</span>
-    </h3>
     <p class="main-first_text container" [text]="text['innovative']">
       Mobile Security Remote Recorder is an innovative safety solution designed to empower
       individuals with the ability to discreetly initiate video and audio recordings from their phone,
@@ -71,15 +80,15 @@
       safety in uncertain situations,MSR provides an immediate and secure way to record and store evidence
       without drawing attention.
     </p>
-  </div>
-  <div class="main-second flex container">
 
-    <h3 class="benefits-title" [text]="{
+    <h3 class="benefits-title container" [text]="{
       ENG: 'Who Can Benefit from MSR?',
       ESP: 'Ddfsrdы ыф фыаы фв',
       RUS: 'Кому необходимо наше приложение?',
     }">Who Can Benefit from MSR?</h3>
+  </div>
 
+  <div class="main-second flex container">
     <div class="benefits">
       <div class="benefits-item">
         <div class="benefits-item_title" [text]="{
@@ -127,9 +136,29 @@
       </div>
     </div>
 
+    <h3 class="world-title container" [text]="{
+      ENG: 'Empowering Security Through Technology',
+      ESP: 'Potenciando la seguridad a través de la tecnología',
+      RUS: 'Улучшение безопасности при помощи технологий',
+    }">Empowering Security Through Technology</h3>
   </div>
-  <div class="main-third flex">
+  <div class="main-third flex wrapper">
+    <div class="world container">
+      <div class="world-text" [text]="text['world']">
+        In a world where uncertainty can loom around any corner, MSR offers more than just a recording application; 
+        it's a commitment to personal safety and security. Our platform is built on the foundation of discretion, 
+        reliability, and immediate response to ensure that your recordings are made securely and uploaded instantly 
+        for evidence preservation.
+      </div>
+    </div>
+  </div>
 
+  <div class="main-fourth flex wrapper">
+    <!-- <div class="technology-title">Empowering Security Through Technology</div> -->
+
+    <div class="technology container">
+
+    </div>
   </div>
   <org-footer></org-footer>
 </div>

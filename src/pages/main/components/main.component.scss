@@ -53,6 +53,20 @@
     &_form {  
       font-size: 14px;
 
+      > p {
+        display: flex;
+        align-items: center;
+        
+        > * {
+          margin-right: 5px;
+          display: flex;
+          align-items: center;
+        }
+        a {
+          margin: 0;
+        }
+      }
+
       &--label {
         display: flex;
         justify-content: center;
@@ -69,7 +83,6 @@
       }
       
       p {
-        height: 7dvh;
 
         a {
           @include fszV(3);
@@ -89,26 +102,27 @@
   }
 
   &-first {
+    display: flex;
+    flex-direction: column;
     position: relative;
     background: $prime-blue;
     width: 100%;
 
-    h3 {
-      position: absolute;
-      top: -10dvh;
+    &_title {
       color: $prime-blue;
       width: 100%;
       max-width: 900px;
       padding-left: 16px;
+      margin: 0;
 
       b {
-        @include fszV(4);
+        font-size: 21px;
         margin-right: 5px;
       }
 
       span {
-        @include fszV(3.5);
-
+        font-size: 20px;
+        font-weight: bold;
       }
     }
 
@@ -116,6 +130,14 @@
       color: $white;
       @include fszV(2, 16);
       padding: 16px;
+    }
+
+    .benefits-title {
+      font-size: 20px;
+      color: white;
+      margin-bottom: 0;
+      padding: 0 16px;
+      margin-top: 60px;
     }
   }
   &-second {
@@ -125,7 +147,7 @@
     width: 100%;
 
     h3 {
-      @include fszV(3.5);
+      font-size: 20px;
     }
 
     .benefits {
@@ -141,9 +163,10 @@
         transition: .2s;
         padding: 10px;
         
-        // &:nth-child(1), &:nth-child(2) {
-        //   margin-bottom: 30px;
-        // }
+        @include w-mobile {
+          width: 100%;
+          padding: 0;
+        }
 
         &:hover {
           padding: 10px;
@@ -151,7 +174,7 @@
 
         &_title {
           margin-bottom: 10px;
-          @include fszV(2.2, 20);
+          font-size: 20px;
         }
 
         &_text {
@@ -159,9 +182,33 @@
         }
       }
     }
+
+    .world-title {
+      font-size: 20px;
+      color: $prime-grey;
+      margin: 0;
+      padding: 0 16px;
+    }
   }
   &-third {
     background: $prime-grey;
+    width: 100%;
+    display: flex;
+    
+    .world {
+
+      &-text {
+        padding: 16px;
+        color: white;
+      }
+    }
+
+
+    
+  }
+  &-fourth {
+    position: relative;
+    background: $prime-blue;
     width: 100%;
   }
 }

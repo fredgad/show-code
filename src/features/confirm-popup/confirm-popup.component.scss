@@ -1,0 +1,42 @@
+@import 'mixins';
+
+.overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  background: rgba(0, 0, 0, 0.100);
+  z-index: 9999999;
+
+  .dialog {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    min-height: 200px;
+    @include org-border;
+    padding: 30px;
+    background: white;
+
+    &-message {
+      font-size: 18px;
+    }
+
+    &-buttons {
+      margin-top: 30px;
+      
+      button {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      .btn-secondary {
+        margin-right: 10px;
+      }
+    }
+  }
+}

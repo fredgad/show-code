@@ -41,8 +41,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(
       StoreModule.forRoot({ App: reducer }),
       StoreDevtoolsModule.instrument(),
-      HttpClientModule,
-      [BrowserModule, BrowserAnimationsModule]
+      [BrowserModule, HttpClientModule, BrowserAnimationsModule]
     ),
   ],
 };

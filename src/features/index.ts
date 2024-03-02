@@ -6,3 +6,5 @@ export * from './video';
 export * from './empty-avatar';
 export * from './delete-button';
 export * from './checkbox';
+export * from './image-modal';
+export * from './confirm-popup';

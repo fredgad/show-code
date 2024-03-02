@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { MainComponent, AuthorizationComponent, RegistrationComponent, ProfileComponent, VideoPageComponent } from '@pages';
+import { MainComponent, AuthorizationComponent, RegistrationComponent, ProfileComponent, VideoPageComponent, SettingsComponent, TrustedProfileComponent } from '@pages';
 import { SavedMediaComponent } from '@widgets/saved-media';
 import { NotificationSettingsComponent } from '@widgets/notification-settings';
 import { TrustedPeopleComponent } from '@widgets/trusted-people';
@@ -38,8 +38,17 @@ export const appRoutes: Route[] = [
     ]
   },
   {
-    path: 'profile/settings',
-    component: RegistrationComponent
+    path: 'settings',
+    component: SettingsComponent
+  },
+  {
+    path: 'trusted-profile',
+    component: TrustedProfileComponent,
+    children: [
+      { path: '', redirectTo: 'video', pathMatch: 'full' },
+      { path: 'video', component: VideoBlockComponent },
+      { path: 'audio', component: AudioBlockComponent }
+    ]
   },
   {
     path: 'capture',

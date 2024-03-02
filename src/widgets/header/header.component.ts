@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { LogoComponent } from '@features/logo';
 import { Router, UrlTree } from '@angular/router';
 import { LangComponent } from '@features/lang';
-import { TextDirective } from '@shared/directives';
+import { ImageDirective, TextDirective } from '@shared/directives';
 import { WindowEventsService } from '@shared/services';
 
 
 @Component({
   selector: 'org-header',
   standalone: true,
-  imports: [CommonModule, LogoComponent, LangComponent, TextDirective],
+  imports: [CommonModule, LogoComponent, LangComponent, TextDirective, ImageDirective],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

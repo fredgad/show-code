@@ -4,11 +4,12 @@ import { ImageDirective, TextDirective } from '@shared/directives';
 import { EmptyAvatarComponent } from '@features/empty-avatar';
 import { DeleteButtonComponent } from '@features/delete-button';
 import { CheckboxComponent } from '@features/checkbox';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'org-trusted-people',
   standalone: true,
-  imports: [CommonModule, ImageDirective, EmptyAvatarComponent, TextDirective, DeleteButtonComponent, CheckboxComponent],
+  imports: [CommonModule, ImageDirective, EmptyAvatarComponent, TextDirective, DeleteButtonComponent, CheckboxComponent, RouterModule],
   templateUrl: './trusted-people.component.html',
   styleUrl: './trusted-people.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,7 +56,12 @@ export class TrustedPeopleComponent {
   public isChecked = false;
 
 
-  public onCheckboxChange(event: Event): void {
+  public onCheckboxChange(event: Event): void {  // change trusted notifications here
     const isChecked = (event.target as HTMLInputElement).checked;
+
+  }
+
+  public onDelete(event: boolean, username: string): void { //    delete trusted user here.
+
   }
 }

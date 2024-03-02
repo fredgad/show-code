@@ -8,17 +8,17 @@ export const TEXT_MAIN: Record<string, LangTextI> = {
   },
   citizen: {
     ENG: "Whether you're a concerned citizen witnessing an injustice or someone who frequently finds themselves in situations where safety is a concern, MSR empowers you to act swiftly and securely.",
-    RUS: "Будь то обеспокоенный гражданин, становящийся свидетелем несправедливости, или человек, часто оказывающийся в ситуациях, когда безопасность вызывает опасения, МБУР дает вам возможность действовать быстро и надежно.",
+    RUS: "Будь то обеспокоенный гражданин, становящийся свидетелем несправедливости, или человек, часто оказывающийся в ситуациях, когда безопасность вызывает опасения, МУР дает вам возможность действовать быстро и надежно.",
     ESP: "",
   },
   journalists: {
     ENG: "Journalists, private investigators, and security personnel can utilize MSR to discreetly gather evidence and record events without compromising their position or safety.",
-    RUS: "Журналисты, частные детективы и сотрудники службы безопасности могут использовать МБУР для конфиденциального сбора доказательств и записи событий, не подвергая свою позицию или безопасность риску.",
+    RUS: "Журналисты, частные детективы и сотрудники службы безопасности могут использовать МУР для конфиденциального сбора доказательств и записи событий, не подвергая свою позицию или безопасность риску.",
     ESP: "",
   },
   adventurers: {
     ENG: "Adventurers and explorers venturing into remote or potentially risky environments can rely on MSR for documenting encounters and ensuring a digital footprint of their journey is securely preserved.",
-    RUS: "Путешественники и исследователи, отправляющиеся в отдаленные или потенциально опасные окружения, могут полагаться на МБУР для документирования встреч и обеспечения безопасного сохранения цифрового следа своего путешествия.",
+    RUS: "Путешественники и исследователи, отправляющиеся в отдаленные или потенциально опасные окружения, могут полагаться на МУР для документирования встреч и обеспечения безопасного сохранения цифрового следа своего путешествия.",
     ESP: "",
   },
   anyone: {
@@ -28,9 +28,9 @@ export const TEXT_MAIN: Record<string, LangTextI> = {
   },
 
   believe: {
-    ENG: "At MSR, we believe in empowering individuals to safeguard their well-being and to document the world around them securely. Whether you're confronting a personal safety threat, capturing a moment of truth, or simply gathering memories without intrusion, MSR stands by to enhance your security and peace of mind in an ever-changing world.",
-    RUS: "",
-    ESP: "",
+    ENG: "We believe in empowering individuals to safeguard their well-being and to document the world around them securely. Whether you're confronting a personal safety threat, capturing a moment of truth, or simply gathering memories without intrusion, MSR stands by to enhance your security and peace of mind in an ever-changing world.",
+    RUS: "Мы верим в то, что нужно давать людям возможность защищать свое благополучие и безопасно документировать окружающий их мир. Будь вы сталкиваетесь с угрозой личной безопасности, фиксируете момент истины или просто собираете воспоминания без вмешательства, MSR готова помочь улучшить вашу безопасность и спокойствие в постоянно меняющемся мире.",
+    ESP: "En MSR, creemos en empoderar a las personas para proteger su bienestar y documentar el mundo que les rodea de manera segura. Ya sea que estés enfrentando una amenaza a tu seguridad personal, capturando un momento de verdad, o simplemente recolectando recuerdos sin intrusión, MSR está aquí para mejorar tu seguridad y paz mental en un mundo en constante cambio.",
   },
 
   experience: {
@@ -75,7 +75,7 @@ export const TEXT_MAIN: Record<string, LangTextI> = {
   // MSR: Empowering Security Through Technology
   world: {
     ENG: "In a world where uncertainty can loom around any corner, MSR offers more than just a recording application; it's a commitment to personal safety and security. Our platform is built on the foundation of discretion, reliability, and immediate response to ensure that your recordings are made securely and uploaded instantly for evidence preservation.",
-    RUS: "",
+    RUS: "В мире, где неопределенность может подстерегать за каждым углом, MSR предлагает не просто приложение для записи; это обязательство личной безопасности и защиты. Наша платформа построена на основе дискретности, надежности и немедленного реагирования, чтобы обеспечить безопасность ваших записей и мгновенную загрузку для сохранения доказательств.",
     ESP: "",
   },
 };

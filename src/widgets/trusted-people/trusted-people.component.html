@@ -24,10 +24,15 @@
           }">This user receives notifications from you</p>
           <org-checkbox (change)="onCheckboxChange($event)" [initialValue]="person.activeListener"></org-checkbox>
         </div>
+        <button class="person-text_media" routerLink="/trusted-profile" [text]="{
+          ENG: 'Saved media',
+          ESP: 'Medios guardados',
+          RUS: 'Сохранённые медиа',
+        }">Saved media</button>
       </div>
 
       <div class="person-delete">
-        <org-delete-button></org-delete-button>
+        <org-delete-button (delete)="onDelete($event, person.username)"></org-delete-button>
       </div>
     </div>
   }

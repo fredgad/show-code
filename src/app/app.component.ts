@@ -2,10 +2,11 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LangService } from '@shared/services';
+import { ConfirmPopupComponent } from '@features/confirm-popup';
 
 @Component({
   standalone: true,
-  imports: [RouterModule, HttpClientModule],
+  imports: [RouterModule, HttpClientModule, ConfirmPopupComponent],
   providers: [HttpClient, HttpClientModule],
   selector: 'org-root',
   templateUrl: './app.component.html',
