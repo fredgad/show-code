@@ -9,6 +9,10 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
   },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node",
+  },
   "files": [],
   "include": [],
   "references": [
@@ -28,5 +32,8 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "extends": "./tsconfig.base.json"
+  "extends": "./tsconfig.base.json",
+  "exclude": [
+    "node_modules",
+  ],
 }

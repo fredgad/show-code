@@ -2,10 +2,16 @@
   "name": "@org/source",
   "version": "0.0.0",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "dev:ssr": "nx run org:serve-ssr",
+    "serve:ssr": "ts-node ./server.ts",
+    "server:ssr": "node ./node_modules/ts-node/dist/bin.js server.ts",
+    "build:ssr": "nx build org --prod && nx run org:server",
+    "prerender": "nx run org:prerender"
   },
   "private": true,
   "dependencies": {
@@ -62,7 +68,7 @@
     "nx": "17.2.8",
     "prettier": "^2.6.2",
     "ts-jest": "^29.1.0",
-    "ts-node": "10.9.1",
+    "ts-node": "^10.9.2",
     "typescript": "~5.2.2"
   }
 }

@@ -15,15 +15,25 @@ import {
 } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { BrowserModule } from '@angular/platform-browser';
+import {
+  BrowserModule,
+  provideClientHydration,
+} from '@angular/platform-browser';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { reducer } from '../store/app-store.reducer';
-import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  HttpClientModule,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { TimeoutInterceptor, TokenInterceptor } from '../shared/interceptors';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideClientHydration(),
+    
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
 
     provideHttpClient(withInterceptorsFromDi()),

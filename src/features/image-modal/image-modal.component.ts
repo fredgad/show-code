@@ -18,7 +18,6 @@ export class ImageModalComponent {
 
   public show(): void {
     this.isVisible = true;
-    console.log('sadsads sow', this.imageUrl, this.isVisible)
     this.cdr.markForCheck();
   }
 

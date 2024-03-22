@@ -50,7 +50,9 @@
           ENG: 'I agree to the terms and conditions',
           ESP: '',
           RUS: 'Согласен с условиями договора',
-        }">I agree to the terms and conditions</label>
+        }">I agree to the 
+        <button>terms and conditions</button>
+        </label>
         @if (isValidControl('agreement')) {
           <p class="error-message" [text]="{
               ENG: 'Agreement is required.',

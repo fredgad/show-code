@@ -1,5 +1,5 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, afterNextRender, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LangService } from '@shared/services';
 import { ConfirmPopupComponent } from '@features/confirm-popup';
