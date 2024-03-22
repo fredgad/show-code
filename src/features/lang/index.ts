@@ -1,1 +1,1 @@
-export * from './lang.component';
+export * from './components/lang.component';

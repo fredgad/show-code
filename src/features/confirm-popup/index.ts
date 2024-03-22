@@ -1,1 +1,1 @@
-export * from './confirm-popup.component';
+export * from './components/confirm-popup.component';

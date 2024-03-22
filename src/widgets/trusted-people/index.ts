@@ -1,1 +1,1 @@
-export * from './trusted-people.component';
+export * from './components/trusted-people.component';

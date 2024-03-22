@@ -29,7 +29,7 @@
         ESP: 'Registro',
         RUS: 'Регистрация',
       }">Registration</label>
-      <input [(ngModel)]="userName" class="" [placeholder]="inputPlaceholder()" type="username" name="name">
+      <input [(ngModel)]="userName" class="" [placeholder]="inputPlaceholder$i()" type="username" name="name">
       <p>
         @if (userName.length) {
           <button type="submit" class="mainButton" [text]="{

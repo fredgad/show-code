@@ -16,10 +16,11 @@ import { LangService, LocalStorageService, WindowEventsService } from '@shared/s
 export class ProfileComponent implements OnInit {
   private langService = inject(LangService);
   private storage = inject(LocalStorageService);
-  
-  public isMobile$ = inject(WindowEventsService).isMobile$;
+  private windowEventsService = inject(WindowEventsService);
 
-  public abbrTitle: Signal<string> = this.langService.textByLanguage({
+  public isMobile$ = this.windowEventsService.isMobile$;
+
+  public abbrTitle$i: Signal<string> = this.langService.textByLanguage({
     ENG: 'Profile settings',
     ESP: 'Configuración de perfil',
     RUS: 'Настройки профиля',

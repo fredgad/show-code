@@ -7,7 +7,7 @@ import { FooterComponent } from '@widgets/footer';
 import { LangService, UserNameService } from '@shared/services';
 import { ImageDirective, TextDirective } from '@shared/directives';
 import { LangTextI } from '@shared/interfaces';
-import { TEXT_MAIN } from '../common/main.text';
+import { INPUT_PLACEHOLDER, LOGO_TEXT, LOGO_TITLE, TEXT_MAIN } from '../common/main.text';
 import { AuthService } from '@shared/services';
 
 @Component({
@@ -27,27 +27,12 @@ export class MainComponent {
   private langService = inject(LangService);
   private authService = inject(AuthService);
 
-  public userName: string = '';
-
-  public inputPlaceholder: Signal<string> = this.langService.textByLanguage({
-    ENG: 'Enter your username',
-    ESP: 'Ingrese su nombre de usuario',
-    RUS: 'Введите логин'
-  });
-
-  public logoTitle$i: Signal<string> = this.langService.textByLanguage({
-    ENG: 'msr-logo-title.svg',
-    ESP: 'msr-logo-title.svg',
-    RUS: 'msr-logo-title-ru.svg'
-  });
-
-  public logoText$i: Signal<string> = this.langService.textByLanguage({
-    ENG: 'msr-logo-title.svg',
-    ESP: 'msr-logo-title.svg',
-    RUS: 'msr-logo-title-ru.svg'
-  });
+  public inputPlaceholder$i: Signal<string> = this.langService.textByLanguage(INPUT_PLACEHOLDER);
+  public logoTitle$i: Signal<string> = this.langService.textByLanguage(LOGO_TITLE);
+  public logoText$i: Signal<string> = this.langService.textByLanguage(LOGO_TEXT);
 
   public text: Record<string, LangTextI> = TEXT_MAIN;
+  public userName: string = '';
 
   public submitUserName(e: Event): void {
     e.preventDefault();

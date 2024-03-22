@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, Signal, SimpleChanges, effect, inject } from '@angular/core';
+import { Directive, ElementRef, Input, Signal, effect } from '@angular/core';
 import { LangService } from '../../services';
 import { LangEnum, LangTextI } from '../../interfaces';
 
@@ -7,14 +7,11 @@ import { LangEnum, LangTextI } from '../../interfaces';
   standalone: true,
 })
 export class TextDirective {
-  private langService = inject(LangService);
-  private el = inject(ElementRef);
-
   public newLanguage$i: Signal<LangEnum> = this.langService.getLang$i;
 
   @Input('text') text!: LangTextI;
 
-  constructor() {
+  constructor(private el: ElementRef, private langService: LangService) {
     effect(() => {
       this.el.nativeElement.textContent = this.text[this.langService.getLang$i()];
     });

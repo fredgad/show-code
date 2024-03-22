@@ -34,20 +34,20 @@ export const getFormControlErrorMessage = (controlName: string, form: FormGroup,
 
 const userNameField: LangTextI = {
   ENG: 'This field is required.',
-  ESP: 'Sdasdf sad sad as dsd.',
+  ESP: 'This field is required.',
   RUS: 'Это поле обязательно.'
 }
 
 const emailField: LangTextI = {
   ENG: 'Please enter a valid email address.',
-  ESP: 'Dfsaf saf sa das.',
+  ESP: 'Please enter a valid email address.',
   RUS: 'Пожалуйста введите корректный email.'
 }
 
 const minLengthField = (requiredLength: number, actualLength: number, lang: LangEnum): string => {
   const passArray: LangTextI = {
     ENG: `Minimum length should be ${requiredLength} characters. You entered ${actualLength}.`,
-    ESP: `M i dsanimu s dsagth s sdould be ${requiredLength} characters. You entered ${actualLength}.`,
+    ESP: `Minimum length should be ${requiredLength} characters. You entered ${actualLength}.`,
     RUS: `Минимальная длина должна быть ${requiredLength} символов. Вы ввели ${actualLength}.`
   };
   return passArray[lang];
@@ -56,7 +56,7 @@ const minLengthField = (requiredLength: number, actualLength: number, lang: Lang
 const maxLengthField = (requiredLength: number, actualLength: number, lang: LangEnum): string => {
   const passArray: LangTextI = {
     ENG: `Maximum length should be ${requiredLength} characters. You entered ${actualLength}.`,
-    ESP: `Mыфав аыsadфв ыфв фы ${requiredLength} ch racters. Yo u ened ${actualLength}.`,
+    ESP: `Maximum length should be ${requiredLength} characters. You entered ${actualLength}.`,
     RUS: `Максимальная длина должна быть ${requiredLength} символов. Вы ввели ${actualLength}.`
   };
   return passArray[lang];

@@ -3,24 +3,25 @@
 // import { of } from "rxjs";
 // import { select, Store } from "@ngrx/store";
 // import { catchError, map, mergeMap, withLatestFrom } from "rxjs/operators";
-// import { getData, getDataFail, getDataSuccess } from "./test.actions";
-// import { AppWithState, selectStoreRange } from "./test.selectors";
+// import { authSuccess } from "./app-store.actions";
+// import { AppState } from "./app-store.selectors";
+// import { AuthService } from "@shared/services";
 
 
 // @Injectable()
 // export class TestEffects {
 //   constructor(
-//     private store$: Store<AppWithState>,
+//     private store$: Store<AppState>,
 //     private actions$: Actions,
-//     private testService: TestService
+//     private authService: AuthService
 //   ) {}
 
 //   loadTestData$ = createEffect(() => 
 //     this.actions$.pipe(
-//       ofType(getData),
+//       ofType(authSuccess),
 //       withLatestFrom(this.store$.pipe(select(selectStoreRange))),
 //       mergeMap(([_, range]: [any, any]) => 
-//         this.testService.getTestApiData(range).pipe(
+//         this.authService.getTestApiData(range).pipe(
 //           map((data) => {
 //             return getDataSuccess({data: data})
 //           }),

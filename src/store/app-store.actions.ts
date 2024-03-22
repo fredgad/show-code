@@ -14,8 +14,3 @@ export const registerNewUser = createAction(
   '[App] Register New User',
   props<{ width: number }>()
 );
-
-
-
-// export const offGoalOut = createAction('[Pong] Off Goal Out');
-

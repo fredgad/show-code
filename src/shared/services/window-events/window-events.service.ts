@@ -33,10 +33,10 @@ export class WindowEventsService {
   }
 
   public get windowHeight(): number {
-    return this.window.innerHeight || this.document.documentElement.clientHeight || this.document.body.clientHeight;
+    return this.window?.innerHeight || this.document.documentElement.clientHeight || this.document.body.clientHeight;
   }
 
   public get currentScreenWidth(): number {
-    return this.window.innerWidth > 0 ? this.window.innerWidth : screen.width;
+    return this.window?.innerWidth > 0 ? this.window.innerWidth : screen.width;
   }
 }

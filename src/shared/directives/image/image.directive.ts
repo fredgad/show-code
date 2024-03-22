@@ -7,7 +7,7 @@ import { Directive, ElementRef, Input, SimpleChanges} from '@angular/core';
 export class ImageDirective {
   @Input() public srcPath: string = '';
 
-  private baseImagesPath = 'assets/images/';
+  protected baseImagesPath = 'assets/images/';
 
   private skeletonPath = 'skeleton-image.svg';
 

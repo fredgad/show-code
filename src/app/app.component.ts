@@ -16,6 +16,8 @@ import { ConfirmPopupComponent } from '@features/confirm-popup';
 export class AppComponent implements OnInit {
   private langService = inject(LangService);
 
+  public title = 'msr';
+
   public ngOnInit(): void {
     this.langService.setStorageLanguage();
   }

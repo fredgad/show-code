@@ -1,12 +1,17 @@
-import { TestBed } from '@angular/core/testing';
 
+import { TestBed } from '@angular/core/testing';
+import { MockBuilder } from 'ng-mocks';
 import { LangService } from './lang.service';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 
 describe('LangService', () => {
   let service: LangService;
 
+  beforeEach(() => MockBuilder(LangService)
+    .mock(LocalStorageService)
+  );
+
   beforeEach(() => {
-    TestBed.configureTestingModule({});
     service = TestBed.inject(LangService);
   });
 
@@ -14,3 +19,4 @@ describe('LangService', () => {
     expect(service).toBeTruthy();
   });
 });
+  

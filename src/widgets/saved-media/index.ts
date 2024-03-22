@@ -1,1 +1,1 @@
-export * from './saved-media.component';
+export * from './components/saved-media.component';

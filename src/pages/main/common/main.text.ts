@@ -1,4 +1,23 @@
+import { Signal } from "@angular/core";
 import { LangTextI } from "@shared/interfaces";
+
+export const INPUT_PLACEHOLDER: LangTextI = {
+  ENG: 'Enter your username',
+  ESP: 'Ingrese su nombre de usuario',
+  RUS: 'Введите логин'
+};
+
+export const LOGO_TITLE: LangTextI = {
+  ENG: 'msr-logo-title.svg',
+  ESP: 'msr-logo-title.svg',
+  RUS: 'msr-logo-title-ru.svg'
+};
+
+export const LOGO_TEXT: LangTextI = {
+  ENG: 'msr-logo-title.svg',
+  ESP: 'msr-logo-title.svg',
+  RUS: 'msr-logo-title-ru.svg'
+};
 
 export const TEXT_MAIN: Record<string, LangTextI> = {
   innovative: {

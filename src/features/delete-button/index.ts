@@ -1,1 +1,1 @@
-export * from './delete-button.component';
+export * from './components/delete-button.component';

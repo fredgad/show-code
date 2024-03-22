@@ -1,25 +1,22 @@
-import { TestBed } from '@angular/core/testing';
+import { MockBuilder, MockRender } from 'ng-mocks';
 import { AppComponent } from './app.component';
-import { NxWelcomeComponent } from './nx-welcome.component';
 import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientModule } from '@angular/common/http';
+import { LangService } from '@shared/services';
 
 describe('AppComponent', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AppComponent, NxWelcomeComponent, RouterTestingModule],
-    }).compileComponents();
+  beforeEach(() => {
+    return MockBuilder(AppComponent)
+      .keep(RouterTestingModule)
+      .keep(HttpClientModule)
+      .mock(LangService, {
+        setStorageLanguage: jest.fn(),
+      });
   });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Welcome org');
-  });
-
-  it(`should have as title 'org'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('org');
+  it(`should have as title 'msr'`, () => {
+    const fixture = MockRender(AppComponent);
+    const app = fixture.point.componentInstance;
+    expect(app.title).toEqual('msr');
   });
 });
