@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ConfirmPopupService, LangService } from '../../../shared';
+import { ConfirmPopupService, LangService } from '@shared/services';
 import { Subscription } from 'rxjs';
+import { POPUP_TEXT } from '../common/delete-button.text';
 
 @Component({
   selector: 'org-delete-button',
@@ -19,11 +20,7 @@ export class DeleteButtonComponent implements OnDestroy {
 
   private confirmSubscription?: Subscription; 
 
-  private popupText = this.langService.textByLanguage({
-    ENG: 'Delete trusted user?',
-    RUS: 'Удалить доверенного пользователя?',
-    ESP: '¿Eliminar usuario de confianza?',
-  });
+  private popupText = this.langService.textByLanguage(POPUP_TEXT);
 
   public onDel(): void {
     this.confirmSubscription = this.confirmService.showPopup(this.popupText()).subscribe((confirm) => {

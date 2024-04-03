@@ -23,39 +23,7 @@
   </p>
 
   <div class="main-registration flex">
-    <form (submit)="submitUserName($event)" class="main-registration_form">
-      <label class="main-registration_form--label" [text]="{
-        ENG: 'Registration',
-        ESP: 'Registro',
-        RUS: 'Регистрация',
-      }">Registration</label>
-      <input [(ngModel)]="userName" class="" [placeholder]="inputPlaceholder$i()" type="username" name="name">
-      <p>
-        @if (userName.length) {
-          <button type="submit" class="mainButton" [text]="{
-            ENG: 'Create Account',
-            ESP: 'Crear una cuenta',
-            RUS: 'Создать аккаунт',
-          }">Create Account</button> 
-          <span [text]="{
-            ENG: 'or',
-            ESP: 'o',
-            RUS: 'или',
-          }">or</span>
-        } @else {
-          <span [text]="{
-            ENG: 'Already registered?',
-            ESP: '¿Ya registrado?',
-            RUS: 'Уже зарегистрирован?',
-          }">Already registered?</span> 
-        }
-        <a routerLink="/auth" [text]="{
-          ENG: ' Sign in.',
-          ESP: ' Iniciar sesión.',
-          RUS: ' Войти.',
-        }"> Sign in.</a>
-      </p>
-    </form>
+    <org-main-form></org-main-form>
   </div>
 
   <h3 class="main-first_title container">
@@ -91,6 +59,7 @@
   <div class="main-second flex container">
     <div class="benefits">
       <div class="benefits-item">
+        <img class="logo-img" [srcPath]="'msr-icon-hero.svg'">
         <div class="benefits-item_title" [text]="{
           ENG: 'For Everyday Heroes',
           ESP: 'Ddfsrdы ыф фыаы фв',
@@ -102,6 +71,7 @@
         </div>
       </div>
       <div class="benefits-item">
+        <img class="logo-img" [srcPath]="'msr-icon-professional.svg'">
         <div class="benefits-item_title" [text]="{
           ENG: 'For Professionals in the Field',
           ESP: 'Ddfsrdы ыф фыаы фв',
@@ -113,6 +83,7 @@
         </div>
       </div>
       <div class="benefits-item">
+        <img class="logo-img" [srcPath]="'msr-icon-adventurer.svg'">
         <div class="benefits-item_title" [text]="{
           ENG: 'For Adventure Seekers',
           ESP: 'Ddfsrdы ыф фыаы фв',
@@ -124,6 +95,7 @@
         </div>
       </div>
       <div class="benefits-item">
+        <img class="logo-img" [srcPath]="'msr-icon-safety.svg'">
         <div class="benefits-item_title" [text]="{
           ENG: 'For the Safety-Conscious Individual',
           ESP: 'Ddfsrdы ыф фыаы фв',
@@ -136,13 +108,44 @@
       </div>
     </div>
 
+    <h3 class="features-title container" [text]="{
+      ENG: 'Features that set MSR apart',
+      RUS: 'Особенности, выделяющие MSR',
+      ESP: 'Características que distinguen a MSR'
+    }">Empowering Security Through Technology</h3>
+  </div>
+
+  <div class="main-third flex wrapper">
+    <div class="features container">
+      <div class="features-text" [text]="text['discreet']">
+        Discreet Activation: Initiate recordings without drawing attention to your actions, providing a covert means to document events.
+      </div>
+
+      <div class="features-text" [text]="text['immediate']">
+        Immediate Upload: Seamlessly upload your recordings to a secure server, ensuring your evidence is safe, sound, and accessible when needed.
+      </div>
+
+      <div class="features-text" [text]="text['friendly']">
+        Alerting Trusted Individuals: A system designed for emergency notifications to those you trust.
+      </div>
+
+      <div class="features-text" [text]="text['quality']">
+        High-Quality Recordings: Capture clear and comprehensive audio and video recordings, crucial for evidence and clarity.
+      </div>
+
+      <div class="features-text" [text]="text['advanced']">
+        Advanced Security Protocols: With state-of-the-art encryption and privacy measures, your recordings are only accessible to you and those you choose to share them with.
+      </div>
+    </div>
+
     <h3 class="world-title container" [text]="{
       ENG: 'Empowering Security Through Technology',
       ESP: 'Potenciando la seguridad a través de la tecnología',
       RUS: 'Улучшение безопасности при помощи технологий',
     }">Empowering Security Through Technology</h3>
   </div>
-  <div class="main-third flex wrapper">
+
+  <div class="main-fourth flex wrapper">
     <div class="world container">
       <div class="world-text" [text]="text['world']">
         In a world where uncertainty can loom around any corner, MSR offers more than just a recording application; 
@@ -152,13 +155,6 @@
       </div>
     </div>
   </div>
-
-  <div class="main-fourth flex wrapper">
-    <!-- <div class="technology-title">Empowering Security Through Technology</div> -->
-
-    <div class="technology container">
-
-    </div>
-  </div>
+  
   <org-footer></org-footer>
 </div>

@@ -65,36 +65,38 @@ export const TEXT_MAIN: Record<string, LangTextI> = {
   },
 
   // Features that set MSR apart:
+  
   discreet: {
-    ENG: "Discreet Activation: Initiate recordings without drawing attention to your actions, providing a covert means to document events.",
-    RUS: "",
-    ESP: "",
+    "ENG": "Discreet Activation: Initiate recordings without drawing attention to your actions, providing a covert means to document events.",
+    "RUS": "Кнопочная активация: Начинайте запись, не привлекая внимания к своим действиям, что обеспечивает скрытый способ документирования событий.",
+    "ESP": "Activación Discreta: Inicia grabaciones sin atraer atención hacia tus acciones, proporcionando un medio encubierto para documentar eventos."
   },
   immediate: {
-    ENG: "Immediate Upload: Seamlessly upload your recordings to a secure server, ensuring your evidence is safe, sound, and accessible when needed.",
-    RUS: "",
-    ESP: "",
-  },
-  quality: {
-    ENG: "High-Quality Recordings: Capture clear and comprehensive audio and video recordings, crucial for evidence and clarity.",
-    RUS: "",
-    ESP: "",
+    "ENG": "Immediate Upload: Seamlessly upload your recordings to a secure server, ensuring your evidence is safe, sound, and accessible when needed.",
+    "RUS": "Немедленная загрузка: Беспрепятственно загружайте ваши записи на защищенный сервер, гарантируя безопасность и доступность ваших данных когда это необходимо.",
+    "ESP": "Carga Inmediata: Sube tus grabaciones a un servidor seguro sin inconvenientes, asegurando que tu evidencia esté segura y accesible cuando sea necesario."
   },
   friendly: {
-    ENG: "User-Friendly Interface: Designed for rapid response in stressful situations, ensuring ease of use when it matters most.",
-    RUS: "",
-    ESP: "",
+    "ENG": "Alerting Trusted Individuals: A notification system has been developed to inform those you trust when you start an emergency recording. This includes the ability for them to view your broadcast and your location.",
+    "RUS": "Оповещение доверенных людей: Разработанна система оповещения тех, кому вы доверяете, о том, что вы начали экстренную запись. С возможность просмотра ими вашей трансляции и вашего местоположения.",
+    "ESP": "Alertando a Personas de Confianza: Se ha desarrollado un sistema de notificación para informar a aquellos en quienes confías cuando inicias una grabación de emergencia. Esto incluye la capacidad para ellos de ver tu transmisión y tu ubicación."
+  },
+  quality: {
+    "ENG": "High-Quality Recordings: Capture clear and comprehensive audio and video recordings, crucial for evidence and clarity.",
+    "RUS": "Записи высокого качества: Захватывайте четкие и полные аудио и видео записи, критически важные для доказательств и ясности.",
+    "ESP": "Grabaciones de Alta Calidad: Captura grabaciones de audio y video claras y completas, cruciales para la evidencia y claridad."
   },
   advanced: {
-    ENG: "Advanced Security Protocols: With state-of-the-art encryption and privacy measures, your recordings are only accessible to you and those you choose to share them with.",
-    RUS: "",
-    ESP: "",
+    "ENG": "Advanced Security Protocols: With state-of-the-art encryption and privacy measures, your recordings are only accessible to you and those you choose to share them with.",
+    "RUS": "Продвинутые протоколы безопасности: С передовым шифрованием и мерами конфиденциальности, ваши записи доступны только вам и тем, с кем вы решите ими поделиться.",
+    "ESP": "Protocolos de Seguridad Avanzados: Con encriptación de última generación y medidas de privacidad, tus grabaciones solo están accesibles para ti y aquellos con quienes elijas compartirlas."
   },
+  
 
   // MSR: Empowering Security Through Technology
   world: {
-    ENG: "In a world where uncertainty can loom around any corner, MSR offers more than just a recording application; it's a commitment to personal safety and security. Our platform is built on the foundation of discretion, reliability, and immediate response to ensure that your recordings are made securely and uploaded instantly for evidence preservation.",
-    RUS: "В мире, где неопределенность может подстерегать за каждым углом, MSR предлагает не просто приложение для записи; это обязательство личной безопасности и защиты. Наша платформа построена на основе дискретности, надежности и немедленного реагирования, чтобы обеспечить безопасность ваших записей и мгновенную загрузку для сохранения доказательств.",
-    ESP: "",
+    "ENG": "In a world where uncertainty can lurk around every corner, MSR offers more than just a recording app; it's a commitment to personal safety and protection. However, in our world, financial commitments cannot be shifted onto us. We provide you with 10 MB of free storage, but you have the option to purchase a paid version where you can set the limits you need.",
+    "RUS": "В мире, где неопределенность может подстерегать за каждым углом, MSR предлагает не просто приложение для записи, это обязательство личной безопасности и защиты. Но в нашем мире финансовые обязательства нельзя перекладывать на нас, мы предоставляем вам бесплатное хранилище на 10 мб., но вы можете приобрести платную версию, в которой самому можно установить необходимые вам лимиты.",
+    "ESP": "En un mundo donde la incertidumbre puede acechar en cada esquina, MSR ofrece más que una simple aplicación de grabación; es un compromiso con la seguridad y protección personal. Sin embargo, en nuestro mundo, los compromisos financieros no pueden ser transferidos a nosotros. Te proporcionamos 10 MB de almacenamiento gratuito, pero tienes la opción de comprar una versión de pago donde puedes establecer los límites que necesitas."
   },
 };

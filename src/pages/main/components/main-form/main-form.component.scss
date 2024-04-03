@@ -1,0 +1,52 @@
+@import 'mixins';
+
+:host {
+
+  > p {
+    display: flex;
+    align-items: center;
+    
+    > * {
+      margin-right: 5px;
+      display: flex;
+      align-items: center;
+    }
+    a {
+      margin: 0;
+    }
+  }
+
+  &--label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    margin-bottom: 4px;
+    color: $text-color;
+  }
+
+  input {
+    min-width: 300px;
+    margin-bottom: 6px;
+    font-size: 16px;
+  }
+  
+  p {
+
+    a {
+      @include fszV(3);
+      font-size: 14px;
+      color: $prime-green;
+      cursor: pointer;
+    }
+    
+    span {
+      @include fszV(3);
+      font-size: 14px;
+    }
+
+    button {
+      min-width: 200px;
+    }
+  }
+}

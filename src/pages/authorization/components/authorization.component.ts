@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, effect, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild, WritableSignal, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '@widgets/header';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,17 +15,16 @@ import { TextDirective } from '@shared/directives';
   styleUrl: './authorization.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AuthorizationComponent {
+export class AuthorizationComponent implements AfterViewInit {
   private formBuilder = inject(FormBuilder);
   private userNameService = inject(UserNameService);
   private langService = inject(LangService);
   
   @ViewChild('password') private password!: ElementRef<HTMLInputElement>;
   
-  public userName$i = this.userNameService.getUserName;
+  public userName$i: WritableSignal<string> = this.userNameService.getUserName;
   
   public language!: LangEnum;
-
   public authForm: FormGroup;
   public isSubmited = false;
 
@@ -35,13 +34,9 @@ export class AuthorizationComponent {
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
-    effect(() => {
+    effect(() => { // the way to get signal value of current language for forms
       this.language = this.langService.getLang$i();
     });
-  }
-
-  public ngOnInit() {
-
   }
 
   public ngAfterViewInit(): void {
@@ -61,8 +56,6 @@ export class AuthorizationComponent {
       // Display an error message or take appropriate action for invalid form
       this.isSubmited = true;
       console.log(this.authForm.value, this.authForm.get('email'), 'registrationForm')
-      // alert('Please fill in all the required fields correctly.');
-      
     }
   }
 

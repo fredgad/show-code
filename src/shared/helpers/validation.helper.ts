@@ -1,6 +1,18 @@
 import { FormGroup } from "@angular/forms";
 import { LangEnum, LangTextI } from "../interfaces";
 
+const userNameField: LangTextI = {
+  ENG: 'This field is required.',
+  ESP: 'This field is required.',
+  RUS: 'Это поле обязательно.'
+}
+
+const emailField: LangTextI = {
+  ENG: 'Please enter a valid email address.',
+  ESP: 'Please enter a valid email address.',
+  RUS: 'Пожалуйста введите корректный email.'
+}
+
 export const isValidFormControl = (controlName: string, form: FormGroup, submited: boolean = false): boolean => {
   const control = form.get(controlName);
   return ((control?.invalid && submited) || (control?.invalid && control?.touched)) as boolean;
@@ -29,19 +41,6 @@ export const getFormControlErrorMessage = (controlName: string, form: FormGroup,
   }
 
   return null;
-}
-
-
-const userNameField: LangTextI = {
-  ENG: 'This field is required.',
-  ESP: 'This field is required.',
-  RUS: 'Это поле обязательно.'
-}
-
-const emailField: LangTextI = {
-  ENG: 'Please enter a valid email address.',
-  ESP: 'Please enter a valid email address.',
-  RUS: 'Пожалуйста введите корректный email.'
 }
 
 const minLengthField = (requiredLength: number, actualLength: number, lang: LangEnum): string => {

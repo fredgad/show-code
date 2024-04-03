@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TextDirective } from '@shared/directives';
 
@@ -8,6 +8,7 @@ import { TextDirective } from '@shared/directives';
   imports: [CommonModule, TextDirective],
   templateUrl: './audio.component.html',
   styleUrl: './audio.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioComponent {
   @Input() audioName: string = '';

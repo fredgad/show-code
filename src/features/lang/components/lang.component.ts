@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Signal, inject } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { LangService } from '@shared/services';
 import { LangEnum } from '@shared/interfaces';
+import { LANGUAGES_LIST } from '@shared/constants';
 
 @Component({
   selector: 'org-lang',
@@ -14,7 +15,7 @@ import { LangEnum } from '@shared/interfaces';
 export class LangComponent {
   public langService = inject(LangService);
 
-  public languageList = ['ENG', 'ESP', 'RUS'];
+  public languagesList: LangEnum[] = LANGUAGES_LIST;
 
   public currentLang$i: Signal<LangEnum> = this.langService.getLang$i;
 

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, WritableSignal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TextDirective } from '@shared/directives';
 import { ConfirmPopupService } from '@shared/services';
@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
   imports: [CommonModule, TextDirective],
   templateUrl: './confirm-popup.component.html',
   styleUrl: './confirm-popup.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmPopupComponent {
   private confirmService = inject(ConfirmPopupService);

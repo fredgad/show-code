@@ -10,9 +10,9 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageModalComponent {
-  @Input() public imageUrl!: string | ArrayBuffer;
-
   private cdr = inject(ChangeDetectorRef)
+
+  @Input() public imageUrl!: string | ArrayBuffer;
 
   public isVisible = false;
 

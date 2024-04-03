@@ -1,0 +1,33 @@
+<form (submit)="submitUserName($event)" class="main-registration_form">
+  <label class="main-registration_form--label" [text]="{
+    ENG: 'Registration',
+    ESP: 'Registro',
+    RUS: 'Регистрация',
+  }">Registration</label>
+  <input [(ngModel)]="userName" class="" [placeholder]="inputPlaceholder$i()" type="username" name="name">
+  <p>
+    @if (userName.length) {
+      <button type="submit" class="mainButton" [text]="{
+        ENG: 'Create Account',
+        ESP: 'Crear una cuenta',
+        RUS: 'Создать аккаунт',
+      }">Create Account</button> 
+      <span [text]="{
+        ENG: 'or',
+        ESP: 'o',
+        RUS: 'или',
+      }">or</span>
+    } @else {
+      <span [text]="{
+        ENG: 'Already registered?',
+        ESP: '¿Ya registrado?',
+        RUS: 'Уже зарегистрирован?',
+      }">Already registered?</span> 
+    }
+    <a routerLink="/auth" [text]="{
+      ENG: ' Sign in.',
+      ESP: ' Iniciar sesión.',
+      RUS: ' Войти.',
+    }"> Sign in.</a>
+  </p>
+</form>

@@ -14,11 +14,10 @@ import { LangService } from '@shared/services';
 })
 export class LogoComponent {
   private langService = inject(LangService);
+  private router = inject(Router);
   
   @Input() public linkToMain: boolean = false;
   @Input() public isTitle: boolean = true;
-  
-  private router = inject(Router);
 
   public logoTitlePath$i: Signal<string> = this.langService.textByLanguage({
     ENG: 'msr-logo-title.svg',
