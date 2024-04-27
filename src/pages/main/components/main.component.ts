@@ -39,10 +39,4 @@ export class MainComponent {
   public logoText$i: Signal<string> = this.langService.textByLanguage(LOGO_TEXT);
 
   public text: Record<string, LangTextI> = TEXT_MAIN;
-
-  public getUsers(): void {
-    this.authService.getUsers().subscribe(x => {
-      console.log(x, 'getUsers x');
-    });
-  }
 }

@@ -10,12 +10,12 @@
 
     <form [formGroup]="authForm" (ngSubmit)="onSubmit()" (keyup.enter)="onSubmit()">
       <div class="form-group">
-        <label for="name" [text]="{
+        <label for="login" [text]="{
           ENG: 'Username or email',
           ESP: 'Ddfsrd ',
           RUS: 'Логин или email',
         }">Username or email</label>
-        <input type="text" id="name" formControlName="login"
+        <input type="text" id="login" formControlName="login"
           [class.validation-error]="isValidControl('login')">
           @if (isValidControl('login')) {
             <p class="error-message">{{getErrorMessage('login')}}</p>

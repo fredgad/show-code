@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { Signal } from '@angular/core';
+import { AppStoreFacade } from '@store';
 
 describe('ProfileComponent with ng-mocks', () => {
   let fixture: ComponentFixture<ProfileComponent>;
@@ -22,6 +23,7 @@ describe('ProfileComponent with ng-mocks', () => {
     .mock(TextDirective)
     .mock(LocalStorageService)
     .mock(ActivatedRoute)
+    .mock(AppStoreFacade)
     .mock(WindowEventsService, {
       isMobile$: new BehaviorSubject<boolean>(false)
     })

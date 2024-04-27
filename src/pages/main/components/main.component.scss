@@ -149,13 +149,13 @@
 
     .features {
       &-text {
-        background: $prime-grey;
         padding: 16px;
         color: white;
+        border-top: 1px solid white;
       }
 
-      &-text:nth-child(odd) {
-        background: $transparent-grey;
+      &-text:first-child {
+        border-top: none;
       }
     }
 

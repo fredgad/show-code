@@ -40,6 +40,7 @@
       "@shared/interfaces": ["src/shared/interfaces"],
       "@shared/services": ["src/shared/services"],
       "@shared/tokens": ["src/shared/tokens"],
+      "@shared/guards": ["src/shared/guards"],
       "@widgets": ["src/widgets"],
       "@widgets/audio-block": ["src/widgets/audio-block"],
       "@widgets/footer": ["src/widgets/footer"],
@@ -47,7 +48,8 @@
       "@widgets/notification-settings": ["src/widgets/notification-settings"],
       "@widgets/saved-media": ["src/widgets/saved-media"],
       "@widgets/trusted-people": ["src/widgets/trusted-people"],
-      "@widgets/video-block": ["src/widgets/video-block"]
+      "@widgets/video-block": ["src/widgets/video-block"],
+      "@store": ["src/store"],
     }
   },
   "exclude": ["node_modules", "tmp"]

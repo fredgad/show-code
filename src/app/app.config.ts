@@ -29,6 +29,8 @@ import {
   withInterceptorsFromDi,
 } from '@angular/common/http';
 import { TimeoutInterceptor, TokenInterceptor } from '../shared/interceptors';
+import { EffectsModule } from '@ngrx/effects';
+import { AppStoreEffects } from '../store/app-store.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -50,6 +52,7 @@ export const appConfig: ApplicationConfig = {
 
     importProvidersFrom(
       StoreModule.forRoot({ App: reducer }),
+      EffectsModule.forRoot([AppStoreEffects]),
       StoreDevtoolsModule.instrument(),
       [BrowserModule, HttpClientModule, BrowserAnimationsModule]
     ),

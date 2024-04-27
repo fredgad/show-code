@@ -10,7 +10,7 @@
   width: 100dvw;
   height: 100dvh;
   background: rgba(0, 0, 0, 0.100);
-  z-index: 9999999;
+  z-index: $popup-zi;
 
   .dialog {
     display: flex;

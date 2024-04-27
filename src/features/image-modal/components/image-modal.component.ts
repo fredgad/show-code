@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 export class ImageModalComponent {
   private cdr = inject(ChangeDetectorRef)
 
-  @Input() public imageUrl!: string | ArrayBuffer;
+  @Input() public imageUrl!: string | ArrayBuffer | null | undefined;
 
   public isVisible = false;
 

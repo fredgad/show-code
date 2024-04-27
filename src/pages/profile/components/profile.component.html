@@ -1,16 +1,22 @@
 <org-header></org-header>
 
-<div class="wrapper" [class.--mobile]="isMobile$ | async">
+<div class="wrapper" [class.--mobile]="isMobile$ | async" *ngIf="userData$ | async as userData">
   <div class="profile container">
     <div class="profile-header">
       
-      <div class="profile-header_image"><img [srcPath]="'camera.svg'"/></div>
+      <div class="profile-header_image">
+        @if (userData.image) {
+          <img [src]="userData.image"/>
+        } @else {
+          <img [srcPath]="'camera.svg'"/>
+        }
+      </div>
       <div class="profile-header_data">
         <div class="profile-header_data--name">
-          Fred Gad
+          {{ userData.username }}
         </div>
         <div class="profile-header_data--email">
-         fred11&#64;mail.ru
+          {{ userData.email }}
         </div>
         <div class="profile-header_data--tarif">
           <span>Tarif:</span>

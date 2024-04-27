@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { StoreStateI } from './app-store.reducer';
+import { StoreStateI } from '@shared/interfaces';
 
 export interface State {
   _empty?: boolean;
@@ -7,11 +7,11 @@ export interface State {
 
 export const storeFeatureKey = 'App';
 
-export interface AppState extends State {
+export interface AppWithAuthState extends State {
   [storeFeatureKey]: StoreStateI;
 }
 
-export const selectFeature = createFeatureSelector<AppState, StoreStateI>(
+export const selectFeature = createFeatureSelector<AppWithAuthState, StoreStateI>(
   storeFeatureKey
 );
 
@@ -23,4 +23,7 @@ export const selectAuth = createSelector(
 );
 
 export const selectToken = createSelector(selectFeature, (state) => state.auth.token);
-export const selectAuthorized = createSelector(selectFeature, (state) => state.auth.authorized);
+
+export const selectIsAuth = createSelector(selectToken, (token) => !!token);
+
+export const selectUserData = createSelector(selectFeature, (state) => state.user);

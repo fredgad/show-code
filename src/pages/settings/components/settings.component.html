@@ -10,18 +10,22 @@
 
   <div class="settings-avatar">
     <div class="settings-avatar_image">
-      @if (imageUrl) {
-        <img [src]="imageUrl" class="--avatar" (click)="imageModal.show()">
-        <org-image-modal #imageModal [imageUrl]="imageUrl"></org-image-modal>
+      @if ((userData$ | async)?.image) {
+        <img [src]="(userData$ | async)?.image" class="--avatar" (click)="imageModal.show()">
+        <org-image-modal #imageModal [imageUrl]="(userData$ | async)?.image"></org-image-modal>
       } @else {
-        <img [srcPath]="'camera.svg'"/>
+        @if (image) {
+          <img [src]="image"/>
+        } @else {
+          <img [srcPath]="'camera.svg'"/>
+        }
       }
     </div>
 
     <div class="settings-upload">
       <input type="file" #fileInput hidden (change)="onFileSelected($event)">
 
-      @if (imageUrl) {
+      @if ((userData$ | async)?.image || image) {
         <button (click)="triggerFileInput()" class="btn-secondary" [text]="{
           ENG: 'Change avatar',
           ESP: 'Cambiar avatar',
@@ -66,6 +70,15 @@
     <input type="password" value="214ывфып123">
 
     <img class="--pencil" [srcPath]="'pencil-edit.svg'">
+  </div>
+
+
+  <div class="settings-logout">
+    <button (click)="logout()" class="btn-err" [text]="{
+      ENG: 'Logout',
+      ESP: 'Salir',
+      RUS: 'Выйти из аккаунта',
+    }">Выйти из аккаунта</button>
   </div>
 
 </div>

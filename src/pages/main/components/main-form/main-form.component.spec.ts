@@ -9,6 +9,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Signal } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MainFormComponent } from './main-form.component';
+import { AppStoreFacade } from '@store';
 
 describe('MainFormComponent', () => {
   let fixture: ComponentFixture<MainFormComponent>;
@@ -23,6 +24,7 @@ describe('MainFormComponent', () => {
     .mock(ImageDirective)
     .mock(TextDirective)
     .mock(ActivatedRoute)
+    .mock(AppStoreFacade)
     .mock(LangService, {
       textByLanguage: jest.fn().mockImplementation(() => (() => 'Mocked Title') as Signal<string>)
     })

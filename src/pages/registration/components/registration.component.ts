@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LangService, UserNameService } from '@shared/services';
+import { AuthService, LangService, UserNameService } from '@shared/services';
 import { getFormControlErrorMessage, isValidFormControl } from '@shared/helpers';
 import { ImageDirective, TextDirective } from '@shared/directives';
 import { HeaderComponent } from '@widgets/header';
-import { LangEnum, LangTextI } from '@shared/interfaces';
+import { LangEnum } from '@shared/interfaces';
+import { AppStoreFacade } from '@store';
 
 @Component({
   selector: 'org-registration',
@@ -22,6 +23,8 @@ export class RegistrationComponent {
   private formBuilder = inject(FormBuilder);
   private userNameService = inject(UserNameService);
   private langService = inject(LangService);
+  private authService = inject(AuthService);
+  private appStoreFacade = inject(AppStoreFacade);
 
   @ViewChild('emailInput') private emailInput!: ElementRef<HTMLInputElement>;
 
@@ -35,7 +38,7 @@ export class RegistrationComponent {
   constructor() {
     this.registrationForm =  this.formBuilder.group({
       name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email, Validators.minLength(13)]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       agreement: [false, Validators.requiredTrue]
     });
@@ -57,10 +60,14 @@ export class RegistrationComponent {
 
   public onSubmit(): void {
     if (this.registrationForm.valid) {
-      // Here, you can send the registration data to your backend service
-      const formData = this.registrationForm.value;
-      console.log('Registration data:', formData);
-      // Reset the form after successful registration
+      const userValue = {
+        username: this.registrationForm.value.name,
+        email: this.registrationForm.value.email,
+        password: this.registrationForm.value.password
+      }
+      
+      this.appStoreFacade.register(userValue);
+
       // this.registrationForm.reset();
       // this.registrationForm.markAsUntouched();
     } else {

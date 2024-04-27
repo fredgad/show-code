@@ -2,10 +2,11 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChil
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '@widgets/header';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LangService, UserNameService } from '@shared/services';
+import { LangService, UserNameService, AuthService } from '@shared/services';
 import { getFormControlErrorMessage, isValidFormControl } from '@shared/helpers';
 import { LangEnum } from '@shared/interfaces';
 import { TextDirective } from '@shared/directives';
+import { AppStoreFacade } from '../../../store/app-store.facade';
 
 @Component({
   selector: 'org-authorization',
@@ -19,6 +20,8 @@ export class AuthorizationComponent implements AfterViewInit {
   private formBuilder = inject(FormBuilder);
   private userNameService = inject(UserNameService);
   private langService = inject(LangService);
+  private authService = inject(AuthService);
+  private appStoreFacade = inject(AppStoreFacade);
   
   @ViewChild('password') private password!: ElementRef<HTMLInputElement>;
   
@@ -47,11 +50,19 @@ export class AuthorizationComponent implements AfterViewInit {
 
   public onSubmit(): void {
     if (this.authForm.valid) {
-      const formData = this.authForm.value;
-      console.log('Registration data:', formData);
-      // Reset the form after successful registration
-      // this.registrationForm.reset();
-      // this.registrationForm.markAsUntouched();
+      const userValue = {
+        login: this.authForm.value.login,
+        password: this.authForm.value.password
+      }
+      
+      console.log('Authhorization data:', userValue);
+      this.appStoreFacade.auth(userValue);
+      
+      // this.authService.getUsers().subscribe((users) => {
+      //   console.log(users, 'getUsers users')
+      //   this.authForm.reset();
+      //   this.authForm.markAsUntouched();
+      // });
     } else {
       // Display an error message or take appropriate action for invalid form
       this.isSubmited = true;

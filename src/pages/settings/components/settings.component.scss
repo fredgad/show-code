@@ -43,7 +43,7 @@
   > div {
     display: flex;
     flex-direction: row;
-    border-bottom: 1px solid grey;
+    // border-bottom: 1px solid grey;
     margin: 15px 0;
 
     p {
@@ -97,5 +97,12 @@
   h2 {
     font-size: 20px;
     text-align: center;
+  }
+
+  &-logout {
+
+
+    display: flex;
+    justify-content: center;
   }
 }

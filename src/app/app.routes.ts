@@ -5,6 +5,7 @@ import { NotificationSettingsComponent } from '@widgets/notification-settings';
 import { TrustedPeopleComponent } from '@widgets/trusted-people';
 import { VideoBlockComponent } from '@widgets/video-block';
 import { AudioBlockComponent } from '@widgets/audio-block';
+import { AuthGuard } from '@shared/guards';
 
 export const appRoutes: Route[] = [
   {
@@ -35,7 +36,8 @@ export const appRoutes: Route[] = [
       },
       { path: 'trusted-people', component: TrustedPeopleComponent },
       { path: 'notification-settings', component: NotificationSettingsComponent },
-    ]
+    ],
+    canActivate: [AuthGuard]
   },
   {
     path: 'settings',

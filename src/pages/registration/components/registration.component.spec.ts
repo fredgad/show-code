@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HeaderComponent, FooterComponent } from '@widgets';
 import { ImageDirective, TextDirective } from '@shared/directives';
-import { LangService } from '@shared/services';
+import { AuthService, LangService } from '@shared/services';
 import { MockBuilder } from 'ng-mocks';
 import { CommonModule } from '@angular/common';
 import { RegistrationComponent } from './registration.component';
+import { AppStoreFacade } from '@store';
 
 describe('RegistrationComponent', () => {
   let fixture: ComponentFixture<RegistrationComponent>;
@@ -17,6 +18,8 @@ describe('RegistrationComponent', () => {
     .mock(ImageDirective)
     .mock(TextDirective)
     .mock(LangService)
+    .mock(AuthService)
+    .mock(AppStoreFacade)
   );
 
   beforeEach(() => {

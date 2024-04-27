@@ -3,8 +3,9 @@ import { HeaderComponent, FooterComponent } from '@widgets';
 import { ImageDirective, TextDirective } from '@shared/directives';
 import { MockBuilder } from 'ng-mocks';
 import { CommonModule } from '@angular/common';
-import { CheckboxComponent, ImageModalComponent } from '../../../features';
+import { CheckboxComponent, ImageModalComponent } from '@features';
 import { SettingsComponent } from './settings.component';
+import { AppStoreFacade } from '@store';
 
 describe('SettingsComponent', () => {
   let fixture: ComponentFixture<SettingsComponent>;
@@ -18,6 +19,7 @@ describe('SettingsComponent', () => {
     .mock(FooterComponent)
     .mock(ImageDirective)
     .mock(TextDirective)
+    .mock(AppStoreFacade)
   );
 
   beforeEach(() => {

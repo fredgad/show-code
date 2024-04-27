@@ -17,5 +17,10 @@ $red-color-hover :#8d0000;
 // Акцентный цвет (Зеленый/$prime-green): 5% - Кнопки, ссылки, и подсказки.
 // Текст (Темно-серый/$text-color): 5% - Основной текст и заголовки.
 
+// Z-indexes
+$header-zi: 31;
+$modal-zi:  32;
+$popup-zi:  33;
 
+//
 $org-border-radius: 6px;
