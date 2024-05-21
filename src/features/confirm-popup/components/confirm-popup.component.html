@@ -3,12 +3,12 @@
     <div class="dialog">
       <p class="dialog-message">{{ message$ | async }}</p>
       <div class="dialog-buttons">
-        <button (click)="confirm()" class="btn-secondary" [text]="{
+        <button (click)="confirm()" class="btn-secondary" [orgText]="{
           ENG: 'Yes',
           ESP: 'Sí',
           RUS: 'Да',
         }">Yes</button>
-        <button (click)="decline()" class="btn-err" [text]="{
+        <button (click)="decline()" class="btn-err" [orgText]="{
           ENG: 'No',
           ESP: 'No',
           RUS: 'Нет',

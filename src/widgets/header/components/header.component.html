@@ -2,7 +2,7 @@
   <org-logo [linkToMain]="true" [isTitle]="(isMobile$ | async) === false"></org-logo>
   <div class="header-buttons">
     @if (!isLoggedIn) {
-      <button class="header-buttons_auth" (click)="goToPath('/auth')" [text]="{
+      <button class="header-buttons_auth" (click)="goToPath('/auth')" [orgText]="{
         ENG: 'AUTHORIZATION',
         ESP: 'AUTORIZACIÓN',
         RUS: 'АВТОРИЗАЦИЯ'

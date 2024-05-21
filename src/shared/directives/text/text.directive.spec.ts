@@ -8,7 +8,7 @@ import { By } from '@angular/platform-browser';
 import { SIGNAL } from '@angular/core/primitives/signals';
 
 @Component({
-  template: `<div [text]="{ENG: 'Hello', ESP: 'Hola', RUS: 'Привет'}"></div>`
+  template: `<div [orgText]="{ENG: 'Hello', ESP: 'Hola', RUS: 'Привет'}"></div>`
 })
 class TestHostComponent {
 }

@@ -1,7 +1,7 @@
 <org-header></org-header>
 
 <div class="settings container">
-  <h2 [text]="{
+  <h2 [orgText]="{
     ENG: 'Profile settings',
     ESP: 'Configuración de perfil',
     RUS: 'Настройки профиля',
@@ -26,13 +26,13 @@
       <input type="file" #fileInput hidden (change)="onFileSelected($event)">
 
       @if ((userData$ | async)?.image || image) {
-        <button (click)="triggerFileInput()" class="btn-secondary" [text]="{
+        <button (click)="triggerFileInput()" class="btn-secondary" [orgText]="{
           ENG: 'Change avatar',
           ESP: 'Cambiar avatar',
           RUS: 'Изменить аватарку',
         }">Change avatar</button>
       } @else {
-        <button (click)="triggerFileInput()" class="btn-secondary" [text]="{
+        <button (click)="triggerFileInput()" class="btn-secondary" [orgText]="{
           ENG: 'Add avatar',
           ESP: 'Agregar avatar',
           RUS: 'Добавить аватарку',
@@ -42,7 +42,7 @@
   </div>
 
   <div class="settings-login">
-    <p [text]="{
+    <p [orgText]="{
       ENG: 'Change your login:',
       ESP: 'Cambia tu inicio de sesión:',
       RUS: 'Изменить логин:',
@@ -52,7 +52,7 @@
   </div>
 
   <div class="settings-email">
-    <p [text]="{
+    <p [orgText]="{
       ENG: 'Change your email:',
       ESP: 'Cambia tu correo electrónico:',
       RUS: 'Изменить email:',
@@ -62,7 +62,7 @@
   </div>
 
   <div class="settings-password">
-    <p [text]="{
+    <p [orgText]="{
       ENG: 'Change your password:',
       ESP: 'Cambia tu inicio de sesión:',
       RUS: 'Изменить пароль:',
@@ -74,7 +74,7 @@
 
 
   <div class="settings-logout">
-    <button (click)="logout()" class="btn-err" [text]="{
+    <button (click)="logout()" class="btn-err" [orgText]="{
       ENG: 'Logout',
       ESP: 'Salir',
       RUS: 'Выйти из аккаунта',

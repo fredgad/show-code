@@ -5,13 +5,14 @@ import { NotificationService } from '../notification/notification.service';
 import { AuthI, RegisterI, TokenI, UserDataI } from '../../interfaces';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { Router } from '@angular/router';
+import { APP_API_URL } from '../../constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:9000';
-
+  private baseUrl = APP_API_URL;
+  
   constructor(
     private http: HttpClient,
     private notificationService: NotificationService,
@@ -19,8 +20,8 @@ export class AuthService {
     private router: Router
   ) { }
 
-  public getUsers(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/getUsers`)
+  public getUsers(): Observable<UserDataI[]> {
+    return this.http.get<UserDataI[]>(`${this.baseUrl}/getUsers`)
     .pipe(
       tap(() => {
         this.notificationService.show('Successfuly get users');
@@ -39,7 +40,7 @@ export class AuthService {
         this.notificationService.show('Successfuly registered');
       }),
       catchError(error => {
-        this.notificationService.showError('Error: ', error);
+        this.notificationService.showError(`Error: ${error}`);
         throw error;
       })
     );
@@ -52,7 +53,7 @@ export class AuthService {
         this.notificationService.show('Successfuly logged');
       }),
       catchError(error => {
-        this.notificationService.showError('Error: ', error);
+        this.notificationService.showError(`Error: ${error}`);
         throw error;
       })
     );
@@ -65,7 +66,7 @@ export class AuthService {
         this.notificationService.show('Successfuly get user data');
       }),
       catchError(error => {
-        this.notificationService.showError('Error: ', error);
+        this.notificationService.showError(`Error: ${error}`);
         throw error;
       })
     );
@@ -78,7 +79,7 @@ export class AuthService {
         this.notificationService.show('Successfuly save image');
       }),
       catchError(error => {
-        this.notificationService.showError('Error: ', error);
+        this.notificationService.showError(`Error: ${error}`);
         throw error;
       })
     );

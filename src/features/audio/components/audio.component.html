@@ -6,7 +6,7 @@
 
   <div class="audio-text">
     <div class="audio-text_data">
-      <span [text]="{
+      <span [orgText]="{
         ENG: 'Date of download: ',
         ESP: 'Date of download: ',
         RUS: 'Дата загрузки: ',
@@ -14,14 +14,14 @@
       <p>25.12.2026</p>
     </div>
     <div class="audio-text_duration">
-      <span [text]="{
+      <span [orgText]="{
         ENG: 'Duration: ',
         ESP: 'Duration: ',
         RUS: 'Продолжительность: ',
       }">Duration: </span>
       <p>1m. 27s.</p>
     </div>
-    <button class="audio-text_download btn-primary" [text]="{
+    <button class="audio-text_download btn-primary" [orgText]="{
       ENG: 'Download',
       ESP: 'Download',
       RUS: 'Загрузить',

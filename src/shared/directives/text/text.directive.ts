@@ -1,15 +1,15 @@
-import { Directive, ElementRef, Input, Signal, effect } from '@angular/core';
+import { Directive, ElementRef, Input, OnInit, Signal, effect } from '@angular/core';
 import { LangService } from '../../services';
 import { LangEnum, LangTextI } from '../../interfaces';
 
 @Directive({
-  selector: '[text]',
+  selector: '[orgText]',
   standalone: true,
 })
-export class TextDirective {
+export class TextDirective implements OnInit {
   public newLanguage$i: Signal<LangEnum> = this.langService.getLang$i;
 
-  @Input('text') text!: LangTextI;
+  @Input('orgText') text!: LangTextI;
 
   constructor(private el: ElementRef, private langService: LangService) {
     effect(() => {

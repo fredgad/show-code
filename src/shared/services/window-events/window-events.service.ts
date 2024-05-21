@@ -1,6 +1,6 @@
 import { DOCUMENT } from "@angular/common";
 import { Inject, Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, Subscription, debounceTime, distinctUntilChanged, mergeMap } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { WINDOW } from "../../tokens/window";
 import { MOBILE_BREAKPOINT } from "../../constants/constants";
 

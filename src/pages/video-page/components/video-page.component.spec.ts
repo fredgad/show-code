@@ -4,7 +4,7 @@ import { ImageDirective, TextDirective } from '@shared/directives';
 import { MockBuilder } from 'ng-mocks';
 import { CommonModule } from '@angular/common';
 import { VideoPageComponent } from './video-page.component';
-import { LangService } from '../../../shared';
+import { LangService } from '@shared/services';
 import { Signal } from '@angular/core';
 
 describe('VideoPageComponent', () => {

@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { MainComponent, AuthorizationComponent, RegistrationComponent, ProfileComponent, VideoPageComponent, SettingsComponent, TrustedProfileComponent } from '@pages';
+import { MainComponent, SettingsComponent, TrustedProfileComponent } from '@pages';
 import { SavedMediaComponent } from '@widgets/saved-media';
 import { NotificationSettingsComponent } from '@widgets/notification-settings';
 import { TrustedPeopleComponent } from '@widgets/trusted-people';
@@ -14,15 +14,15 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'auth',
-    component: AuthorizationComponent
+    loadComponent: () => import('@pages').then((x) => x.AuthorizationComponent),
   },
   {
     path: 'registration',
-    component: RegistrationComponent
+    loadComponent: () => import('@pages').then((x) => x.RegistrationComponent),
   },
   {
     path: 'profile',
-    component: ProfileComponent,
+    loadComponent: () => import('@pages').then((x) => x.ProfileComponent),
     children: [
       { path: '', redirectTo: 'saved-media', pathMatch: 'full' },
       { 
@@ -54,6 +54,6 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'capture',
-    component: VideoPageComponent
+    loadComponent: () => import('@pages').then((x) => x.VideoPageComponent),
   },
 ];

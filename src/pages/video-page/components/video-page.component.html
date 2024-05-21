@@ -8,7 +8,7 @@
 
     <!-- @if (isRecording) {
       <div class="capture-controls_timer">
-        <span [text]="{
+        <span [orgText]="{
           ENG: 'Record: ',
           ESP: 'Registro: ',
           RUS: 'Запись: '
@@ -25,13 +25,13 @@
       }
 
       @if (isRecording) {
-        <button (click)="stopRecording()" class="btn-primary" [text]="{
+        <button (click)="stopRecording()" class="btn-primary" [orgText]="{
           ENG: 'Stop recording',
           ESP: 'Para de grabar',
           RUS: 'Остановить запись',
         }">Stop recording</button>
       } @else {
-        <button (click)="startRecording()" class="btn-secondary" [text]="{
+        <button (click)="startRecording()" class="btn-secondary" [orgText]="{
           ENG: 'Start recording',
           ESP: 'Comience a grabar',
           RUS: 'Начать запись',

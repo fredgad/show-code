@@ -1,4 +1,8 @@
+// import { environment } from "../environments/environment";
 import { LangEnum, LangTextI } from "../interfaces";
+
+// export const APP_API_URL = environment.apiUrl;
+export const APP_API_URL = 'http://localhost:9000';
 
 export const MOBILE_BREAKPOINT: number = 768;
 

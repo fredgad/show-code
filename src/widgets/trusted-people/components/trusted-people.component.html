@@ -1,5 +1,5 @@
 <div class="people">
-  <div class="people-title" [text]="{
+  <div class="people-title" [orgText]="{
     ENG: 'You receive notifications from these users',
     ESP: 'Recibes notificaciones de estos usuarios',
     RUS: 'Вы получаете уведомления от этих пользователей',
@@ -17,14 +17,14 @@
         <div class="person-text_name">{{person.username}}</div>
         <div class="person-text_email">{{person.email}}</div>
         <div class="person-text_checkbox">
-          <p class="person-text_checkbox--text" [text]="{
+          <p class="person-text_checkbox--text" [orgText]="{
             ENG: 'This user receives notifications from you',
             ESP: 'Este usuario recibe notificaciones tuyas',
             RUS: 'Этот пользователь получает уведомления от вас',
           }">This user receives notifications from you</p>
           <org-checkbox (change)="onCheckboxChange($event)" [initialValue]="person.activeListener"></org-checkbox>
         </div>
-        <button class="person-text_media" routerLink="/trusted-profile" [text]="{
+        <button class="person-text_media" routerLink="/trusted-profile" [orgText]="{
           ENG: 'Saved media',
           ESP: 'Medios guardados',
           RUS: 'Сохранённые медиа',
