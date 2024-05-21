@@ -1,12 +1,12 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild, WritableSignal, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent } from '@widgets/header';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HeaderComponent } from '@widgets/header';
 import { LangService, UserNameService, AuthService } from '@shared/services';
 import { getFormControlErrorMessage, isValidFormControl } from '@shared/helpers';
 import { LangEnum } from '@shared/interfaces';
 import { TextDirective } from '@shared/directives';
-import { AppStoreFacade } from '../../../store/app-store.facade';
+import { AppStoreFacade } from '@store';
 
 @Component({
   selector: 'org-authorization',

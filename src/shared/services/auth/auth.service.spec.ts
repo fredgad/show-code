@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { MockBuilder, MockRender } from 'ng-mocks';
+import { MockBuilder } from 'ng-mocks';
 import { AuthService } from './auth.service';
 import { NotificationService } from '../notification/notification.service';
 

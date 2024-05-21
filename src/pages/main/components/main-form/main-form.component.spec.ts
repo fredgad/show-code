@@ -1,45 +1,61 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HeaderComponent, FooterComponent } from '@widgets';
-import { ImageDirective, TextDirective } from '@shared/directives';
-import { LangService } from '@shared/services';
-import { MockBuilder, MockInstance } from 'ng-mocks';
+import { AuthService, ConfirmPopupService, LangService, UserNameService } from '@shared/services';
+import { MockBuilder, ngMocks } from 'ng-mocks';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-
+import { Router, RouterModule } from '@angular/router';
 import { Signal } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MainFormComponent } from './main-form.component';
 import { AppStoreFacade } from '@store';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
 
 describe('MainFormComponent', () => {
-  let fixture: ComponentFixture<MainFormComponent>;
   let component: MainFormComponent;
+  let fixture: ComponentFixture<MainFormComponent>;
+  let router: Router;
+  let mockConfirmPopupService: jest.Mocked<Partial<ConfirmPopupService>>;
+  let mockAppStoreFacade: jest.Mocked<Partial<AppStoreFacade>>;
 
-  beforeEach(() => MockBuilder(MainFormComponent)
-    .keep(CommonModule)
-    .keep(RouterModule)
-    .mock(HttpClientTestingModule)
-    .mock(HeaderComponent)
-    .mock(FooterComponent)
-    .mock(ImageDirective)
-    .mock(TextDirective)
-    .mock(ActivatedRoute)
-    .mock(AppStoreFacade)
-    .mock(LangService, {
-      textByLanguage: jest.fn().mockImplementation(() => (() => 'Mocked Title') as Signal<string>)
-    })
-  );
+  beforeEach(async () => {
+    await MockBuilder(MainFormComponent)
+      .keep(CommonModule)
+      .keep(RouterModule)
+      .keep(RouterTestingModule.withRoutes([]))
+      .mock(HttpClientTestingModule)
+      .mock(Router)
+      .mock(AuthService, { isLoggedIn: jest.fn().mockReturnValue(true) }) 
+      .mock(UserNameService) 
+      .mock(ConfirmPopupService, { showPopup: jest.fn(() => of(true)) }) 
+      .mock(AppStoreFacade, { logout: jest.fn() })
+      .mock(LangService, {
+        textByLanguage: jest.fn().mockImplementation(() => (() => 'Mocked Data') as Signal<string>)
+      });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(MainFormComponent);
     component = fixture.componentInstance;
+    mockConfirmPopupService = ngMocks.get(ConfirmPopupService);
+    mockAppStoreFacade = ngMocks.get(AppStoreFacade);
 
-    MockInstance(LangService, 'textByLanguage', jest.fn().mockImplementation(() => (() => 'Mocked Title') as Signal<string>));
+
+    router = TestBed.inject(Router);
+    jest.spyOn(router, 'navigate');
 
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should navigate to the profile page', () => {
+    component.goToProfile();
+    expect(router.navigate).toHaveBeenCalledWith(['/profile']);
+  });
+
+  it('should logout and navigate as expected', () => {
+    component.logout();
+    expect(mockConfirmPopupService.showPopup).toHaveBeenCalled();
+    expect(mockAppStoreFacade.logout).toHaveBeenCalled();
   });
 });

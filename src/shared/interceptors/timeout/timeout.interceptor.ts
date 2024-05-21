@@ -13,7 +13,7 @@ import { catchError, timeout } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class TimeoutInterceptor implements HttpInterceptor {
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const timeoutValue: number = 30000;
 
     return next.handle(request).pipe(

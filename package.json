@@ -10,7 +10,9 @@
     "serve:ssr": "ts-node ./server.ts",
     "server:ssr": "node ./node_modules/ts-node/dist/bin.js server.ts",
     "build:ssr": "nx build org --prod && nx run org:server",
-    "prerender": "nx run org:prerender"
+    "prerender": "nx run org:prerender",
+    "slint": "stylelint \"**/*.scss\" --config .stylelintrc.json --fix",
+    "slint:analyze": "stylelint \"**/*.scss\" --config .stylelintrc.json"
   },
   "private": true,
   "dependencies": {

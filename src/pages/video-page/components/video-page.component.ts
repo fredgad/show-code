@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, Signal, ViewChild, WritableSignal, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, Signal, ViewChild, WritableSignal, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '@widgets/header';
 import { ImageDirective, TextDirective } from '@shared/directives';
@@ -11,7 +11,7 @@ import { LangService } from '@shared/services';
   templateUrl: './video-page.component.html',
   styleUrl: './video-page.component.scss',
 })
-export class VideoPageComponent implements OnInit {
+export class VideoPageComponent implements OnInit, OnDestroy {
   @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
 
   private langService = inject(LangService);
@@ -34,7 +34,7 @@ export class VideoPageComponent implements OnInit {
     RUS: 'Сменить камеру'
   });
 
-  async ngOnInit(): Promise<void> {
+  public async ngOnInit(): Promise<void> {
     this.videoDevices = await this.getCameraDevices();
     this.videoStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
@@ -83,7 +83,7 @@ export class VideoPageComponent implements OnInit {
         }
       };
 
-      this.mediaRecorder.start(10); // Разбивка видео на чанки каждые 10 миллисекунд
+      this.mediaRecorder.start(10);
       this.isRecording = true;
     } catch (error) {
       console.error('Ошибка при получении доступа к камере:', error);
@@ -101,7 +101,7 @@ export class VideoPageComponent implements OnInit {
     // videoUrl можно использовать для загрузки на сервер или сохранения локально
   }
 
-  ngOnDestroy() {
-    this.videoStream?.getTracks().forEach(track => track.stop()); // Остановка потока
+  public ngOnDestroy(): void {
+    this.videoStream?.getTracks().forEach(track => track.stop());
   }
 }

@@ -1,0 +1,86 @@
+{
+  "extends": "stylelint-config-standard-scss",
+  "plugins": ["stylelint-scss", "stylelint-order"],
+  "rules": {
+    "order/order": ["custom-properties", "declarations"],
+    "order/properties-order": [
+      "content",
+      "position",
+      "display",
+      "Flexbox properties",
+      "top",
+      "bottom",
+      "left",
+      "right",
+
+      "width",
+      "height",
+      "transform",
+      "transition",
+      "opacity",
+      "z-index",
+      "color",
+      "background",
+      "margin",
+      "padding",
+      "float",
+      "clear",
+      "box-shadow",
+      "border",
+      "border-radius",
+
+      "font-size",
+      "line-height",
+      "font-family",
+      "font-weight",
+      "font-style",
+      "text-align",
+      "text-transform",
+      "word-spacing",
+      "box-sizing",
+      "animation",
+      "cursor",
+
+      ":hover",
+      ":focus",
+      ":active",
+      ":before",
+      ":after",
+      ":first-child",
+      ":last-child"
+    ],
+    "scss/dollar-variable-colon-space-after": "always-single-line",
+    "block-no-empty": [
+      true,
+      {
+        "ignore": ["comments"]
+      }
+    ],
+    "comment-no-empty": null,
+    "scss/comment-no-empty": true,
+    "unit-allowed-list": [
+      "em", "rem", "%", "s", "px", "deg", "vh", "vw", "vmin", "vmax", "dvh", "dvw", "ms", "fr"
+    ],
+    "no-extra-semicolons": true,
+    "no-duplicate-selectors": true,
+    "declaration-block-single-line-max-declarations": 1,
+    "color-no-invalid-hex": true,
+    "function-url-quotes": "always",
+    "max-nesting-depth": 20,
+    "selector-max-compound-selectors": 30,
+    "selector-pseudo-element-no-unknown": true,
+    "selector-pseudo-class-no-unknown": [true, {
+      "ignorePseudoClasses": ["global"]
+    }],
+    "at-rule-empty-line-before": [
+			"always",
+			{
+				"except": ["blockless-after-blockless", "first-nested"],
+				"ignore": ["after-comment"],
+				"ignoreAtRules": ["else"]
+			}
+		],
+		"import-notation": "string",
+    "property-no-vendor-prefix": null
+  }
+}
