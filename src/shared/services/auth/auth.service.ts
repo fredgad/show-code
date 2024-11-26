@@ -11,7 +11,7 @@ import { APP_API_URL } from '../../constants';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'https://msr-server.onrender.com'; // APP_API_URL;
+  private baseUrl = APP_API_URL;
 
   constructor(
     private http: HttpClient,

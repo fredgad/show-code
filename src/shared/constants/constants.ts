@@ -1,8 +1,9 @@
 // import { environment } from "../environments/environment";
-import { LangEnum, LangTextI } from "../interfaces";
+import { LangEnum, LangTextI } from '../interfaces';
 
 // export const APP_API_URL = environment.apiUrl;
-export const APP_API_URL = 'http://localhost:9000';
+// export const APP_API_URL = 'http://localhost:9000';
+export const APP_API_URL = 'https://msr-server.onrender.com';
 
 export const MOBILE_BREAKPOINT: number = 768;
 
@@ -13,5 +14,5 @@ export const BASE_VIDEO_PATH: string = './assets/video/';
 export const LOGOUT_POPUP_TEXT: LangTextI = {
   ENG: 'Are you sure you want to log out?',
   ESP: '¿Está seguro de que desea cerrar sesión?',
-  RUS: 'Вы действительно хотите выйти из аккаунта?',
-}
+  RUS: 'Вы действительно хотите выйти из аккаунта?'
+};
