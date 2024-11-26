@@ -1,0 +1,39 @@
+<div class="outgoing">
+  @if (outgoingReq$ | async) { @for (req of (outgoingReq$ | async); track req) {
+  <div class="outgoing-req">
+    <div>
+      <span
+        [orgText]="{
+          ENG: 'You are requesting a user:',
+          ESP: 'Usted solicita al usuario:',
+          RUS: 'Вы запрашиваете пользователя:',
+        }"
+      >
+        You are requesting a user:
+      </span>
+      <b>{{ req }}</b>
+    </div>
+    <button
+      (click)="cancelReq(req)"
+      class="btn-err"
+      [orgText]="{
+      ENG: 'Cancel',
+      ESP: 'Cancelar',
+      RUS: 'Отменить',
+    }"
+    >
+      Cancel
+    </button>
+  </div>
+  } } @else {
+  <span
+    [orgText]="{
+          ENG: 'There are no outgoing requests.',
+          ESP: 'No hay solicitudes salientes.',
+          RUS: 'Нет исходящих запросов.',
+        }"
+  >
+    There are no outgoing requests.
+  </span>
+  }
+</div>

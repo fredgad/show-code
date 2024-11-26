@@ -8,7 +8,7 @@ import { CheckboxComponent } from '@features/checkbox';
 import { ImageModalComponent } from '@features/image-modal';
 import { ConfirmPopupService, LangService } from '@shared/services';
 import { AppStoreFacade } from '@store';
-import { StoreUserI } from '@shared/interfaces';
+import { StoreUserIN } from '@shared/interfaces';
 import { LOGOUT_POPUP_TEXT } from '@shared/constants';
 
 @Component({
@@ -17,7 +17,7 @@ import { LOGOUT_POPUP_TEXT } from '@shared/constants';
   imports: [CommonModule, HeaderComponent, TextDirective, CheckboxComponent, ImageDirective, FooterComponent, ImageModalComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SettingsComponent implements OnDestroy {
   private confirmPopupService = inject(ConfirmPopupService);
@@ -30,10 +30,14 @@ export class SettingsComponent implements OnDestroy {
   private subscription?: Subscription;
   private popupText = this.langService.textByLanguage(LOGOUT_POPUP_TEXT);
 
-  public userData$: Observable<StoreUserI> = this.appStoreFacade.userData$;
+  public userData$: Observable<StoreUserIN> = this.appStoreFacade.userData$;
 
   public image: string | ArrayBuffer | null | undefined = null;
   public fileName = 'Файл не выбран';
+
+  public ngOnInit(): void {
+    this.appStoreFacade.getUserData();
+  }
 
   public onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -47,14 +51,13 @@ export class SettingsComponent implements OnDestroy {
         this.image = e.target?.result;
         this.cdr.markForCheck();
 
-        
         // Save avatar to server
         if (typeof this.image === 'string') {
-          console.log('typeof this.image === string', this.fileName)
+          console.log('typeof this.image === string', this.fileName);
           this.appStoreFacade.saveImage(this.image);
         }
       };
-      
+
       reader.readAsDataURL(file);
     } else {
       this.fileName = 'Файл не выбран';
@@ -66,7 +69,8 @@ export class SettingsComponent implements OnDestroy {
   }
 
   public logout() {
-    this.subscription = this.confirmPopupService.showPopup(this.popupText())
+    this.subscription = this.confirmPopupService
+      .showPopup(this.popupText())
       .pipe(filter(Boolean))
       .subscribe(() => {
         this.appStoreFacade.logout();

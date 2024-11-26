@@ -1,0 +1,96 @@
+@import 'mixins';
+
+@import 'mixins';
+
+.requests {
+  display: flex;
+  flex-direction: column;
+
+  &-buttons {
+    button {
+      height: 45px;
+      width: 50%;
+      background: transparent;
+      outline: none;
+      border: none;
+      cursor: pointer;
+
+      &.active {
+        color: $prime-green;
+      }
+    }
+
+    &_video {
+      border-right: 1px solid $transparent-grey !important;
+    }
+  }
+
+  &-audios {
+    background: transparent;
+  }
+
+  &-title {
+    font-size: 18px;
+    text-align: center;
+    margin: 5px !important;
+  }
+
+  &-email {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+    &_text {
+      min-width: 140px;
+      padding: 10px;
+    }
+
+    .tags {
+      width: 100%;
+    }
+  }
+}
+
+.tags {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  &-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+
+    &_tag {
+      background-color: $prime-grey;
+      color: white;
+      padding: 0px 10px;
+      margin-right: 5px;
+      margin-top: 4px;
+      padding-bottom: 2.5px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+
+      button {
+        background-color: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        margin-left: 5px;
+      }
+    }
+  }
+
+  &-input {
+    flex: 1;
+    margin-top: 4px;
+    padding: 5px;
+    border: none;
+    outline: none;
+  }
+}

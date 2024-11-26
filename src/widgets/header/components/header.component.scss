@@ -32,10 +32,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        min-width: 40px;
+        height: 40px;
         @include fszV(1.8);
         border: none;
         background: transparent;
-        padding-top: .3dvh;
+        padding-top: 0.3dvh;
         cursor: pointer;
 
         &::after {
@@ -46,7 +48,7 @@
           width: 0%;
           height: 1px;
           background-color: $second-green;
-          transition: .3s;
+          transition: 0.3s;
         }
 
         &:hover::after {
@@ -55,6 +57,26 @@
         }
       }
 
+      &--settings {
+        display: flex;
+        height: 40px;
+        background: none;
+        border: none;
+        margin-left: 14px;
+        @include unselectable;
+        cursor: pointer;
+
+        img {
+          display: block;
+          width: 24px;
+          height: 24px;
+          transition: 0.6s;
+        }
+
+        &:hover img {
+          transform: rotate(45deg);
+        }
+      }
 
       &_reg {
         position: relative;
@@ -70,7 +92,7 @@
         margin-left: 10px;
 
         img {
-          width: 22px;
+          width: 24px;
         }
       }
 

@@ -14,4 +14,4 @@ export const getHexColorByNumber = (value: number) => {
   }
 
   return `#${color}`;
-}
+};

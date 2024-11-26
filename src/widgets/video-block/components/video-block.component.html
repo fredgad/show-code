@@ -1,5 +1,5 @@
 <div class="saved-videos">
-  @for (video of videoList; track video) {
-    <org-video [videoName]="video"></org-video>
+  @for (video of videos; track video) {
+  <org-video [videoData]="video" [isOwn]="isOwn"></org-video>
   }
 </div>

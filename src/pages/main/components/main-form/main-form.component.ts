@@ -14,7 +14,7 @@ import { INPUT_PLACEHOLDER } from '../../common/main.text';
   standalone: true,
   imports: [CommonModule, TextDirective, FormsModule],
   templateUrl: './main-form.component.html',
-  styleUrl: './main-form.component.scss',
+  styleUrl: './main-form.component.scss'
 })
 export class MainFormComponent implements OnDestroy {
   private router = inject(Router);
@@ -28,7 +28,7 @@ export class MainFormComponent implements OnDestroy {
   private popupText = this.langService.textByLanguage(LOGOUT_POPUP_TEXT);
 
   public inputPlaceholder$i: Signal<string> = this.langService.textByLanguage(INPUT_PLACEHOLDER);
-  
+
   public isLoggedIn = this.authService.isLoggedIn();
   public userName: string = '';
 
@@ -42,12 +42,14 @@ export class MainFormComponent implements OnDestroy {
     this.router.navigate(['/profile']);
   }
 
-  public goToAuth(): void {
+  public goToAuth(userName: string): void {
+    this.userNameService.setUserName = this.userName;
     this.router.navigate(['/auth']);
   }
 
   public logout(): void {
-    this.subscription = this.confirmPopupService.showPopup(this.popupText())
+    this.subscription = this.confirmPopupService
+      .showPopup(this.popupText())
       .pipe(filter(Boolean))
       .subscribe(() => {
         this.appStoreFacade.logout();

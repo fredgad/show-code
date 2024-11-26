@@ -46,10 +46,11 @@
       "@widgets/footer": ["src/widgets/footer"],
       "@widgets/header": ["src/widgets/header"],
       "@widgets/notification-settings": ["src/widgets/notification-settings"],
+      "@widgets/requests": ["src/widgets/requests"],
       "@widgets/saved-media": ["src/widgets/saved-media"],
       "@widgets/trusted-people": ["src/widgets/trusted-people"],
       "@widgets/video-block": ["src/widgets/video-block"],
-      "@store": ["src/store"],
+      "@store": ["src/store"]
     }
   },
   "exclude": ["node_modules", "tmp"]

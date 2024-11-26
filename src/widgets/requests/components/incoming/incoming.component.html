@@ -1,0 +1,33 @@
+<div class="incoming">
+  @if (incomingReq$ | async) { @for (req of (incomingReq$ | async); track req) {
+  <div class="incoming-req">
+    <div>
+      <span
+        [orgText]="{
+          ENG: 'You are requesting a user:',
+          ESP: 'Usted solicita al usuario:',
+          RUS: 'Пользователь:',
+        }"
+      >
+        You are requesting a user:
+      </span>
+      <b>{{ req }}</b>
+    </div>
+
+    <div>
+      <button (click)="acceptReq(req)" class="btn-secondary">Принять</button> /
+      <button (click)="rejectReq(req)" class="btn-err">Отклонить</button>
+    </div>
+  </div>
+  } } @else {
+  <span
+    [orgText]="{
+          ENG: 'There are no incoming requests.',
+          ESP: 'No hay solicitudes salientes.',
+          RUS: 'Нет исходящих запросов.',
+        }"
+  >
+    There are no incoming requests.
+  </span>
+  }
+</div>

@@ -1,11 +1,8 @@
 @import 'mixins';
 
-
 // .file-upload input[type="file"] {
 //   display: none;
 // }
-
-
 
 :host {
   display: flex;
@@ -26,9 +23,9 @@
   min-height: 86dvh;
   margin-bottom: 2dvh;
   box-sizing: border-box;
-  padding: 30px;
+  padding: 24px;
   @include w-mobile {
-    padding: 8px;
+    padding: 16px;
     border: none;
     box-shadow: none;
   }
@@ -38,6 +35,28 @@
     display: flex;
     align-items: center;
     gap: 10px;
+  }
+
+  .--shadow {
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: inset 0px -5px 5px -5px;
+    transition: 0.4s;
+
+    p {
+      width: 170px;
+    }
+
+    input {
+      border: 1px solid grey;
+      border-radius: 8px;
+      width: 300px;
+      padding: 4px;
+    }
+
+    // &:hover {
+    //   box-shadow: inset 4px -5px 5px -5px, inset 0px 5px 5px -5px;
+    // }
   }
 
   > div {
@@ -79,7 +98,7 @@
       min-width: 80px;
       width: 80px;
       height: 80px;
-      transition: .3s;
+      transition: 0.3s;
       overflow: hidden;
       cursor: pointer;
 
@@ -100,8 +119,6 @@
   }
 
   &-logout {
-
-
     display: flex;
     justify-content: center;
   }

@@ -1,49 +1,82 @@
 @if (isLoggedIn) {
-  <div class="registration-profile">
-    <button class="registration-profile btn-primary" (click)="goToProfile()" [orgText]="{
+<div class="registration-profile">
+  <button
+    class="registration-profile btn-primary"
+    (click)="goToProfile()"
+    [orgText]="{
       ENG: 'Profile',
       ESP: 'Profile',
       RUS: 'Профиль',
-    }">Профиль</button>
-    <button class="registration-profile btn-err" (click)="logout()" [orgText]="{
+    }"
+  >
+    Профиль
+  </button>
+  <button
+    class="registration-profile btn-err"
+    (click)="logout()"
+    [orgText]="{
       ENG: 'Logout',
       ESP: 'Salir',
       RUS: 'Выйти',
-    }">Выйти</button>
-  </div>
+    }"
+  >
+    Выйти
+  </button>
+</div>
 } @else {
-  <form (submit)="submitUserName($event)" class="main-registration_form">
-    <label class="main-registration_form--label" [orgText]="{
+<form (submit)="submitUserName($event)" class="main-registration_form">
+  <label
+    class="main-registration_form--label"
+    [orgText]="{
       ENG: 'Registration',
       ESP: 'Registro',
       RUS: 'Регистрация',
-    }">Registration</label>
-    <input [(ngModel)]="userName" class="" [placeholder]="inputPlaceholder$i()" type="username" name="name">
-    <p>
-      @if (userName.length) {
-        <button type="submit" class="mainButton" [orgText]="{
+    }"
+    >Registration</label
+  >
+  <input [(ngModel)]="userName" class="" [placeholder]="inputPlaceholder$i()" type="username" name="name" />
+  <p>
+    @if (userName.length) {
+    <button
+      type="submit"
+      class="mainButton"
+      [orgText]="{
           ENG: 'Create Account',
           ESP: 'Crear una cuenta',
           RUS: 'Создать аккаунт',
-        }">Create Account</button> 
-        <span [orgText]="{
+        }"
+    >
+      Create Account
+    </button>
+    <span
+      [orgText]="{
           ENG: 'or',
           ESP: 'o',
           RUS: 'или',
-        }">or</span>
-      } @else {
-        <span [orgText]="{
+        }"
+      >or</span
+    >
+    } @else {
+    <span
+      [orgText]="{
           ENG: 'Already registered?',
           ESP: '¿Ya registrado?',
           RUS: 'Уже зарегистрирован?',
-        }">Already registered?</span> 
-      }
-      <a routerLink="/auth" (click)="goToAuth()" [orgText]="{
+        }"
+      >Already registered?</span
+    >
+    }
+    <a
+      routerLink="/auth"
+      (click)="goToAuth(userName)"
+      [orgText]="{
         ENG: ' Sign in.',
         ESP: ' Iniciar sesión.',
         RUS: ' Войти.',
-      }"> Sign in.</a>
-    </p>
-  </form>
+      }"
+    >
+      Sign in.</a
+    >
+  </p>
+</form>
 }
-

@@ -23,7 +23,7 @@
   &-options {
     visibility: hidden;
     opacity: 0;
-    transition: visibility 0s .8s, opacity 1s linear;
+    transition: visibility 0s 0.8s, opacity 1s linear;
 
     display: flex;
     flex-direction: column;
@@ -36,12 +36,12 @@
     cursor: pointer;
 
     &_item {
-      transition: .3s;
+      transition: 0.3s;
       @include glass-bg;
       padding: 2dvh;
 
       &:hover {
-        background: transparent;
+        background-color: $super-transparent-grey;
       }
     }
 

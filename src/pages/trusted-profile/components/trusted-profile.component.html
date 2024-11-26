@@ -1,35 +1,54 @@
 <org-header></org-header>
 
-
-  <div class="trusted container">
-    <div class="trusted-header">
-      <div class="trusted-header_image"><img [srcPath]="'camera.svg'"/></div>
-      <div class="trusted-header_data">
-        <div class="trusted-header_data--name">
-          Trusted User
-        </div>
-        <div class="trusted-header_data--email">
-         user22&#64;mail.ru
-        </div>
-      </div>
+<div *ngIf="trustedPerson$ | async as trustedPerson" class="trusted container">
+  <div class="trusted-header">
+    <div class="trusted-header_image">
+      @if (trustedPerson?.image) {
+      <img [src]="trustedPerson?.image" />
+      } @else {
+      <img [srcPath]="'camera.svg'" />
+      }
     </div>
 
-    <div class="trusted-body">
-      <div class="trusted-body_buttons">
-        <button class="trusted-body_buttons--video" routerLink="/trusted-profile/video" routerLinkActive="active" [orgText]="{
-          ENG: 'Video',
-          ESP: 'Video',
-          RUS: 'Видео',
-        }">Video</button>
-        <button routerLink="/trusted-profile/audio" routerLinkActive="active" [orgText]="{
-          ENG: 'Audio',
-          ESP: 'Audio',
-          RUS: 'Аудио',
-        }">Audio</button>
-      </div>
-      <router-outlet></router-outlet>
+    <div class="trusted-header_data">
+      <div class="trusted-header_data--name">{{ trustedPerson.username }}</div>
+      <div class="trusted-header_data--email">{{ trustedPerson.email }}</div>
     </div>
   </div>
 
+  <div class="trusted-body">
+    <div class="trusted-body_buttons">
+      <button
+        class="saved-buttons_video"
+        (click)="changeTab(0)"
+        [class.active]="!currentTab"
+        [orgText]="{
+      ENG: 'Video',
+      ESP: 'Video',
+      RUS: 'Видео',
+    }"
+      >
+        Video
+      </button>
+      <button
+        (click)="changeTab(1)"
+        [class.active]="currentTab"
+        [orgText]="{
+      ENG: 'Audio',
+      ESP: 'Audio',
+      RUS: 'Аудио',
+    }"
+      >
+        Audio
+      </button>
 
-<org-footer></org-footer>
+      @if(currentTab) {
+      <org-audio-block></org-audio-block>
+      } @else {
+      <org-video-block [videos]="trustedPerson?.videos || []"></org-video-block>
+      }
+    </div>
+  </div>
+
+  <org-footer></org-footer>
+</div>

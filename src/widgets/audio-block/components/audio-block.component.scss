@@ -1,11 +1,27 @@
 @import 'mixins';
 
 .saved-audios {
+  box-shadow: inset 4px -5px 5px -5px, inset 0px 5px 5px -5px;
+  border-radius: 8px;
+  height: 100dvh;
+  max-height: 65dvh;
+  overflow-x: auto;
+
   org-audio {
     display: grid;
+    // display: flex;
+    flex-direction: row;
+    border: 1px solid grey;
+    border-radius: 16px;
+    margin: 8px;
+    padding: 8px;
 
     &:nth-child(odd) {
-      background: $super-transparent-grey;
+      // background: $super-transparent-grey;
+    }
+
+    * > {
+      width: 100%;
     }
   }
 }

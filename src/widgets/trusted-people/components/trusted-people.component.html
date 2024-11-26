@@ -1,39 +1,121 @@
+<form class="form-group" [formGroup]="keyIdForm" (keyup.enter)="onSubmit()">
+  <input type="text" id="keyId" formControlName="keyId" autocomplete="keyId" placeholder="KeyId" />
+  <button
+    (click)="onSubmit()"
+    class="btn-primary"
+    [orgText]="{
+        ENG: 'Add trusted person',
+        ESP: 'Agregar un usuario de confianza',
+        RUS: 'Добавить доверенного пользователя',
+      }"
+  >
+    Add a trusted person
+  </button>
+
+  <!-- [class.validation-error]="isValidControl('login')" -->
+  <!-- @if (isValidControl('login')) {
+          <p class="error-message">{{getErrorMessage('login')}}</p>
+        } -->
+</form>
+
 <div class="people">
-  <div class="people-title" [orgText]="{
+  <!-- <div
+    class="people-title"
+    [orgText]="{
     ENG: 'You receive notifications from these users',
     ESP: 'Recibes notificaciones de estos usuarios',
     RUS: 'Вы получаете уведомления от этих пользователей',
-  }">You receive notifications from these users</div>
+  }"
+  >
+    You receive notifications from these users
+  </div> -->
 
-  @for (person of trustedPeopleList; track person.id) {
-    <div class="person">
-      @if (person.image) {
-        <img class="person-image" [srcPath]="person.image">
-      } @else {
-        <org-empty-avatar [id]="person.id"></org-empty-avatar>
-      }
+  @for (person of trustedPeople$ | async; track person?.keyId || 'unknown') {
+  <div class="person">
+    @if (person?.image) {
+    <!-- <img class="person-image" [srcPath]="person.image" /> -->
+    <img [src]="person?.image" class="person-image" (click)="imageModal.show()" />
+    <org-image-modal #imageModal [imageUrl]="person?.image"></org-image-modal>
+    } @else {
+    <org-empty-avatar [id]="+person.keyId"></org-empty-avatar>
+    }
 
-      <div class="person-text">
-        <div class="person-text_name">{{person.username}}</div>
-        <div class="person-text_email">{{person.email}}</div>
-        <div class="person-text_checkbox">
-          <p class="person-text_checkbox--text" [orgText]="{
+    <div class="person-text">
+      <div class="person-text_name">{{ person?.username }}</div>
+      <div class="person-text_email">{{ person?.email }}</div>
+      <div class="person-text_keyId">{{ person?.keyId }}</div>
+      <div class="person-text_checkbox">
+        <p
+          class="person-text_checkbox--text"
+          [orgText]="{
+              ENG: 'This user receives notifications from you',
+              ESP: 'Este usuario recibe notificaciones tuyas',
+              RUS: 'Этот пользователь получает уведомления от вас',
+            }"
+        >
+          This user receives notifications from you
+        </p>
+        <org-checkbox (change)="onCheckboxChange($event)" [initialValue]="person.displayed"></org-checkbox>
+      </div>
+      <button
+        class="person-text_media"
+        (click)="goToTrustedPersonMedia(person.keyId)"
+        [orgText]="{
+            ENG: 'Saved media',
+            ESP: 'Medios guardados',
+            RUS: 'Сохранённые медиа',
+          }"
+      >
+        Saved media
+      </button>
+    </div>
+
+    <div class="person-delete">
+      <org-delete-button (delete)="onDelete($event, person.keyId)"></org-delete-button>
+    </div>
+  </div>
+  }
+
+  <!-- @for (person of trustedPeopleList; track person.id) {
+  <div class="person">
+    @if (person.image) {
+    <img class="person-image" [srcPath]="person.image" />
+    } @else {
+    <org-empty-avatar [id]="person.id"></org-empty-avatar>
+    }
+
+    <div class="person-text">
+      <div class="person-text_name">{{ person.username }}</div>
+      <div class="person-text_email">{{ person.email }}</div>
+      <div class="person-text_checkbox">
+        <p
+          class="person-text_checkbox--text"
+          [orgText]="{
             ENG: 'This user receives notifications from you',
             ESP: 'Este usuario recibe notificaciones tuyas',
             RUS: 'Этот пользователь получает уведомления от вас',
-          }">This user receives notifications from you</p>
-          <org-checkbox (change)="onCheckboxChange($event)" [initialValue]="person.activeListener"></org-checkbox>
-        </div>
-        <button class="person-text_media" routerLink="/trusted-profile" [orgText]="{
+          }"
+        >
+          This user receives notifications from you
+        </p>
+        <org-checkbox (change)="onCheckboxChange($event)" [initialValue]="person.activeListener"></org-checkbox>
+      </div>
+      <button
+        class="person-text_media"
+        routerLink="/trusted-profile"
+        [orgText]="{
           ENG: 'Saved media',
           ESP: 'Medios guardados',
           RUS: 'Сохранённые медиа',
-        }">Saved media</button>
-      </div>
-
-      <div class="person-delete">
-        <org-delete-button (delete)="onDelete($event, person.username)"></org-delete-button>
-      </div>
+        }"
+      >
+        Saved media
+      </button>
     </div>
-  }
+
+    <div class="person-delete">
+      <org-delete-button (delete)="onDelete($event, person.username)"></org-delete-button>
+    </div>
+  </div>
+  } -->
 </div>

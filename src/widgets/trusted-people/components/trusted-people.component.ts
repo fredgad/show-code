@@ -1,67 +1,105 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ImageDirective, TextDirective } from '@shared/directives';
 import { EmptyAvatarComponent } from '@features/empty-avatar';
 import { DeleteButtonComponent } from '@features/delete-button';
 import { CheckboxComponent } from '@features/checkbox';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AppStoreFacade } from '@store';
+import { Observable, Subscription } from 'rxjs';
+import { ImageModalComponent } from '@features/image-modal';
+import { TrustedPersonI, TrustedPersonIN } from '@shared/interfaces';
+
+interface TrustedUserI {
+  _id: string;
+  username: string;
+  email: string;
+  image: string;
+  displayed: boolean;
+  keyId: string;
+}
 
 @Component({
   selector: 'org-trusted-people',
   standalone: true,
-  imports: [CommonModule, ImageDirective, EmptyAvatarComponent, TextDirective, DeleteButtonComponent, CheckboxComponent, RouterModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ImageDirective,
+    EmptyAvatarComponent,
+    TextDirective,
+    DeleteButtonComponent,
+    CheckboxComponent,
+    RouterModule,
+    ImageModalComponent
+  ],
   templateUrl: './trusted-people.component.html',
   styleUrl: './trusted-people.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TrustedPeopleComponent {
-  public trustedPeopleList = [
-    {
-      id: 6421,
-      username: 'Fred Friend',
-      email: 'fsaf@mail.org',
-      image: 'img_1.webp',
-      activeListener: true
-    },
-    {
-      id: 51232,
-      username: 'Fred Friend 2',
-      email: 'fsaf@mail.org',
-      image: '',
-      activeListener: false
-    },
-    {
-      id: 2141323,
-      username: 'Fred Friend 3',
-      email: 'safsad@mail.org',
-      image: '',
-      activeListener: true
-    },
-    {
-      id: 4231,
-      username: 'Fred Friend 4',
-      email: 'fsaf@mail.org',
-      image: '',
-      activeListener: true
-    },
-    {
-      id: 25,
-      username: 'Fred Friend 5',
-      email: 'fsaf@mail.org',
-      image: '',
-      activeListener: false
-    },
-  ];
+export class TrustedPeopleComponent implements OnDestroy {
+  private formBuilder = inject(FormBuilder);
+  private appStoreFacade = inject(AppStoreFacade);
+  private router = inject(Router);
 
+  private subscription?: Subscription;
+
+  public trustedPeople$: Observable<TrustedPersonI[]> = this.appStoreFacade.trustedPeople$;
   public isChecked = false;
 
+  public keyIdForm: FormGroup = this.formBuilder.group({
+    keyId: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]]
+  });
 
-  public onCheckboxChange(event: Event): void {  // change trusted notifications here
-    const isChecked = (event.target as HTMLInputElement).checked;
-
+  ngOnInit(): void {
+    // this.trustedPeople$
+    //   .pipe(
+    //     map(trustedPeople => trustedPeople.map(person => person.keyId)),
+    //     distinctUntilChanged((prev, curr) => {
+    //       console.log(prev, curr, 'prev, curr');
+    //       return JSON.stringify(prev) === JSON.stringify(curr);
+    //     }),
+    //     filter(keyIds => keyIds.length > 0)
+    //   )
+    //   .subscribe(keyIds => {
+    //     console.log('keyIds', keyIds);
+    //     this.appStoreFacade.getTrustedUsersByKeyIds(keyIds);
+    //   });
   }
 
-  public onDelete(event: boolean, username: string): void { //    delete trusted user here.
+  public onSubmit(): void {
+    if (this.keyIdForm.valid) {
+      const data = {
+        keyId: this.keyIdForm.value.keyId
+      };
 
+      this.appStoreFacade.addUserByKeyId(this.keyIdForm.value.keyId);
+
+      this.keyIdForm.reset();
+    } else {
+      console.log(this.keyIdForm.value, this.keyIdForm.get('key'), 'Add user by key Form error');
+    }
+  }
+
+  public onCheckboxChange(event: Event): void {
+    // change trusted notifications here
+    const isChecked = (event.target as HTMLInputElement).checked;
+  }
+
+  public goToTrustedPersonMedia(keyId: string): void {
+    this.router.navigate(['/trusted-profile', keyId]);
+  }
+
+  public onDelete(event: boolean, keyId: string): void {
+    if (event) {
+      this.appStoreFacade.removeTrustedUser(keyId);
+    }
+  }
+
+  public ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

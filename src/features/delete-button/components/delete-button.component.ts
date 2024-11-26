@@ -10,7 +10,7 @@ import { POPUP_TEXT } from '../common/delete-button.text';
   imports: [CommonModule],
   templateUrl: './delete-button.component.html',
   styleUrl: './delete-button.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeleteButtonComponent implements OnDestroy {
   private confirmService = inject(ConfirmPopupService);
@@ -18,19 +18,19 @@ export class DeleteButtonComponent implements OnDestroy {
 
   @Output() delete = new EventEmitter<boolean>();
 
-  private confirmSubscription?: Subscription; 
+  private subscription?: Subscription;
 
   private popupText = this.langService.textByLanguage(POPUP_TEXT);
 
   public onDel(): void {
-    this.confirmSubscription = this.confirmService.showPopup(this.popupText()).subscribe((confirm) => {
+    this.subscription = this.confirmService.showPopup(this.popupText()).subscribe(confirm => {
       this.delete.emit(confirm);
-    })
+    });
   }
-     
+
   public ngOnDestroy(): void {
-    if (this.confirmSubscription) {
-      this.confirmSubscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 }

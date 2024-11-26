@@ -7,14 +7,15 @@ import { getFormControlErrorMessage, isValidFormControl } from '@shared/helpers'
 import { LangEnum } from '@shared/interfaces';
 import { TextDirective } from '@shared/directives';
 import { AppStoreFacade } from '@store';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'org-authorization',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, ReactiveFormsModule, TextDirective],
+  imports: [CommonModule, HeaderComponent, ReactiveFormsModule, TextDirective, RouterModule],
   templateUrl: './authorization.component.html',
   styleUrl: './authorization.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthorizationComponent implements AfterViewInit {
   private formBuilder = inject(FormBuilder);
@@ -22,28 +23,30 @@ export class AuthorizationComponent implements AfterViewInit {
   private langService = inject(LangService);
   private authService = inject(AuthService);
   private appStoreFacade = inject(AppStoreFacade);
-  
+
   @ViewChild('password') private password!: ElementRef<HTMLInputElement>;
-  
+
   public userName$i: WritableSignal<string> = this.userNameService.getUserName;
-  
+
   public language!: LangEnum;
   public authForm: FormGroup;
   public isSubmited = false;
 
   constructor() {
-    this.authForm =  this.formBuilder.group({
+    this.authForm = this.formBuilder.group({
       login: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
-    effect(() => { // the way to get signal value of current language for forms
+    effect(() => {
+      // the way to get signal value of current language for forms
       this.language = this.langService.getLang$i();
     });
   }
 
   public ngAfterViewInit(): void {
     if (this.userName$i()) {
+      this.authForm.patchValue({ login: this.userName$i() });
       this.password.nativeElement.focus();
     }
   }
@@ -53,11 +56,11 @@ export class AuthorizationComponent implements AfterViewInit {
       const userValue = {
         login: this.authForm.value.login,
         password: this.authForm.value.password
-      }
-      
+      };
+
       console.log('Authhorization data:', userValue);
       this.appStoreFacade.auth(userValue);
-      
+
       // this.authService.getUsers().subscribe((users) => {
       //   console.log(users, 'getUsers users')
       //   this.authForm.reset();
@@ -66,7 +69,7 @@ export class AuthorizationComponent implements AfterViewInit {
     } else {
       // Display an error message or take appropriate action for invalid form
       this.isSubmited = true;
-      console.log(this.authForm.value, this.authForm.get('email'), 'registrationForm')
+      console.log(this.authForm.value, this.authForm.get('email'), 'registrationForm');
     }
   }
 
@@ -75,6 +78,6 @@ export class AuthorizationComponent implements AfterViewInit {
   }
 
   public getErrorMessage(controlName: string): string | null {
-    return getFormControlErrorMessage(controlName, this.authForm, this.language)
+    return getFormControlErrorMessage(controlName, this.authForm, this.language);
   }
 }

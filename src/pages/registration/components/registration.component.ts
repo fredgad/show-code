@@ -7,16 +7,17 @@ import { ImageDirective, TextDirective } from '@shared/directives';
 import { HeaderComponent } from '@widgets/header';
 import { LangEnum } from '@shared/interfaces';
 import { AppStoreFacade } from '@store';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'org-registration',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HeaderComponent, ImageDirective, TextDirective],
+  imports: [CommonModule, ReactiveFormsModule, HeaderComponent, ImageDirective, TextDirective, RouterModule],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { 
-    'class': 'page' 
+  host: {
+    class: 'page'
   }
 })
 export class RegistrationComponent {
@@ -36,7 +37,7 @@ export class RegistrationComponent {
   public language!: LangEnum;
 
   constructor() {
-    this.registrationForm =  this.formBuilder.group({
+    this.registrationForm = this.formBuilder.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -49,7 +50,7 @@ export class RegistrationComponent {
   }
 
   public ngOnInit(): void {
-    this.registrationForm.patchValue({name: this.userName$i()});
+    this.registrationForm.patchValue({ name: this.userName$i() });
   }
 
   public ngAfterViewInit(): void {
@@ -64,8 +65,8 @@ export class RegistrationComponent {
         username: this.registrationForm.value.name,
         email: this.registrationForm.value.email,
         password: this.registrationForm.value.password
-      }
-      
+      };
+
       this.appStoreFacade.register(userValue);
 
       // this.registrationForm.reset();
@@ -73,9 +74,8 @@ export class RegistrationComponent {
     } else {
       // Display an error message or take appropriate action for invalid form
       this.isSubmited = true;
-      console.log(this.registrationForm.value, this.registrationForm.get('email'), 'registrationForm')
+      console.log(this.registrationForm.value, this.registrationForm.get('email'), 'registrationForm');
       // alert('Please fill in all the required fields correctly.');
-      
     }
   }
 
@@ -84,6 +84,6 @@ export class RegistrationComponent {
   }
 
   public getErrorMessage(controlName: string): string | null {
-    return getFormControlErrorMessage(controlName, this.registrationForm, this.language)
+    return getFormControlErrorMessage(controlName, this.registrationForm, this.language);
   }
 }

@@ -3,12 +3,11 @@
 <div class="wrapper" [class.--mobile]="isMobile$ | async" *ngIf="userData$ | async as userData">
   <div class="profile container">
     <div class="profile-header">
-      
       <div class="profile-header_image">
         @if (userData.image) {
-          <img [src]="userData.image"/>
+        <img [src]="userData.image" />
         } @else {
-          <img [srcPath]="'camera.svg'"/>
+        <img [srcPath]="'camera.svg'" />
         }
       </div>
       <div class="profile-header_data">
@@ -22,42 +21,80 @@
           <span>Tarif:</span>
           <span>Basic</span>
         </div>
+        <div class="profile-header_data--email">
+          <span>KeyId: </span>
+          <span>{{ userData.keyId }}</span>
+        </div>
       </div>
 
-
       <div class="profile-header_buttons">
-        <button class="profile-header_buttons--settings" routerLink="/settings">
+        <!-- <button class="profile-header_buttons--settings" routerLink="/settings">
           <abbr [title]="abbrTitle$i()">
-            <img [srcPath]="'settings-icon.svg'">
+            <img [srcPath]="'settings-icon.svg'" />
           </abbr>
-        </button>
+        </button> -->
 
-        <button class="profile-header_buttons--record btn-primary" routerLink="/capture" [orgText]="{
+        <button
+          class="profile-header_buttons--record btn-primary"
+          routerLink="/capture"
+          [orgText]="{
           ENG: 'Make an entry',
           ESP: 'Hacer una entrada',
           RUS: 'Сделать запись',
-        }">Make an entry</button>
+        }"
+        >
+          Make an entry
+        </button>
       </div>
     </div>
-    
+
     <div class="profile-body">
       <div class="profile-body_menu" (click)="onMenuClick()" [class.--openMenu]="isMenuOpen">
         <div class="profile-body_menu--arrow"></div>
-        <button routerLink="/profile/saved-media" routerLinkActive="active" [orgText]="{
+        <button
+          routerLink="/profile/saved-media"
+          routerLinkActive="active"
+          [orgText]="{
           ENG: 'Saved media',
           ESP: 'Medios guardados',
           RUS: 'Сохранённые медиа',
-        }">Saved media</button>
-        <button routerLink="/profile/trusted-people" routerLinkActive="active" [orgText]="{
+        }"
+        >
+          Saved media
+        </button>
+        <button
+          routerLink="/profile/trusted-people"
+          routerLinkActive="active"
+          [orgText]="{
           ENG: 'Trusted people',
           ESP: 'Gente de confianza',
           RUS: 'Доверенные люди',
-        }">Trusted people</button>
-        <button routerLink="/profile/notification-settings" routerLinkActive="active" [orgText]="{
+        }"
+        >
+          Trusted people
+        </button>
+        <button
+          routerLink="/profile/requests"
+          routerLinkActive="active"
+          [orgText]="{
+          ENG: 'Requests',
+          ESP: 'Demandas',
+          RUS: 'Запросы',
+        }"
+        >
+          Requests
+        </button>
+        <button
+          routerLink="/profile/notification-settings"
+          routerLinkActive="active"
+          [orgText]="{
           ENG: 'Notification settings',
           ESP: 'Configuración de alerta',
           RUS: 'Настройки оповещений',
-        }">Notification settings</button>
+        }"
+        >
+          Notification settings
+        </button>
       </div>
 
       <div class="profile-body_sections">

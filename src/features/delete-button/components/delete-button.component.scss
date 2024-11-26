@@ -8,17 +8,17 @@
   @include unselectable;
 
   &::after {
-    content: "+";
-    min-height: 16px;
-    height: 16px;
-    min-width: 16px;
-    width: 16px;
+    content: '+';
+    min-height: 20px;
+    height: 20px;
+    min-width: 20px;
+    width: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     color: $red-color;
-    border: 2px solid $prime-grey;
-    font-size: 20px;
+    border: 1px solid $prime-grey;
+    font-size: 18px;
     font-family: Roboto, sans-serif;
     transform: rotate(45deg);
     border-radius: 50%;

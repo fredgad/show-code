@@ -1,16 +1,31 @@
-<div class="header">
+<header class="header">
   <org-logo [linkToMain]="true" [isTitle]="(isMobile$ | async) === false"></org-logo>
   <div class="header-buttons">
     @if (!isLoggedIn) {
-      <button class="header-buttons_auth" (click)="goToPath('/auth')" [orgText]="{
+    <button
+      class="header-buttons_auth"
+      (click)="goToPath('/auth')"
+      [orgText]="{
         ENG: 'AUTHORIZATION',
         ESP: 'AUTORIZACIÓN',
         RUS: 'АВТОРИЗАЦИЯ'
-      }">AUTHORIZATION</button>
+      }"
+    >
+      AUTHORIZATION
+    </button>
     }
 
     <org-lang></org-lang>
 
-    <button class="header-buttons_auth" (click)="goToPath('/profile')"><img [srcPath]="'empty-avatar.svg'"></button>
+    <button class="header-buttons--settings" routerLink="/settings">
+      <abbr [title]="abbrTitle$i()">
+        <img [srcPath]="'settings-icon.svg'" />
+      </abbr>
+    </button>
+
+    <button class="header-buttons_auth" (click)="goToPath('/profile')">
+      <!-- <span>{{ (userData$ | async)?.username }}</span> -->
+      <img [srcPath]="'empty-avatar.svg'" />
+    </button>
   </div>
-</div>
+</header>

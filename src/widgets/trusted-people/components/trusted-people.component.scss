@@ -1,8 +1,25 @@
 @import 'mixins';
 
+form {
+  display: flex;
+  // justify-content: center;
+  align-items: center;
+  padding: 8px;
+  input {
+    margin: 4px;
+    height: 40px;
+    padding: 8px;
+  }
+}
+
 .people {
   display: flex;
   flex-direction: column;
+  height: 100dvh;
+  max-height: 65dvh;
+  overflow-x: auto;
+  box-shadow: inset 4px -5px 5px -5px, inset 0px 5px 5px -5px;
+  border-radius: 8px;
 
   &-title {
     font-size: 18px;
@@ -14,11 +31,16 @@
     position: relative;
     display: flex;
     flex-direction: row;
+
+    border: 1px solid grey;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 8px;
     padding: 16px;
 
-    &:nth-child(2n) {
-      background: $super-transparent-grey;
-    }
+    // &:nth-child(2n) {
+    //   background: $super-transparent-grey;
+    // }
 
     &-image {
       width: 60px;
@@ -43,7 +65,6 @@
       margin-left: 10px;
       width: 100%;
 
-
       &_name {
         cursor: pointer;
       }
@@ -51,7 +72,7 @@
       &_email {
         cursor: pointer;
       }
-  
+
       &_checkbox {
         display: flex;
         justify-content: space-between;
@@ -84,15 +105,14 @@
     &-delete {
       position: absolute;
       right: 16px;
-      
+
       margin-left: auto;
       width: 30px;
       height: 30px;
 
-      org-delete-button{
+      org-delete-button {
         height: 100%;
       }
     }
-    
   }
 }

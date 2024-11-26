@@ -1,9 +1,7 @@
 @import 'mixins';
 
 .saved {
-
   &-buttons {
-
     button {
       height: 45px;
       width: 50%;
@@ -16,7 +14,7 @@
         color: $prime-green;
       }
     }
-  
+
     &_video {
       border-right: 1px solid $transparent-grey !important;
     }

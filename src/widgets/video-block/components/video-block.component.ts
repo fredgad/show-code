@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoComponent } from '@features/video';
+import { VideoSuccessUploadI } from '@shared/interfaces';
+import { AppStoreFacade } from '@store';
 
 @Component({
   selector: 'org-video-block',
@@ -8,13 +10,11 @@ import { VideoComponent } from '@features/video';
   imports: [CommonModule, VideoComponent],
   templateUrl: './video-block.component.html',
   styleUrl: './video-block.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VideoBlockComponent {
-  public videoList = [
-    'SampleVideo_1280x720_1mb.mp4',
-    'SampleVideo_1280x720_2mb.mp4',
-    'SampleVideo_1280x720_5mb.mp4',
-    'SampleVideo_1280x720_5mb.mp4',
-    'SampleVideo_1280x720_5mb.mp4'
-  ];
+  @Input() isOwn: boolean = false;
+  @Input() videos: VideoSuccessUploadI[] = [];
+
+  public userData$ = inject(AppStoreFacade).userData$;
 }

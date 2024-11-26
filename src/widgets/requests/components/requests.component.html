@@ -1,0 +1,65 @@
+<div class="requests container">
+  <div class="requests-buttons">
+    <button
+      class="requests-buttons_video"
+      routerLink="/profile/requests/incoming"
+      routerLinkActive="active"
+      [orgText]="{
+      ENG: 'Incoming',
+      ESP: 'Entrante',
+      RUS: 'Входящие',
+    }"
+    >
+      Incoming
+    </button>
+    <button
+      routerLink="/profile/requests/outgoing"
+      routerLinkActive="active"
+      [orgText]="{
+      ENG: 'Outgoing',
+      ESP: 'Saliente',
+      RUS: 'Исходящие',
+    }"
+    >
+      Outgoing
+    </button>
+  </div>
+
+  <router-outlet></router-outlet>
+</div>
+
+<!-- <div class="requests">
+  <div
+    class="requests-title"
+    [orgText]="{
+    ENG: 'Setting up alerts in other ways',
+    ESP: 'Configurar alertas de otras formas',
+    RUS: 'Настройка оповещений другими способами',
+  }"
+  >
+    Setting up alerts in other ways
+  </div>
+
+  <div class="requests-email">
+    <div
+      class="requests-email_text"
+      [orgText]="{
+      ENG: 'Add email:',
+      ESP: 'Agregar correo:',
+      RUS: 'Добавить email:',
+    }"
+    >
+      Add email:
+    </div>
+
+    <div class="tags">
+      <div class="tags-list">
+        <span class="tags-list_tag" *ngFor="let tag of tags">
+          {{ tag }}
+          <button (click)="removeTag(tag)">×</button>
+        </span>
+      </div>
+      <input class="tags-input" type="text" (keydown.enter)="addTag($event)" [placeholder]="inputPlaceholder$i()" />
+    </div>
+  </div>
+</div> -->

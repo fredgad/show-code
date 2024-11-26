@@ -1,4 +1,4 @@
-@import "mixins";
+@import 'mixins';
 
 .wrapper {
   display: flex;
@@ -13,44 +13,53 @@
     max-width: 400px;
     margin: 0 auto;
     background-color: $white;
-    padding: 30px;
+    padding: 24px;
     @include w-mobile {
       padding: 16px;
     }
     border: 1px solid $prime-grey;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  
+
     h2 {
       text-align: center;
       margin-bottom: 20px;
-      font-size: 20px;
+      font-size: 22px;
     }
-  
+
     form {
       display: flex;
       flex-direction: column;
-  
+
       .form-group {
         margin-bottom: 20px;
-  
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
+
+        input[type='text'],
+        input[type='email'],
+        input[type='password'] {
           width: 100%;
           padding: 6px;
           border: 1px solid #ccc;
           border-radius: 4px;
         }
       }
-  
+
       .form-check {
         margin-bottom: 5px;
-  
+
         .form-check-input {
           margin-right: 5px;
         }
       }
+    }
+
+    .--go-reg {
+      display: flex;
+      margin-top: 24px;
+      color: $prime-green;
+      background: transparent;
+      border: none;
+      cursor: pointer;
     }
   }
 }

@@ -9,7 +9,7 @@
   left: 0;
   width: 100dvw;
   height: 100dvh;
-  background: rgba(0, 0, 0, 0.100);
+  background: rgba(0, 0, 0, 0.1);
   z-index: $popup-zi;
 
   .dialog {
@@ -20,7 +20,7 @@
     width: 300px;
     min-height: 200px;
     @include org-border;
-    padding: 30px;
+    padding: 24px;
     background: white;
 
     &-message {
@@ -29,12 +29,12 @@
 
     &-buttons {
       margin-top: 30px;
-      
+
       button {
         padding-left: 20px;
         padding-right: 20px;
       }
-      
+
       .btn-secondary {
         margin-right: 10px;
       }

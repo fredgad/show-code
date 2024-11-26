@@ -1,17 +1,33 @@
 <div class="saved container">
-
   <div class="saved-buttons">
-    <button class="saved-buttons_video" routerLink="/profile/saved-media/video" routerLinkActive="active" [orgText]="{
+    <button
+      class="saved-buttons_video"
+      (click)="changeTab(0)"
+      [class.active]="!currentTab"
+      [orgText]="{
       ENG: 'Video',
       ESP: 'Video',
       RUS: 'Видео',
-    }">Video</button>
-    <button routerLink="/profile/saved-media/audio" routerLinkActive="active" [orgText]="{
+    }"
+    >
+      Video
+    </button>
+    <button
+      (click)="changeTab(1)"
+      [class.active]="currentTab"
+      [orgText]="{
       ENG: 'Audio',
       ESP: 'Audio',
       RUS: 'Аудио',
-    }">Audio</button>
+    }"
+    >
+      Audio
+    </button>
   </div>
 
-  <router-outlet></router-outlet>
+  @if(currentTab) {
+  <org-audio-block></org-audio-block>
+  } @else {
+  <org-video-block [videos]="(userData$ | async)?.videos || []" [isOwn]="true"></org-video-block>
+  }
 </div>

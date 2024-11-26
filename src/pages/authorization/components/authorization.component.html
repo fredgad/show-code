@@ -2,43 +2,84 @@
 
 <div class="wrapper">
   <div class="container">
-    <h2 [orgText]="{
+    <h2
+      [orgText]="{
       ENG: 'Authorization',
       ESP: 'Authorization',
       RUS: 'Авторизация',
-    }">Authorization</h2>
+    }"
+    >
+      Authorization
+    </h2>
 
     <form [formGroup]="authForm" (ngSubmit)="onSubmit()" (keyup.enter)="onSubmit()">
       <div class="form-group">
-        <label for="login" [orgText]="{
+        <label
+          for="login"
+          [orgText]="{
           ENG: 'Username or email',
           ESP: 'Ddfsrd ',
           RUS: 'Логин или email',
-        }">Username or email</label>
-        <input type="text" id="login" formControlName="login" autocomplete="current-login"
-          [class.validation-error]="isValidControl('login')">
-          @if (isValidControl('login')) {
-            <p class="error-message">{{getErrorMessage('login')}}</p>
-          }
+        }"
+          >Username or email</label
+        >
+        <input
+          type="text"
+          id="login"
+          formControlName="login"
+          autocomplete="current-login"
+          [class.validation-error]="isValidControl('login')"
+        />
+        @if (isValidControl('login')) {
+        <p class="error-message">{{ getErrorMessage('login') }}</p>
+        }
       </div>
 
       <div class="form-group">
-        <label for="password" [orgText]="{
+        <label
+          for="password"
+          [orgText]="{
           ENG: 'Password',
           ESP: 'Pass',
           RUS: 'Пароль',
-        }">Password</label>
-        <input #password type="password" id="password" formControlName="password" autocomplete="current-password"
-          [class.validation-error]="isValidControl('password')">
-          @if (isValidControl('password')) {
-            <p class="error-message">{{getErrorMessage('password')}}</p>
-          }
+        }"
+          >Password</label
+        >
+        <input
+          #password
+          type="password"
+          id="password"
+          formControlName="password"
+          autocomplete="current-password"
+          [class.validation-error]="isValidControl('password')"
+        />
+        @if (isValidControl('password')) {
+        <p class="error-message">{{ getErrorMessage('password') }}</p>
+        }
       </div>
-      <button type="submit" class="btn-primary" [orgText]="{
+      <button
+        type="submit"
+        class="btn-primary"
+        [orgText]="{
         ENG: 'Log in',
         ESP: 'Pass',
         RUS: 'Войти',
-      }">Log in</button>
+      }"
+      >
+        Log in
+      </button>
     </form>
+
+    <button
+      class="--go-reg"
+      [routerLink]="'/registration'"
+      [orgText]="{
+        ENG: 'Registration',
+        ESP: 'Ddfsrdы',
+        RUS: 'Регистрация',
+      }"
+    >
+      Registration
+    </button>
   </div>
 </div>

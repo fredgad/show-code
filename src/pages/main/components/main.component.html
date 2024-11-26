@@ -1,25 +1,35 @@
 <org-header></org-header>
 
 <div class="main flex">
-  <img class="main-logo" [srcPath]="'msr-logo-phone-no-title.svg'"/>
-  <img class="main-title" [srcPath]="logoTitle$i()"/>
- 
+  <img class="main-logo" [srcPath]="'msr-logo-phone-no-title.svg'" />
+  <img class="main-title" [srcPath]="logoTitle$i()" />
+
   <p class="main-text">
-    <span [orgText]="{
-      ENG: '',
-      ESP: '',
-      RUS: '',
-    }"></span>&nbsp;
-    <span class="grey" [orgText]="{
-      ENG: '',
-      ESP: '',
-      RUS: '',
-    }"></span>&nbsp;
-    <span [orgText]="{
-      ENG: '',
-      ESP: '',
-      RUS: '',
-    }"></span>
+    <span
+      [orgText]="{
+        ENG: 'MOBILE',
+        ESP: 'Есп',
+        RUS: 'МОБИЛЬНЫЙ',
+    }"
+      >MOBILE</span
+    >&nbsp;
+    <span
+      class="grey"
+      [orgText]="{
+        ENG: 'REMOTE',
+        ESP: 'Есп',
+        RUS: 'УДАЛЁННЫЙ',
+    }"
+      >REMOTE</span
+    >&nbsp;
+    <span
+      [orgText]="{
+        ENG: 'RECORDER',
+        ESP: 'Есп',
+        RUS: 'РЕГИСТРАТОР',
+    }"
+      >RECORDER</span
+    >
   </p>
 
   <div class="main-registration flex">
@@ -27,116 +37,149 @@
   </div>
 
   <h3 class="main-first_title container">
-    <b [orgText]="{
+    <b
+      [orgText]="{
       ENG: 'MSR:',
       ESP: 'MSR:',
       RUS: 'МУР:',
-    }">MSR:</b>
-    <span [orgText]="{
+    }"
+      >MSR:</b
+    >
+    <span
+      [orgText]="{
       ENG: 'Your Partner in Personal Safety',
       ESP: 'Ddfsrdы',
       RUS: 'Ваш партнёр в персональной безопасности',
-    }">Your Partner in Personal Safety</span>
+    }"
+      >Your Partner in Personal Safety</span
+    >
   </h3>
   <div class="main-first flex wrapper">
-    <p class="main-first_text container" [orgText]="text['innovative']">
+    <p class="main-first_text container" [orgText]="text['innovative']"></p>
 
-    </p>
-
-    <h3 class="benefits-title container" [orgText]="{
+    <h3
+      class="benefits-title container"
+      [orgText]="{
       ENG: 'Who Can Benefit from MSR?',
       ESP: 'Ddfsrdы ыф фыаы фв',
       RUS: 'Кому необходимо наше приложение?',
-    }">Who Can Benefit from MSR?</h3>
+    }"
+    >
+      Who Can Benefit from MSR?
+    </h3>
   </div>
 
   <div class="main-second flex container">
     <div class="benefits">
-      <div class="benefits-item">
-        <img class="logo-img" [srcPath]="'msr-icon-hero.svg'">
-        <div class="benefits-item_title" [orgText]="{
-          ENG: 'For Everyday Heroes',
-          ESP: 'Ddfsrdы ыф фыаы фв',
-          RUS: 'Для повседневных героев',
-        }">For Everyday Heroes</div>
-        <div class="benefits-item_text" [orgText]="text['citizen']">
-
+      <div (click)="toggleText($event)" class="benefits-item --open">
+        <img class="logo-img" [srcPath]="'msr-icon-hero.svg'" />
+        <div class="benefits-item_title">
+          <h3
+            [orgText]="{
+            ENG: 'For Everyday Heroes',
+            ESP: 'Ddfsrdы ыф фыаы фв',
+            RUS: 'Для повседневных героев',
+          }"
+          >
+            For Everyday Heroes
+          </h3>
+          <span class="arrow"></span>
         </div>
+        <div class="benefits-item_text" [orgText]="text['citizen']"></div>
       </div>
-      <div class="benefits-item">
-        <img class="logo-img" [srcPath]="'msr-icon-professional.svg'">
-        <div class="benefits-item_title" [orgText]="{
-          ENG: 'For Professionals in the Field',
-          ESP: 'Ddfsrdы ыф фыаы фв',
-          RUS: 'Для профессионалов в опасных профессиях',
-        }">For Professionals in the Field</div>
-        <div class="benefits-item_text" [orgText]="text['journalists']">
-
+      <div (click)="toggleText($event)" class="benefits-item --open">
+        <img class="logo-img" [srcPath]="'msr-icon-professional.svg'" />
+        <div class="benefits-item_title">
+          <h3
+            [orgText]="{
+              ENG: 'For Professionals in the Field',
+              ESP: 'Ddfsrdы ыф фыаы фв',
+              RUS: 'Для профессионалов в опасных профессиях',
+            }"
+          >
+            For Professionals in the Field
+          </h3>
+          <span class="arrow"></span>
         </div>
+        <div class="benefits-item_text" [orgText]="text['journalists']"></div>
       </div>
-      <div class="benefits-item">
-        <img class="logo-img" [srcPath]="'msr-icon-adventurer.svg'">
-        <div class="benefits-item_title" [orgText]="{
-          ENG: 'For Adventure Seekers',
-          ESP: 'Ddfsrdы ыф фыаы фв',
-          RUS: 'Для искателей приключений',
-        }">For Adventure Seekers</div>
-        <div class="benefits-item_text" [orgText]="text['adventurers']">
-
+      <div (click)="toggleText($event)" class="benefits-item --open">
+        <img class="logo-img" [srcPath]="'msr-icon-adventurer.svg'" />
+        <div class="benefits-item_title">
+          <h3
+            [orgText]="{
+              ENG: 'For Adventure Seekers',
+              ESP: 'Ddfsrdы ыф фыаы фв',
+              RUS: 'Для искателей приключений',
+            }"
+          >
+            For Adventure Seekers
+          </h3>
+          <span class="arrow"></span>
         </div>
+        <div class="benefits-item_text" [orgText]="text['adventurers']"></div>
       </div>
-      <div class="benefits-item">
-        <img class="logo-img" [srcPath]="'msr-icon-safety.svg'">
-        <div class="benefits-item_title" [orgText]="{
-          ENG: 'For the Safety-Conscious Individual',
-          ESP: 'Ddfsrdы ыф фыаы фв',
-          RUS: 'Для людей, заботящихся о персональной безопасности',
-        }">For the Safety-Conscious Individual</div>
-        <div class="benefits-item_text" [orgText]="text['anyone']">
+      <div (click)="toggleText($event)" class="benefits-item --open">
+        <img class="logo-img" [srcPath]="'msr-icon-safety.svg'" />
+        <div class="benefits-item_title">
+          <h3
+            [orgText]="{
+              ENG: 'For the Safety-Conscious Individual',
+              ESP: 'Ddfsrdы ыф фыаы фв',
+              RUS: 'Для людей, заботящихся о персональной безопасности',
+            }"
+          >
+            For the Safety-Conscious Individual
+          </h3>
+          <span class="arrow"></span>
         </div>
+
+        <div class="benefits-item_text" [orgText]="text['anyone']"></div>
       </div>
     </div>
 
-    <h3 class="features-title container" [orgText]="{
-      ENG: 'Features that set MSR apart',
-      RUS: 'Особенности, выделяющие MSR',
-      ESP: 'Características que distinguen a MSR'
-    }">Empowering Security Through Technology</h3>
+    <h3
+      class="features-title container"
+      [orgText]="{
+        ENG: 'Features that set MSR apart',
+        RUS: 'Особенности, выделяющие MSR',
+        ESP: 'Características que distinguen a MSR'
+      }"
+    >
+      Empowering Security Through Technology
+    </h3>
   </div>
 
   <div class="main-third flex wrapper">
     <div class="features container">
-      <div class="features-text" [orgText]="text['discreet']">
-       
-      </div>
+      <div class="features-text" [orgText]="text['discreet']"></div>
 
-      <div class="features-text" [orgText]="text['immediate']">
-       
-      </div>
+      <div class="features-text" [orgText]="text['immediate']"></div>
 
-      <div class="features-text" [orgText]="text['friendly']">
-      </div>
+      <div class="features-text" [orgText]="text['friendly']"></div>
 
-      <div class="features-text" [orgText]="text['quality']">
-      </div>
+      <div class="features-text" [orgText]="text['quality']"></div>
 
-      <div class="features-text" [orgText]="text['advanced']">
-      </div>
+      <div class="features-text" [orgText]="text['advanced']"></div>
     </div>
 
-    <h3 class="world-title container" [orgText]="{
+    <h3
+      class="world-title container"
+      [orgText]="{
       ENG: 'Empowering Security Through Technology',
       ESP: 'Potenciando la seguridad a través de la tecnología',
       RUS: 'Улучшение безопасности при помощи технологий',
-    }">Empowering Security Through Technology</h3>
+    }"
+    >
+      Empowering Security Through Technology
+    </h3>
   </div>
 
   <div class="main-fourth flex wrapper">
     <div class="world container">
-      <div class="world-text" [orgText]="text['world']">
-      </div>
+      <div class="world-text" [orgText]="text['world']"></div>
     </div>
   </div>
-  
+
   <org-footer></org-footer>
 </div>
