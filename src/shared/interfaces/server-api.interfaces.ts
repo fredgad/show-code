@@ -30,7 +30,7 @@ interface StoreUserI {
   incomingReq?: string[];
   trustedPeople?: TrustedPersonIN[];
 
-  videos?: VideoSuccessUploadI[];
+  videos?: VideoDataI[];
 }
 export type StoreUserIN = Nullable<StoreUserI>;
 
@@ -40,7 +40,7 @@ export interface TrustedPersonI {
   username?: string;
   email?: string;
   image?: string;
-  videos?: VideoSuccessUploadI[];
+  videos?: VideoDataI[];
 }
 export type TrustedPersonIN = Nullable<TrustedPersonI>;
 
@@ -90,7 +90,7 @@ export interface ResponseErrorListItemProps {
   Type: string;
 }
 
-export interface VideoSuccessUploadI {
+export interface VideoDataI {
   url: string;
   createdAt: string;
 }

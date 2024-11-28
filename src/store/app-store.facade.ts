@@ -3,7 +3,7 @@ import { select, Store } from '@ngrx/store';
 import { map, Observable } from 'rxjs';
 import * as actions from './app-store.actions';
 import * as selectors from './app-store.selectors';
-import { AuthI, RegisterI, StoreUserIN, TrustedPersonI, TrustedPersonIN } from '@shared/interfaces';
+import { AuthI, RegisterI, StoreUserIN, TrustedPersonI, VideoDataI } from '@shared/interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class AppStoreFacade {
@@ -77,4 +77,8 @@ export class AppStoreFacade {
   // public getVideosByKeyId(keyId): void {
   //   this.store$.dispatch(actions.getVideosByKeyId(keyId));
   // }
+
+  public deleteUserVideo(videoData: VideoDataI): void {
+    this.store$.dispatch(actions.deleteUserVideo({ videoData }));
+  }
 }

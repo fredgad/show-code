@@ -37,6 +37,10 @@ export class SettingsComponent implements OnDestroy {
 
   public ngOnInit(): void {
     this.appStoreFacade.getUserData();
+
+    this.userData$.subscribe(x => {
+      console.log(x, 'userData$');
+    });
   }
 
   public onFileSelected(event: Event): void {

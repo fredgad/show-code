@@ -1,6 +1,6 @@
 <org-header></org-header>
 
-<div class="settings container">
+<div *ngIf="userData$ | async as userData" class="settings container">
   <h2
     [orgText]="{
     ENG: 'Profile settings',
@@ -13,9 +13,9 @@
 
   <div class="settings-avatar">
     <div class="settings-avatar_image">
-      @if ((userData$ | async)?.image) {
-      <img [src]="(userData$ | async)?.image" class="--avatar" (click)="imageModal.show()" />
-      <org-image-modal #imageModal [imageUrl]="(userData$ | async)?.image"></org-image-modal>
+      @if (userData?.image) {
+      <img [src]="userData?.image" class="--avatar" (click)="imageModal.show()" />
+      <org-image-modal #imageModal [imageUrl]="userData?.image"></org-image-modal>
       } @else { @if (image) {
       <img [src]="image" />
       } @else {
@@ -64,8 +64,10 @@
     >
       Change your login:
     </p>
-    <input type="text" value="Fred Gad" />
-    <img class="--pencil" [srcPath]="'pencil-edit.svg'" />
+    <div>
+      <input type="text" [value]="userData.username" />
+      <img class="--pencil" [srcPath]="'pencil-edit.svg'" />
+    </div>
   </div>
 
   <div class="settings-email --shadow">
@@ -78,11 +80,13 @@
     >
       Change your email:
     </p>
-    <input type="text" value="fred11@mail.ru" />
-    <img class="--pencil" [srcPath]="'pencil-edit.svg'" />
+    <div>
+      <input type="text" [value]="userData.email" />
+      <img class="--pencil" [srcPath]="'pencil-edit.svg'" />
+    </div>
   </div>
 
-  <div class="settings-password --shadow">
+  <!-- <div class="settings-password --shadow">
     <p
       [orgText]="{
       ENG: 'Change your password:',
@@ -92,9 +96,36 @@
     >
       Change your password:
     </p>
-    <input type="password" value="214ывфып123" />
+    <div>
+      <input type="password" value="214ывфып123" />
+      <img class="--pencil" [srcPath]="'pencil-edit.svg'" />
+    </div>
+  </div> -->
 
-    <img class="--pencil" [srcPath]="'pencil-edit.svg'" />
+  <h2
+    [orgText]="{
+    ENG: 'Profile settings',
+    ESP: 'Configuración de perfil',
+    RUS: 'Общие',
+  }"
+  >
+    Profile settings
+  </h2>
+
+  <div class="settings-login --shadow">
+    <p
+      [orgText]="{
+      ENG: 'Change your login:',
+      ESP: 'Cambia tu inicio de sesión:',
+      RUS: 'Время запроса на удаление видео:',
+    }"
+    >
+      Change your login:
+    </p>
+    <div>
+      <input type="text" value="72h" />
+      <img class="--pencil" [srcPath]="'pencil-edit.svg'" />
+    </div>
   </div>
 
   <div class="settings-logout">

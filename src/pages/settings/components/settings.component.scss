@@ -19,12 +19,16 @@
 .settings {
   display: flex;
   flex-direction: column;
+
   margin-top: 12dvh;
   min-height: 86dvh;
   margin-bottom: 2dvh;
+  width: 90dvw;
+  max-width: 600px;
   box-sizing: border-box;
   padding: 24px;
   @include w-mobile {
+    width: 100%;
     padding: 16px;
     border: none;
     box-shadow: none;
@@ -38,44 +42,64 @@
   }
 
   .--shadow {
+    // &:hover {
+    //   box-shadow: inset 4px -5px 5px -5px, inset 0px 5px 5px -5px;
+    // }
+  }
+
+  .--shadow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
     padding: 8px;
     border-radius: 8px;
     box-shadow: inset 0px -5px 5px -5px;
     transition: 0.4s;
 
+    > div {
+      display: flex;
+      align-items: center;
+    }
+
     p {
-      width: 170px;
+      font-size: 18px;
+      width: 185px;
     }
 
     input {
+      margin-left: 15px;
+      border: none;
+      max-height: 30px;
       border: 1px solid grey;
       border-radius: 8px;
       width: 300px;
       padding: 4px;
     }
 
-    // &:hover {
-    //   box-shadow: inset 4px -5px 5px -5px, inset 0px 5px 5px -5px;
-    // }
-  }
-
-  > div {
-    display: flex;
-    flex-direction: row;
-    // border-bottom: 1px solid grey;
-    margin: 15px 0;
-
-    p {
-      font-size: 18px;
-    }
-
-    input {
-      margin-left: 15px;
-      border: none;
-    }
-
     .--pencil {
       margin-left: auto;
+    }
+
+    @include w-mobile {
+      flex-direction: column;
+      align-items: none;
+      padding: 3px;
+      box-shadow: inset 0px -5px 2px -5px;
+      // border: 2px solid red;
+
+      > div {
+        width: 100%;
+      }
+
+      input {
+        margin-left: 0;
+      }
+
+      p {
+        width: 100%;
+      }
     }
   }
 
@@ -121,5 +145,6 @@
   &-logout {
     display: flex;
     justify-content: center;
+    margin-top: 24px;
   }
 }

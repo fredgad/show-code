@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  
+
   width: 100%;
   max-width: 900px;
   min-height: 90dvh;
@@ -20,9 +20,7 @@
     height: 70dvh;
   }
 
-
   &-controls {
-
     &_timer {
       display: flex;
       justify-content: center;
@@ -39,25 +37,25 @@
 
       button {
         @include unselectable;
-        height: fit-content;
+        // height: fit-content;
       }
 
       &--switch {
         margin-right: 30px;
         text-align: center;
         cursor: pointer;
-        
+
         &:hover > img {
           transform: scale(1.15);
         }
         img {
-          transition: .2s;
+          transition: 0.2s;
           height: 45px;
           width: 45px;
         }
       }
     }
-  
+
     &_camera {
       text-align: center;
     }

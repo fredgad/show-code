@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { StoreUserIN, VideoSuccessUploadI } from '@shared/interfaces';
+import { StoreUserIN, VideoDataI } from '@shared/interfaces';
 
 export const register = createAction('[App] Register', props<{ username: string; email: string; password: string }>());
 export const registerSuccess = createAction('[App] Register Success', props<{ token: string }>());
@@ -41,9 +41,13 @@ export const removeTrustedUserFailure = createAction('[App] Remove trusted user 
 
 // Video
 export const uploadVideo = createAction('[App] Upload video', props<{ formData: FormData }>());
-export const uploadVideoSuccess = createAction('[App] Upload video success', props<{ data: VideoSuccessUploadI }>());
+export const uploadVideoSuccess = createAction('[App] Upload video success', props<{ data: VideoDataI }>());
 export const uploadVideoFailure = createAction('[App] Upload video failure', props<{ error: string }>());
 
 export const getUserVideos = createAction('[App] Get user videos');
-export const getUserVideosSuccess = createAction('[App] Get user videos success', props<{ data: VideoSuccessUploadI }>());
+export const getUserVideosSuccess = createAction('[App] Get user videos success', props<{ data: VideoDataI }>());
 export const getUserVideosFailure = createAction('[App] Get user videos failure', props<{ error: string }>());
+
+export const deleteUserVideo = createAction('[App] Delete user video', props<{ videoData: VideoDataI }>());
+export const deleteUserVideoSuccess = createAction('[App] Delete user video success');
+export const deleteUserVideoFailure = createAction('[App] Delete user video failure', props<{ error: string }>());

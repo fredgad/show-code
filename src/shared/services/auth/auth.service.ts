@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, tap } from 'rxjs';
 import { NotificationService } from '../notification/notification.service';
-import { AuthI, RegisterI, TokenI, StoreUserIN } from '../../interfaces';
+import { AuthI, RegisterI, TokenI, StoreUserIN, VideoDataI } from '../../interfaces';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { Router } from '@angular/router';
 import { APP_API_URL } from '../../constants';
@@ -165,6 +165,18 @@ export class AuthService {
     return this.http.get<any>(`${this.baseUrl}/uploadVideo`).pipe(
       tap(() => {
         this.notificationService.show(`Successfuly get user videos.`);
+      }),
+      catchError(error => {
+        this.notificationService.showError(`Error: ${error}`);
+        throw error;
+      })
+    );
+  }
+
+  public deleteUserVideo(videoData: VideoDataI): Observable<void> {
+    return this.http.post<any>(`${this.baseUrl}/deleteUserVideo`, videoData).pipe(
+      tap(() => {
+        this.notificationService.show(`Successfuly delete video: ${videoData.url}.`);
       }),
       catchError(error => {
         this.notificationService.showError(`Error: ${error}`);

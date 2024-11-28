@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TextDirective } from '@shared/directives';
-import { BASE_VIDEO_PATH } from '@shared/constants';
-import { VideoSuccessUploadI } from '@shared/interfaces';
+import { VideoDataI } from '@shared/interfaces';
+import { AppStoreFacade } from '@store';
+import { NotificationService } from '@shared/services';
 
 @Component({
   selector: 'org-video',
@@ -13,8 +14,11 @@ import { VideoSuccessUploadI } from '@shared/interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VideoComponent {
-  @Input() videoData!: VideoSuccessUploadI;
+  @Input() videoData!: VideoDataI;
   @Input() isOwn: boolean = false;
+
+  private facade = inject(AppStoreFacade);
+  private notification = inject(NotificationService);
 
   public videoDuration: string = '';
 
@@ -38,5 +42,37 @@ export class VideoComponent {
     } else {
       this.videoDuration = 'Unknown';
     }
+  }
+
+  public deleteVideo(videoData: VideoDataI): void {
+    this.facade.deleteUserVideo(videoData);
+  }
+
+  public downloadVideo(): void {
+    if (!this.videoPath) {
+      this.notification.show('Video path is not available.');
+      return;
+    }
+
+    fetch(this.videoPath)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.blob();
+      })
+      .then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = blobUrl;
+        anchor.download = this.videoPath.split('/').pop() || '';
+        anchor.click();
+        URL.revokeObjectURL(blobUrl);
+
+        this.notification.show(`Successfuly download video.`);
+      })
+      .catch(error => {
+        this.notification.showError('Error downloading video. Please try again.');
+      });
   }
 }

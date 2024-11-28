@@ -1,13 +1,9 @@
 <div class="lang">
-  <p class="lang-select">{{currentLang$i()}}</p>
+  <p class="lang-select" (click)="handleLangClick()">{{ currentLang$i() }}</p>
 
-  <div class="lang-options">
+  <div class="lang-options" [class.--open]="isOpen">
     @for (language of languagesList; track language) {
-      <span 
-        (click)="setLanguage(language)" 
-        class="lang-options_item"
-        [class.--current]="currentLang$i() === language"
-      >{{ language }}</span>
+    <span (click)="setLanguage(language)" class="lang-options_item" [class.--current]="currentLang$i() === language">{{ language }}</span>
     }
   </div>
 </div>

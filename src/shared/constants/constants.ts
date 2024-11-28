@@ -2,8 +2,8 @@
 import { LangEnum, LangTextI } from '../interfaces';
 
 // export const APP_API_URL = environment.apiUrl;
-// export const APP_API_URL = 'http://localhost:9000';
-export const APP_API_URL = 'https://msr-server.onrender.com';
+export const APP_API_URL = 'http://localhost:9000';
+// export const APP_API_URL = 'https://msr-server.onrender.com';
 
 export const MOBILE_BREAKPOINT: number = 768;
 

@@ -75,10 +75,17 @@
         background: transparent;
         outline: none;
         border: none;
+        transition: 0.3s;
         cursor: pointer;
 
         &.active {
           color: $prime-green;
+          &:nth-child(1) {
+            box-shadow: inset -8px 0px 5px -5px $transparent-grey;
+          }
+          &:nth-child(2) {
+            box-shadow: inset 8px 0px 5px -5px $transparent-grey;
+          }
         }
       }
 

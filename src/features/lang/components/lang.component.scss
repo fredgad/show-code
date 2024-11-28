@@ -8,22 +8,39 @@
   align-items: center;
   font-weight: bold;
   height: 10dvh;
+  transition: 0s;
   @include unselectable;
 
   &-select {
     color: $prime-grey;
   }
 
-  &:hover > &-options {
+  .--open {
     visibility: visible;
     opacity: 1;
-    transition: visibility 0s 0s, opacity 0s linear;
   }
+
+  // &:hover > &-options {
+  //   visibility: visible;
+  //   opacity: 1;
+  //   transition: visibility 0s 0s, opacity 0s linear;
+  // }
+  // @include w-mobile {
+  //   &:hover > &-options {
+
+  //   }
+  // }
+
+  // &.--hover:hover > &-options {
+  //   visibility: visible;
+  //   opacity: 1;
+  //   transition: visibility 0s 0s, opacity 0s linear;
+  // }
 
   &-options {
     visibility: hidden;
     opacity: 0;
-    transition: visibility 0s 0.8s, opacity 1s linear;
+    // transition: visibility 0s 0.8s, opacity 1s linear;
 
     display: flex;
     flex-direction: column;

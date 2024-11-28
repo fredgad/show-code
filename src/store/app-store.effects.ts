@@ -24,7 +24,8 @@ export class AppStoreEffects {
           actions.cancelRequestSuccess,
           actions.addUserByKeyIdSuccess,
           actions.acceptTrustedUserSuccess,
-          actions.removeTrustedUserSuccess
+          actions.removeTrustedUserSuccess,
+          actions.deleteUserVideoSuccess
         ),
         tap(() => {
           this.facade.getUserData();
@@ -184,6 +185,18 @@ export class AppStoreEffects {
         this.authService.uploadVideo(formData).pipe(
           map(response => actions.uploadVideoSuccess({ data: response })),
           catchError(error => of(actions.uploadVideoFailure({ error })))
+        )
+      )
+    )
+  );
+
+  deleteUserVideo$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.deleteUserVideo),
+      mergeMap(({ videoData }) =>
+        this.authService.deleteUserVideo(videoData).pipe(
+          map(() => actions.deleteUserVideoSuccess()),
+          catchError(error => of(actions.deleteUserVideoFailure({ error })))
         )
       )
     )

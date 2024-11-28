@@ -1,9 +1,9 @@
 import { Component, OnDestroy, Signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { TextDirective } from '@shared/directives';
+import { ImageDirective, TextDirective } from '@shared/directives';
 import { AuthService, ConfirmPopupService, LangService, UserNameService } from '@shared/services';
 import { AppStoreFacade } from '@store';
 import { LOGOUT_POPUP_TEXT } from '@shared/constants';
@@ -12,7 +12,7 @@ import { INPUT_PLACEHOLDER } from '../../common/main.text';
 @Component({
   selector: 'org-main-form',
   standalone: true,
-  imports: [CommonModule, TextDirective, FormsModule],
+  imports: [CommonModule, TextDirective, FormsModule, ImageDirective, RouterModule],
   templateUrl: './main-form.component.html',
   styleUrl: './main-form.component.scss'
 })

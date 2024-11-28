@@ -5,7 +5,8 @@
     <div class="profile-header">
       <div class="profile-header_image">
         @if (userData.image) {
-        <img [src]="userData.image" />
+        <img [src]="userData.image" (click)="imageModal.show()" />
+        <org-image-modal #imageModal [imageUrl]="userData?.image"></org-image-modal>
         } @else {
         <img [srcPath]="'camera.svg'" />
         }
@@ -34,17 +35,30 @@
           </abbr>
         </button> -->
 
-        <button
-          class="profile-header_buttons--record btn-primary"
-          routerLink="/capture"
-          [orgText]="{
-          ENG: 'Make an entry',
-          ESP: 'Hacer una entrada',
-          RUS: 'Сделать запись',
-        }"
-        >
-          Make an entry
+        <button class="profile-header_buttons--record btn-primary" routerLink="/capture">
+          <p class="circles"></p>
+          <span
+            [orgText]="{
+              ENG: 'Start an emergency video recording!',
+              ESP: 'Iniciar la grabación de vídeo de emergencia!',
+              RUS: 'Начать экстренную видео запись!',
+            }"
+          >
+            Начать экстренную видео запись!
+          </span>
         </button>
+        <!-- <button class="profile-header_buttons--audio btn-third" routerLink="/capture">
+          <p class="circles"></p>
+          <span
+            [orgText]="{
+              ENG: 'Start an emergency video recording!',
+              ESP: 'Iniciar la grabación de vídeo de emergencia!',
+              RUS: 'Начать aудио запись!',
+            }"
+          >
+            Начать aудио запись!
+          </span>
+        </button> -->
       </div>
     </div>
 

@@ -1,21 +1,43 @@
 @import 'mixins';
 
 :host {
-
   .registration-profile {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
 
-    .btn-err {
-      margin-left: 5px;
+    &--record {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+
+      .circles {
+        background: red;
+        border-radius: 50%;
+        min-width: 20px;
+        height: 20px;
+        margin-right: 8px;
+        outline: 2px solid;
+      }
+    }
+
+    > div {
+      display: flex;
+      flex-direction: row;
+      margin-top: 5px;
+
+      .btn-err {
+        margin-left: 5px;
+      }
     }
   }
 
   > p {
     display: flex;
     align-items: center;
-    
+
     > * {
       margin-right: 5px;
       display: flex;
@@ -40,16 +62,15 @@
     margin-bottom: 6px;
     font-size: 16px;
   }
-  
-  p {
 
+  p {
     a {
       @include fszV(3);
       font-size: 14px;
       color: $prime-green;
       cursor: pointer;
     }
-    
+
     span {
       @include fszV(3);
       font-size: 14px;

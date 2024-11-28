@@ -1,27 +1,42 @@
 @if (isLoggedIn) {
 <div class="registration-profile">
-  <button
-    class="registration-profile btn-primary"
-    (click)="goToProfile()"
-    [orgText]="{
-      ENG: 'Profile',
-      ESP: 'Profile',
-      RUS: 'Профиль',
+  <button class="registration-profile--record btn-primary" routerLink="/capture">
+    <p class="circles"></p>
+    <span
+      [orgText]="{
+      ENG: 'Start an emergency video recording!',
+      ESP: 'Iniciar la grabación de vídeo de emergencia!',
+      RUS: 'Начать экстренную видео запись!',
     }"
-  >
-    Профиль
+    >
+      Начать экстренную видео запись!
+    </span>
   </button>
-  <button
-    class="registration-profile btn-err"
-    (click)="logout()"
-    [orgText]="{
-      ENG: 'Logout',
-      ESP: 'Salir',
-      RUS: 'Выйти',
-    }"
-  >
-    Выйти
-  </button>
+
+  <div>
+    <button
+      class="registration-profile btn-primary"
+      (click)="goToProfile()"
+      [orgText]="{
+        ENG: 'Profile',
+        ESP: 'Profile',
+        RUS: 'Профиль',
+      }"
+    >
+      Профиль
+    </button>
+    <button
+      class="registration-profile btn-err"
+      (click)="logout()"
+      [orgText]="{
+        ENG: 'Logout',
+        ESP: 'Salir',
+        RUS: 'Выйти',
+      }"
+    >
+      Выйти
+    </button>
+  </div>
 </div>
 } @else {
 <form (submit)="submitUserName($event)" class="main-registration_form">

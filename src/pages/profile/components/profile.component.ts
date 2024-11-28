@@ -7,11 +7,12 @@ import { AuthService, LangService, LocalStorageService, WindowEventsService } fr
 import { AppStoreFacade } from '@store';
 import { Observable } from 'rxjs';
 import { StoreUserIN } from '@shared/interfaces';
+import { ImageModalComponent } from '@features/image-modal';
 
 @Component({
   selector: 'org-profile',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent, ImageDirective, TextDirective, RouterModule],
+  imports: [CommonModule, HeaderComponent, FooterComponent, ImageDirective, TextDirective, RouterModule, ImageModalComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

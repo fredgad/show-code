@@ -1,11 +1,7 @@
-
-
 html {
   -webkit-text-size-adjust: 100%;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-    'Noto Color Emoji';
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   line-height: 1.5;
   tab-size: 4;
   scroll-behavior: smooth;
@@ -19,7 +15,6 @@ body {
   font-family: inherit;
   line-height: inherit;
   margin: 0;
-
 
   // Дублирует миксин org-scrollbar
   &::-moz-scrollbar,
@@ -68,14 +63,14 @@ input {
   border: none;
   border-radius: 5px;
   color: white;
-  background: #4CAF50;
+  background: #4caf50;
   padding: 10px 20px;
   transition: background-color 0.3s ease;
   cursor: pointer;
 }
 
 .mainButton:hover {
-  background: #388E3C;
+  background: #388e3c;
 }
 
 // ::before,
@@ -96,8 +91,7 @@ a {
 }
 
 pre {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    'Liberation Mono', 'Courier New', monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 }
 
 svg {
@@ -114,15 +108,13 @@ pre {
   background-color: rgba(55, 65, 81, 1);
   border-radius: 0.25rem;
   color: rgba(229, 231, 235, 1);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    'Liberation Mono', 'Courier New', monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
   overflow: scroll;
   padding: 0.5rem 0.75rem;
 }
 
 .shadow {
-  box-shadow: 0 0 #0000, 0 0 #0000, 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 org-root {
@@ -165,7 +157,7 @@ org-root {
 
 .btn-primary {
   height: 40px;
-  padding: 10px;
+  padding: 0 10px;
   background-color: #003366; // $prime-blue
   color: #ffffff;
   border: none;
@@ -180,8 +172,8 @@ org-root {
 
 .btn-secondary {
   height: 40px;
-  padding: 10px;
-  background-color: #4CAF50;; // $prime-green
+  padding: 0 10px;
+  background-color: #4caf50; // $prime-green
   color: #ffffff;
   border: none;
   border-radius: 4px;
@@ -189,7 +181,22 @@ org-root {
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #388E3C; // $second-green
+    background-color: #388e3c; // $second-green
+  }
+}
+
+.btn-third {
+  height: 40px;
+  padding: 0 10px;
+  background-color: #ebbd01;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #ffd530;
   }
 }
 

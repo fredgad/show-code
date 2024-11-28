@@ -73,6 +73,23 @@
       margin-left: auto;
 
       &--record {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        .circles {
+          background: red;
+          border-radius: 50%;
+          min-width: 20px;
+          height: 20px;
+          margin-right: 8px;
+          outline: 2px solid;
+        }
+      }
+
+      &--audio {
+        margin-top: 4px;
       }
 
       // &--settings {
@@ -230,7 +247,7 @@
           button {
             height: 45px;
             &.active {
-              background-color: $transparent-grey;
+              // background-color: $transparent-grey;
             }
             &:not(.active) {
               background: transparent;

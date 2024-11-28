@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoComponent } from '@features/video';
-import { VideoSuccessUploadI } from '@shared/interfaces';
+import { VideoDataI } from '@shared/interfaces';
 import { AppStoreFacade } from '@store';
 
 @Component({
@@ -14,7 +14,7 @@ import { AppStoreFacade } from '@store';
 })
 export class VideoBlockComponent {
   @Input() isOwn: boolean = false;
-  @Input() videos: VideoSuccessUploadI[] = [];
+  @Input() videos: VideoDataI[] = [];
 
   public userData$ = inject(AppStoreFacade).userData$;
 }
