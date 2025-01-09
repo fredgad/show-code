@@ -16,6 +16,19 @@
     border: 1px solid grey;
     border-radius: 16px;
     padding: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .buttons {
+      display: flex;
+      width: 100%;
+      justify-content: space-evenly;
+      gap: 16px;
+
+      button {
+        width: 100%;
+      }
+    }
 
     b {
       margin-left: 8px;

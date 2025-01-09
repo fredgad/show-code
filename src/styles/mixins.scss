@@ -81,9 +81,9 @@
 
 @mixin unselectable {
   -webkit-user-select: none; /* Safari */
-  -moz-user-select: none;    /* Firefox */
-  -ms-user-select: none;     /* Internet Explorer/Edge */
-  user-select: none;   
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
 }
 
 @mixin ng-deep {
@@ -110,7 +110,6 @@
   @return unquote($px + 'dvh');
 }
 
-
 $small-width: 768px;
 @mixin w-mobile {
   @media screen and (max-width: $small-width) {
@@ -118,3 +117,9 @@ $small-width: 768px;
   }
 }
 
+@mixin d-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}

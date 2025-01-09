@@ -26,6 +26,7 @@
       "@features/login": ["src/features/login"],
       "@features/logo": ["src/features/logo"],
       "@features/video": ["src/features/video"],
+      "@features/trusted-request": ["src/features/trusted-request"],
       "@pages": ["src/pages"],
       "@pages/authorization": ["src/pages/authorization"],
       "@pages/main": ["src/pages/main"],
@@ -36,11 +37,12 @@
       "@shared": ["src/shared/index.ts"],
       "@shared/constants": ["src/shared/constants"],
       "@shared/directives": ["src/shared/directives"],
+      "@shared/guards": ["src/shared/guards"],
       "@shared/helpers": ["src/shared/helpers"],
       "@shared/interfaces": ["src/shared/interfaces"],
       "@shared/services": ["src/shared/services"],
       "@shared/tokens": ["src/shared/tokens"],
-      "@shared/guards": ["src/shared/guards"],
+      "@store": ["src/store"],
       "@widgets": ["src/widgets"],
       "@widgets/audio-block": ["src/widgets/audio-block"],
       "@widgets/footer": ["src/widgets/footer"],
@@ -49,8 +51,7 @@
       "@widgets/requests": ["src/widgets/requests"],
       "@widgets/saved-media": ["src/widgets/saved-media"],
       "@widgets/trusted-people": ["src/widgets/trusted-people"],
-      "@widgets/video-block": ["src/widgets/video-block"],
-      "@store": ["src/store"]
+      "@widgets/video-block": ["src/widgets/video-block"]
     }
   },
   "exclude": ["node_modules", "tmp"]

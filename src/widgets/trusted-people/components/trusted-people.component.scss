@@ -1,18 +1,5 @@
 @import 'mixins';
 
-form {
-  display: flex;
-  // justify-content: center;
-  align-items: center;
-  padding: 8px;
-  input {
-    margin: 4px;
-    height: 40px;
-    padding: 8px;
-    width: 140px;
-  }
-}
-
 .people {
   display: flex;
   flex-direction: column;

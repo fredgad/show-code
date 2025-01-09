@@ -4,7 +4,9 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
+    "reset": "nx reset",
     "build": "nx build",
+    "deploy": "firebase deploy",
     "test": "npx nx test",
     "dev:ssr": "nx run org:serve-ssr",
     "serve:ssr": "ts-node ./server.ts",
