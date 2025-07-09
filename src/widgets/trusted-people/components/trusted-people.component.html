@@ -1,4 +1,4 @@
-<form class="form-group" [formGroup]="keyIdForm" (keyup.enter)="onSubmit()">
+<!-- <form class="form-group" [formGroup]="keyIdForm" (keyup.enter)="onSubmit()">
   <input type="text" id="keyId" formControlName="keyId" autocomplete="keyId" placeholder="KeyId" />
   <button
     (click)="onSubmit()"
@@ -12,11 +12,13 @@
     Add a trusted person
   </button>
 
-  <!-- [class.validation-error]="isValidControl('login')" -->
-  <!-- @if (isValidControl('login')) {
+  [class.validation-error]="isValidControl('login')"
+  @if (isValidControl('login')) {
           <p class="error-message">{{getErrorMessage('login')}}</p>
-        } -->
-</form>
+        }
+</form> -->
+
+<org-trusted-request></org-trusted-request>
 
 <div class="people">
   <!-- <div

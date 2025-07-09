@@ -16,3 +16,5 @@ export const LOGOUT_POPUP_TEXT: LangTextI = {
   ESP: '¿Está seguro de que desea cerrar sesión?',
   RUS: 'Вы действительно хотите выйти из аккаунта?'
 };
+
+export const VAPID_PUBLIC_KEY = 'BMjIBfz0QCcmGNE32T7hR8l0RDDB4WQUkyLIRzc7qqGby4q4McrDiqRknFsTOPDsy53rioiTsjspXve7k2idJRc';

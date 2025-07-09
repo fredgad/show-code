@@ -149,10 +149,10 @@ export class AuthService {
     );
   }
 
-  public uploadVideo(formData: FormData): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/uploadVideo`, formData).pipe(
+  public uploadVideo(formData: FormData): Observable<VideoDataI> {
+    return this.http.post<VideoDataI>(`${this.baseUrl}/uploadVideo`, formData).pipe(
       tap(() => {
-        this.notificationService.show(`Successfuly upload video: ${formData}.`);
+        // this.notificationService.show(`Successfuly upload video: ${formData}.`);
       }),
       catchError(error => {
         this.notificationService.showError(`Error: ${error}`);
@@ -161,25 +161,37 @@ export class AuthService {
     );
   }
 
-  public getUserVideos(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/uploadVideo`).pipe(
-      tap(() => {
-        this.notificationService.show(`Successfuly get user videos.`);
-      }),
-      catchError(error => {
-        this.notificationService.showError(`Error: ${error}`);
-        throw error;
-      })
-    );
-  }
+  // public getUserVideos(): Observable<any> {
+  //   return this.http.get<any>(`${this.baseUrl}/uploadVideo`).pipe(
+  //     tap(() => {
+  //       this.notificationService.show(`Successfuly get user videos.`);
+  //     }),
+  //     catchError(error => {
+  //       this.notificationService.showError(`Error: ${error}`);
+  //       throw error;
+  //     })
+  //   );
+  // }
 
   public deleteUserVideo(videoData: VideoDataI): Observable<void> {
-    return this.http.post<any>(`${this.baseUrl}/deleteUserVideo`, videoData).pipe(
+    return this.http.post<void>(`${this.baseUrl}/deleteUserVideo`, videoData).pipe(
       tap(() => {
         this.notificationService.show(`Successfuly delete video: ${videoData.url}.`);
       }),
       catchError(error => {
         this.notificationService.showError(`Error: ${error}`);
+        throw error;
+      })
+    );
+  }
+
+  public saveSubscription(subscription: PushSubscription): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/saveSubscription`, { subscription }).pipe(
+      tap(() => {
+        this.notificationService.show(`Successfuly save subscription: ${subscription}.`);
+      }),
+      catchError(error => {
+        this.notificationService.showError(`Error subscription: ${error}`);
         throw error;
       })
     );

@@ -7,3 +7,4 @@ export * from './delete-button';
 export * from './checkbox';
 export * from './image-modal';
 export * from './confirm-popup';
+export * from './trusted-request';

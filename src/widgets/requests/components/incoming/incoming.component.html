@@ -4,9 +4,9 @@
     <div>
       <span
         [orgText]="{
-          ENG: 'You are requesting a user:',
-          ESP: 'Usted solicita al usuario:',
-          RUS: 'Пользователь:',
+          ENG: 'You are requested by user:',
+          ESP: '',
+          RUS: 'Запрос в доверенные пользователи от:',
         }"
       >
         You are requesting a user:
@@ -14,9 +14,29 @@
       <b>{{ req }}</b>
     </div>
 
-    <div>
-      <button (click)="acceptReq(req)" class="btn-secondary">Принять</button> /
-      <button (click)="rejectReq(req)" class="btn-err">Отклонить</button>
+    <div class="buttons">
+      <button
+        (click)="acceptReq(req)"
+        class="btn-secondary"
+        [orgText]="{
+        ENG: 'Accept',
+        ESP: '',
+        RUS: 'Принять',
+      }"
+      >
+        Принять
+      </button>
+      <button
+        (click)="rejectReq(req)"
+        class="btn-err"
+        [orgText]="{
+        ENG: 'Decline',
+        ESP: '',
+        RUS: 'Отклонить',
+      }"
+      >
+        Отклонить
+      </button>
     </div>
   </div>
   } } @else {

@@ -7,7 +7,7 @@
 //   providers: [provideClientHydration(), provideRouter(appRoutes)],
 // };
 
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -19,6 +19,23 @@ import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withInterceptor
 import { TimeoutInterceptor, TokenInterceptor } from '../shared/interceptors';
 import { EffectsModule } from '@ngrx/effects';
 import { AppStoreEffects } from '../store/app-store.effects';
+
+const registerServiceWorker = () => () => {
+  if (typeof window !== 'undefined') {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/custom-sw.js')
+        .then(registration => {
+          console.log('Service Worker зарегистрирован:', registration);
+        })
+        .catch(error => {
+          console.error('Ошибка при регистрации Service Worker:', error);
+        });
+    } else {
+      console.warn('Service Worker не поддерживается в этом браузере.');
+    }
+  }
+};
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -42,6 +59,12 @@ export const appConfig: ApplicationConfig = {
       BrowserModule,
       HttpClientModule,
       BrowserAnimationsModule
-    ])
+    ]),
+
+    {
+      provide: APP_INITIALIZER,
+      useFactory: registerServiceWorker,
+      multi: true
+    }
   ]
 };

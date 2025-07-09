@@ -6,11 +6,12 @@ import { INPUT_PLACEHOLDER } from '../common/requests.text';
 import { RouterModule } from '@angular/router';
 import { OutgoingComponent } from './outgoing/outgoing.component';
 import { IncomingComponent } from './incoming/incoming.component';
+import { TrustedRequestComponent } from '@features/trusted-request';
 
 @Component({
   selector: 'org-requests',
   standalone: true,
-  imports: [CommonModule, TextDirective, RouterModule, OutgoingComponent, IncomingComponent],
+  imports: [CommonModule, TextDirective, RouterModule, TrustedRequestComponent, OutgoingComponent, IncomingComponent],
   templateUrl: './requests.component.html',
   styleUrl: './requests.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,9 +1,8 @@
-import { DOCUMENT } from "@angular/common";
-import { Inject, Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
-import { WINDOW } from "../../tokens/window";
-import { MOBILE_BREAKPOINT } from "../../constants/constants";
-
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { WINDOW } from '../../tokens/window';
+import { MOBILE_BREAKPOINT } from '../../constants/constants';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +11,7 @@ export class WindowEventsService {
   constructor(
     @Inject(WINDOW) private window: Window,
     @Inject(DOCUMENT) private document: Document,
+    @Inject(PLATFORM_ID) private platformId: string
   ) {}
 
   public readonly isMobile$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(MOBILE_BREAKPOINT >= this.currentScreenWidth);
@@ -36,7 +36,14 @@ export class WindowEventsService {
     return this.window?.innerHeight || this.document.documentElement.clientHeight || this.document.body.clientHeight;
   }
 
-  public get currentScreenWidth(): number {
-    return this.window?.innerWidth > 0 ? this.window.innerWidth : screen.width;
+  // public get currentScreenWidth(): number {
+  //   return this.window?.innerWidth > 0 ? this.window.innerWidth : screen?.width;
+  // }
+  get currentScreenWidth(): number {
+    if (isPlatformBrowser(this.platformId)) {
+      return this.window?.innerWidth && this.window.innerWidth > 0 ? this.window.innerWidth : screen?.width || 1024; // 1024 — fallback
+    } else {
+      return 1024;
+    }
   }
 }

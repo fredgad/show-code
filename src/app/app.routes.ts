@@ -1,10 +1,8 @@
 import { Route } from '@angular/router';
-import { MainComponent, SettingsComponent, TrustedProfileComponent } from '@pages';
+import { MainComponent, TrustedProfileComponent } from '@pages';
 import { SavedMediaComponent } from '@widgets/saved-media';
 import { NotificationSettingsComponent } from '@widgets/notification-settings';
 import { TrustedPeopleComponent } from '@widgets/trusted-people';
-import { VideoBlockComponent } from '@widgets/video-block';
-import { AudioBlockComponent } from '@widgets/audio-block';
 import { AuthGuard } from '@shared/guards';
 import { IncomingComponent, OutgoingComponent, RequestsComponent } from '@widgets/requests';
 
@@ -51,7 +49,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'settings',
-    component: SettingsComponent,
+    loadComponent: () => import('@pages').then(x => x.SettingsComponent),
     canActivate: [AuthGuard]
   },
   {

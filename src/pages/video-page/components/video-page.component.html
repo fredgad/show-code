@@ -4,7 +4,7 @@
   <video #videoElement autoplay muted></video>
 
   <div class="capture-controls">
-    <div class="capture-controls_camera">{{currentDeviceLabel$i()}}</div>
+    <div class="capture-controls_camera">{{ currentDeviceLabel$i() }}</div>
 
     <!-- @if (isRecording) {
       <div class="capture-controls_timer">
@@ -16,26 +16,37 @@
         <p>{{currentVideoTimer$i()}}</p>
       </div>
     } -->
-  
-    <div class="capture-controls_buttons">
-      @if (!isRecording) {
-        <abbr (click)="switchCamera()" class="capture-controls_buttons--switch" [title]="abbrTitle$i()">
-          <img [srcPath]="'camera-switch-icon.svg'">
-        </abbr>
-      }
 
+    <div class="capture-controls_buttons">
+      <!-- @if (!isRecording) { -->
+      <abbr (click)="switchCamera()" class="capture-controls_buttons--switch" [title]="abbrTitle$i()">
+        <img [srcPath]="'camera-switch-icon.svg'" />
+      </abbr>
+      <!-- }  -->
       @if (isRecording) {
-        <button (click)="stopRecording()" class="btn-primary" [orgText]="{
+      <button
+        (click)="stopRecording()"
+        class="btn-primary"
+        [orgText]="{
           ENG: 'Stop recording',
           ESP: 'Para de grabar',
           RUS: 'Остановить запись',
-        }">Stop recording</button>
+        }"
+      >
+        Stop recording
+      </button>
       } @else {
-        <button (click)="startRecording()" class="btn-secondary" [orgText]="{
+      <button
+        (click)="startRecording()"
+        class="btn-secondary"
+        [orgText]="{
           ENG: 'Start recording',
           ESP: 'Comience a grabar',
           RUS: 'Начать запись',
-        }">Start recording</button>
+        }"
+      >
+        Start recording
+      </button>
       }
     </div>
   </div>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, OnInit, Signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -18,7 +18,7 @@ import { MainFormComponent } from './main-form/main-form.component';
   styleUrl: './main.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MainComponent implements OnInit {
+export class MainComponent {
   @HostBinding('class') hostClass = 'page';
 
   private langService = inject(LangService);
@@ -27,10 +27,6 @@ export class MainComponent implements OnInit {
   public logoText$i: Signal<string> = this.langService.textByLanguage(LOGO_TEXT);
 
   public text: Record<string, LangTextI> = TEXT_MAIN;
-
-  ngOnInit(): void {
-    console.log(this.text['world'], 'sad!');
-  }
 
   public toggleText(event: Event): void {
     const target = event.currentTarget as HTMLElement;

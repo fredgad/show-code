@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TextDirective } from '@shared/directives';
 import { VideoDataI } from '@shared/interfaces';
@@ -72,7 +72,7 @@ export class VideoComponent {
         this.notification.show(`Successfuly download video.`);
       })
       .catch(error => {
-        this.notification.showError('Error downloading video. Please try again.');
+        this.notification.showError(`${error}, Error downloading video. Please try again.`);
       });
   }
 }

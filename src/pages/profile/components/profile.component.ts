@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent, FooterComponent } from '@widgets';
 import { ImageDirective, TextDirective } from '@shared/directives';
 import { RouterModule } from '@angular/router';
-import { AuthService, LangService, LocalStorageService, WindowEventsService } from '@shared/services';
+import { AuthService, LangService, LocalStorageService, PushService, WindowEventsService } from '@shared/services';
 import { AppStoreFacade } from '@store';
 import { Observable } from 'rxjs';
 import { StoreUserIN } from '@shared/interfaces';
 import { ImageModalComponent } from '@features/image-modal';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'org-profile',
@@ -22,6 +23,9 @@ export class ProfileComponent implements OnInit {
   private storage = inject(LocalStorageService);
   private windowEventsService = inject(WindowEventsService);
   private appStoreFacade = inject(AppStoreFacade);
+  private pushService = inject(PushService);
+
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   public isMobile$ = this.windowEventsService.isMobile$;
 
@@ -38,8 +42,20 @@ export class ProfileComponent implements OnInit {
   public ngOnInit(): void {
     this.appStoreFacade.getUserData();
 
-    // this.userData$.subscribe(x => {
-    //   console.log(x, 'userData$');
+    this.pushService.subscribeToNotifications().subscribe(x => {
+      console.log(x, 'pushService.subscribeToNotifications');
+    });
+
+    // const testSubscription = {
+    //   endpoint: "https://fcm.googleapis.com/fcm/send/abcd...",
+    //   expirationTime: null,
+    //   keys: {
+    //     p256dh: "BNcX...",
+    //     auth: "RandomAuthKey=="
+    //   }
+    // };
+    // this.authService.saveSubscription(testSubscription).subscribe(x => {
+    //   console.log(x, 'pushService.subscribeToNotifications');
     // });
 
     this.cLoseTabsForNewUser();
