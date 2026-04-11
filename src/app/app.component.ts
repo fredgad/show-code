@@ -1,7 +1,7 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { LangService } from '@shared/services';
+import { FontScaleService, LangService } from '@shared/services';
 import { ConfirmPopupComponent } from '@features/confirm-popup';
 
 @Component({
@@ -15,8 +15,10 @@ import { ConfirmPopupComponent } from '@features/confirm-popup';
 })
 export class AppComponent implements OnInit {
   private langService = inject(LangService);
+  private fontScaleService = inject(FontScaleService);
 
   public ngOnInit(): void {
     this.langService.setStorageLanguage();
+    this.fontScaleService.init();
   }
 }

@@ -1,29 +1,27 @@
 import { ChangeDetectionStrategy, Component, OnInit, Signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent, FooterComponent } from '@widgets';
-import { ImageDirective, TextDirective } from '@shared/directives';
+import { TextDirective } from '@shared/directives';
 import { RouterModule } from '@angular/router';
-import { AuthService, LangService, LocalStorageService, PushService, WindowEventsService } from '@shared/services';
+import { AuthService, LangService, WindowEventsService } from '@shared/services';
 import { AppStoreFacade } from '@store';
 import { Observable } from 'rxjs';
 import { StoreUserIN } from '@shared/interfaces';
-import { ImageModalComponent } from '@features/image-modal';
+import { AvatarComponent } from '@features';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'org-profile',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent, ImageDirective, TextDirective, RouterModule, ImageModalComponent],
+  imports: [CommonModule, HeaderComponent, FooterComponent, TextDirective, RouterModule, AvatarComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProfileComponent implements OnInit {
   // private langService = inject(LangService);
-  private storage = inject(LocalStorageService);
   private windowEventsService = inject(WindowEventsService);
   private appStoreFacade = inject(AppStoreFacade);
-  private pushService = inject(PushService);
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -42,10 +40,6 @@ export class ProfileComponent implements OnInit {
   public ngOnInit(): void {
     this.appStoreFacade.getUserData();
 
-    this.pushService.subscribeToNotifications().subscribe(x => {
-      console.log(x, 'pushService.subscribeToNotifications');
-    });
-
     // const testSubscription = {
     //   endpoint: "https://fcm.googleapis.com/fcm/send/abcd...",
     //   expirationTime: null,
@@ -58,14 +52,6 @@ export class ProfileComponent implements OnInit {
     //   console.log(x, 'pushService.subscribeToNotifications');
     // });
 
-    this.cLoseTabsForNewUser();
-  }
-
-  private cLoseTabsForNewUser(): void {
-    if (this.storage.getItem('HBH/profile')) {
-      this.isMenuOpen = false;
-    }
-    this.storage.setItem('HBH/profile', 'true');
   }
 
   public onMenuClick(): void {

@@ -1,4 +1,4 @@
-<org-header></org-header>
+<org-header [showDisplayControls]="true"></org-header>
 
 <div class="wrapper">
   <div class="container">
@@ -57,6 +57,22 @@
         <p class="error-message">{{ getErrorMessage('password') }}</p>
         }
       </div>
+
+      <div class="auth-meta">
+        <a
+          class="auth-meta_link"
+          [routerLink]="'/password-recovery'"
+          [queryParams]="recoveryQueryParams"
+          [orgText]="{
+            ENG: 'Forgot password?',
+            ESP: '¿Olvidaste tu contraseña?',
+            RUS: 'Забыли пароль?',
+          }"
+        >
+          Forgot password?
+        </a>
+      </div>
+
       <button
         type="submit"
         class="btn-primary"

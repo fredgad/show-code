@@ -1,33 +1,44 @@
 @import 'mixins';
 
-.del {
+:host {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  width: 100%;
   height: 100%;
-  @include unselectable;
-
-  &::after {
-    content: '+';
-    min-height: 20px;
-    height: 20px;
-    min-width: 20px;
-    width: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: $red-color;
-    border: 1px solid $prime-grey;
-    font-size: 18px;
-    font-family: Roboto, sans-serif;
-    transform: rotate(45deg);
-    border-radius: 50%;
-    cursor: pointer;
-  }
 }
 
-.del:hover {
+.del {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border: 1px solid $prime-grey;
+  border-radius: 50%;
+  color: $red-color;
+  cursor: pointer;
+  @include unselectable;
+
+  &::before,
   &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 1.5px;
+    background-color: currentColor;
+    border-radius: 999px;
+  }
+
+  &::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  &::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
+  &:hover {
     background-color: $red-color;
     color: $prime-grey;
   }

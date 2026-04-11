@@ -1,150 +1,25 @@
 @import 'mixins';
 
-// .file-upload input[type="file"] {
-//   display: none;
-// }
-
 :host {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-
-  .--pencil {
-    width: 30px;
-    cursor: pointer;
-  }
 }
 
 .settings {
-  display: flex;
-  flex-direction: column;
-
   margin-top: 12dvh;
-  min-height: 86dvh;
   margin-bottom: 2dvh;
+  min-height: 86dvh;
   width: 90dvw;
   max-width: 600px;
   box-sizing: border-box;
-  padding: 24px;
+  @include org-border;
+
   @include w-mobile {
     width: 100%;
     padding: 16px;
     border: none;
     box-shadow: none;
-  }
-  @include org-border;
-
-  &-upload {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .--shadow {
-    // &:hover {
-    //   box-shadow: inset 4px -5px 5px -5px, inset 0px 5px 5px -5px;
-    // }
-  }
-
-  .--shadow {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin: 15px 0;
-    padding: 8px;
-    border-radius: 8px;
-    box-shadow: inset 0px -5px 5px -5px;
-    transition: 0.4s;
-
-    > div {
-      display: flex;
-      align-items: center;
-    }
-
-    p {
-      font-size: 18px;
-      width: 185px;
-    }
-
-    input {
-      margin-left: 15px;
-      border: none;
-      max-height: 30px;
-      border: 1px solid grey;
-      border-radius: 8px;
-      width: 300px;
-      padding: 4px;
-    }
-
-    .--pencil {
-      margin-left: auto;
-    }
-
-    @include w-mobile {
-      flex-direction: column;
-      align-items: none;
-      padding: 3px;
-      box-shadow: inset 0px -5px 2px -5px;
-      // border: 2px solid red;
-
-      > div {
-        width: 100%;
-      }
-
-      input {
-        margin-left: 0;
-      }
-
-      p {
-        width: 100%;
-      }
-    }
-  }
-
-  &-avatar {
-    display: flex;
-    align-items: center;
-
-    &_image {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: $transparent-grey;
-      margin-right: 30px;
-      @include w-mobile {
-        margin-right: 10px;
-      }
-      margin-bottom: 5px;
-      margin-top: 5px;
-      border-radius: 50%;
-      min-width: 80px;
-      width: 80px;
-      height: 80px;
-      transition: 0.3s;
-      overflow: hidden;
-      cursor: pointer;
-
-      .--avatar {
-        height: 100%;
-        object-fit: contain;
-      }
-
-      &:hover {
-        background: grey;
-      }
-    }
-  }
-
-  h2 {
-    font-size: 20px;
-    text-align: center;
-  }
-
-  &-logout {
-    display: flex;
-    justify-content: center;
-    margin-top: 24px;
   }
 }

@@ -1,13 +1,13 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild, WritableSignal, effect, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, WritableSignal, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HeaderComponent } from '@widgets/header';
-import { LangService, UserNameService, AuthService } from '@shared/services';
+import { LangService, UserNameService, NotificationService } from '@shared/services';
 import { getFormControlErrorMessage, isValidFormControl } from '@shared/helpers';
 import { LangEnum } from '@shared/interfaces';
 import { TextDirective } from '@shared/directives';
 import { AppStoreFacade } from '@store';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'org-authorization',
@@ -17,11 +17,13 @@ import { RouterModule } from '@angular/router';
   styleUrl: './authorization.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AuthorizationComponent implements AfterViewInit {
+export class AuthorizationComponent implements OnInit, AfterViewInit {
   private formBuilder = inject(FormBuilder);
   private userNameService = inject(UserNameService);
   private langService = inject(LangService);
-  private authService = inject(AuthService);
+  private notificationService = inject(NotificationService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private appStoreFacade = inject(AppStoreFacade);
 
   @ViewChild('password') private password!: ElementRef<HTMLInputElement>;
@@ -44,11 +46,40 @@ export class AuthorizationComponent implements AfterViewInit {
     });
   }
 
+  public ngOnInit(): void {
+    const loginFromQuery = this.route.snapshot.queryParamMap.get('login')?.trim();
+
+    if (loginFromQuery) {
+      this.authForm.patchValue({ login: loginFromQuery });
+    }
+
+    if (this.route.snapshot.queryParamMap.get('recovered') === '1') {
+      this.notificationService.show(
+        this.langService.textByLanguage({
+          ENG: 'Password updated. Sign in with the new password.',
+          ESP: 'Contraseña actualizada. Inicia sesión con la nueva contraseña.',
+          RUS: 'Пароль обновлён. Войдите с новым паролем.'
+        })(),
+        4000
+      );
+
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { recovered: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true
+      });
+    }
+  }
+
   public ngAfterViewInit(): void {
-    if (this.userName$i()) {
+    if (!this.authForm.get('login')?.value && this.userName$i()) {
       this.authForm.patchValue({ login: this.userName$i() });
       this.password.nativeElement.focus();
+      return;
     }
+
+    this.password.nativeElement.focus();
   }
 
   public onSubmit(): void {
@@ -79,5 +110,15 @@ export class AuthorizationComponent implements AfterViewInit {
 
   public getErrorMessage(controlName: string): string | null {
     return getFormControlErrorMessage(controlName, this.authForm, this.language);
+  }
+
+  public get recoveryQueryParams(): { email: string } | null {
+    const login = String(this.authForm.get('login')?.value ?? '').trim();
+
+    if (!login || !login.includes('@')) {
+      return null;
+    }
+
+    return { email: login };
   }
 }

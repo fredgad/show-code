@@ -1,185 +1,115 @@
-<org-header></org-header>
+<org-header [showDisplayControls]="true"></org-header>
 
-<div class="main flex">
-  <img class="main-logo" [srcPath]="'msr-logo-phone-no-title.svg'" />
-  <img class="main-title" [srcPath]="logoTitle$i()" />
+<div class="main">
+  <section class="hero container">
+    <div class="hero-brand">
+      <img class="hero-logo" [srcPath]="'e-stream-logotype.svg'" alt="E-stream logo" />
+    </div>
 
-  <p class="main-text">
-    <span
-      [orgText]="{
-        ENG: 'EMERGENCY',
-        ESP: 'Есп',
-        RUS: 'ЗАЩИТНАЯ',
-    }"
-      >MOBILE</span
-    >&nbsp;
-    <span
-      class="grey"
-      [orgText]="{
-        ENG: 'CLOUD',
-        ESP: 'Есп',
-        RUS: 'ЭКСТРЕННАЯ',
-    }"
-      >REMOTE</span
-    >&nbsp;
-    <span
-      [orgText]="{
-        ENG: 'RECORDER',
-        ESP: 'Есп',
-        RUS: 'ТРАНСЛЯЦИЯ',
-    }"
-      >RECORDER</span
-    >
-  </p>
+    <h1 class="hero-title">
+      <span class="hero-title_label" [orgText]="text['e-stream']">E-stream</span>
+    </h1>
+    <h2 class="hero-subtitle">
+      <span [orgText]="text['hero_tagline']">Your partner in personal safety.</span>
+    </h2>
 
-  <div class="main-registration flex">
-    <org-main-form></org-main-form>
-  </div>
+    <p class="hero-description">
+      <span [orgText]="text['innovative']"></span>
+      <a
+        class="hero-description_link"
+        href="https://www.soyuz.app/read/e-stream"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span [orgText]="text['read_more']">Подробнее</span>
+      </a>
+    </p>
 
-  <h3 class="main-first_title container">
-    <b
-      [orgText]="{
-      ENG: 'MSR:',
-      ESP: 'MSR:',
-      RUS: 'ЗЭТ:',
-    }"
-      >ZET:</b
-    >
-    <span
-      [orgText]="{
-      ENG: 'Your Partner in Personal Safety',
-      ESP: 'Ddfsrdы',
-      RUS: 'Ваш партнёр в персональной безопасности',
-    }"
-      >Your Partner in Personal Safety</span
-    >
-  </h3>
-  <div class="main-first flex wrapper">
-    <p class="main-first_text container" [orgText]="text['innovative']"></p>
+    <div class="hero-actions">
+      <a class="download-button" href="/assets/downloads/e-stream.apk" download="e-stream.apk">
+        <span [orgText]="text['download_button']">Download the app</span>
+        <img class="download-button_icon" [srcPath]="'download-icon.svg'" alt="" />
+      </a>
+    </div>
+  </section>
 
-    <h3
-      class="benefits-title container"
-      [orgText]="{
-      ENG: 'Who Can Benefit from MSR?',
-      ESP: 'Ddfsrdы ыф фыаы фв',
-      RUS: 'Кому необходимо наше приложение?',
-    }"
-    >
-      Who Can Benefit from MSR?
-    </h3>
-  </div>
-
-  <div class="main-second flex container">
-    <div class="benefits">
-      <div (click)="toggleText($event)" class="benefits-item --open">
-        <img class="logo-img" [srcPath]="'msr-icon-hero.svg'" />
+  <section class="benefits-section">
+    <div class="section-header container">
+      <h2 class="section-title" [orgText]="text['benefits_title']">Who the app may be useful for</h2>
+    </div>
+    <div class="benefits container">
+      <div (click)="toggleText($event)" class="benefits-item">
+        <img class="logo-img" [srcPath]="'e-stream-safety.png'" />
         <div class="benefits-item_title">
-          <h3
-            [orgText]="{
-            ENG: 'For Everyday Heroes',
-            ESP: 'Ddfsrdы ыф фыаы фв',
-            RUS: 'Для повседневных героев',
-          }"
-          >
-            For Everyday Heroes
-          </h3>
-          <span class="arrow"></span>
-        </div>
-        <div class="benefits-item_text" [orgText]="text['citizen']"></div>
-      </div>
-      <div (click)="toggleText($event)" class="benefits-item --open">
-        <img class="logo-img" [srcPath]="'msr-icon-professional.svg'" />
-        <div class="benefits-item_title">
-          <h3
-            [orgText]="{
-              ENG: 'For Professionals in the Field',
-              ESP: 'Ddfsrdы ыф фыаы фв',
-              RUS: 'Для профессионалов в опасных профессиях',
-            }"
-          >
-            For Professionals in the Field
-          </h3>
-          <span class="arrow"></span>
-        </div>
-        <div class="benefits-item_text" [orgText]="text['journalists']"></div>
-      </div>
-      <div (click)="toggleText($event)" class="benefits-item --open">
-        <img class="logo-img" [srcPath]="'msr-icon-adventurer.svg'" />
-        <div class="benefits-item_title">
-          <h3
-            [orgText]="{
-              ENG: 'For Adventure Seekers',
-              ESP: 'Ddfsrdы ыф фыаы фв',
-              RUS: 'Для искателей приключений',
-            }"
-          >
-            For Adventure Seekers
-          </h3>
-          <span class="arrow"></span>
-        </div>
-        <div class="benefits-item_text" [orgText]="text['adventurers']"></div>
-      </div>
-      <div (click)="toggleText($event)" class="benefits-item --open">
-        <img class="logo-img" [srcPath]="'msr-icon-safety.svg'" />
-        <div class="benefits-item_title">
-          <h3
-            [orgText]="{
-              ENG: 'For the Safety-Conscious Individual',
-              ESP: 'Ddfsrdы ыф фыаы фв',
-              RUS: 'Для людей, заботящихся о персональной безопасности',
-            }"
-          >
-            For the Safety-Conscious Individual
-          </h3>
+          <h3 [orgText]="text['benefits_anyone_title']">For those who care about their own safety and the safety of loved ones</h3>
           <span class="arrow"></span>
         </div>
 
         <div class="benefits-item_text" [orgText]="text['anyone']"></div>
       </div>
+      <div (click)="toggleText($event)" class="benefits-item">
+        <img class="logo-img" [srcPath]="'e-stream-hero.png'" />
+        <div class="benefits-item_title">
+          <h3 [orgText]="text['benefits_citizen_title']">For everyday heroes</h3>
+          <span class="arrow"></span>
+        </div>
+        <div class="benefits-item_text" [orgText]="text['citizen']"></div>
+      </div>
+      <div (click)="toggleText($event)" class="benefits-item">
+        <img class="logo-img" [srcPath]="'e-stream-professional.png'" />
+        <div class="benefits-item_title">
+          <h3 [orgText]="text['benefits_journalist_title']">For professionals in high-risk fields</h3>
+          <span class="arrow"></span>
+        </div>
+        <div class="benefits-item_text" [orgText]="text['journalists']"></div>
+      </div>
+      <div (click)="toggleText($event)" class="benefits-item">
+        <img class="logo-img" [srcPath]="'e-stream-adventurer.png'" />
+        <div class="benefits-item_title">
+          <h3 [orgText]="text['benefits_adventurers_title']">For adventure seekers</h3>
+          <span class="arrow"></span>
+        </div>
+        <div class="benefits-item_text" [orgText]="text['adventurers']"></div>
+      </div>
     </div>
+  </section>
 
-    <h3
-      class="features-title container"
-      [orgText]="{
-        ENG: 'Features that set MSR apart',
-        RUS: 'Особенности, выделяющие MSR',
-        ESP: 'Características que distinguen a MSR'
-      }"
-    >
-      Empowering Security Through Technology
-    </h3>
-  </div>
-
-  <div class="main-third flex wrapper">
-    <div class="features container">
-      <div class="features-text" [orgText]="text['discreet']"></div>
-
-      <div class="features-text" [orgText]="text['immediate']"></div>
-
-      <div class="features-text" [orgText]="text['friendly']"></div>
-
-      <div class="features-text" [orgText]="text['quality']"></div>
-
-      <div class="features-text" [orgText]="text['advanced']"></div>
+  <section class="main-third">
+    <div class="container">
+      <h2 class="section-title" [orgText]="text['features_title']">Key features of E-stream</h2>
+      <div class="features">
+        <div class="features-text" [orgText]="text['discreet']"></div>
+        <div class="features-text" [orgText]="text['immediate']"></div>
+        <div class="features-text" [orgText]="text['friendly']"></div>
+        <div class="features-text" [orgText]="text['quality']"></div>
+        <div class="features-text" [orgText]="text['advanced']"></div>
+      </div>
     </div>
+  </section>
 
-    <h3
-      class="world-title container"
-      [orgText]="{
-      ENG: 'Empowering Security Through Technology',
-      ESP: 'Potenciando la seguridad a través de la tecnología',
-      RUS: 'Улучшение безопасности при помощи технологий',
-    }"
-    >
-      Empowering Security Through Technology
-    </h3>
-  </div>
-
-  <div class="main-fourth flex wrapper">
-    <div class="world container">
-      <div class="world-text" [orgText]="text['world']"></div>
+  <section class="how-to-use">
+    <div class="container">
+      <h2 class="section-title" [orgText]="text['how_to_use.how_use']">How to use E-stream:</h2>
+      <div class="how-to-use-grid">
+        <div class="how-step">
+          <span class="how-step_index">1</span>
+          <p class="how-step_text" [orgText]="text['how_to_use.how_use_1']"></p>
+        </div>
+        <div class="how-step">
+          <span class="how-step_index">2</span>
+          <p class="how-step_text" [orgText]="text['how_to_use.how_use_2']"></p>
+        </div>
+        <div class="how-step">
+          <span class="how-step_index">3</span>
+          <p class="how-step_text" [orgText]="text['how_to_use.how_use_3']"></p>
+        </div>
+        <div class="how-step">
+          <span class="how-step_index">4</span>
+          <p class="how-step_text" [orgText]="text['how_to_use.how_use_4']"></p>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 
   <org-footer></org-footer>
 </div>

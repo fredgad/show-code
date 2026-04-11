@@ -1,6 +1,7 @@
 export * from './logo';
 export * from './lang';
 export * from './audio';
+export * from './avatar';
 export * from './video';
 export * from './empty-avatar';
 export * from './delete-button';

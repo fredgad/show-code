@@ -1,14 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TextDirective } from '@shared/directives';
-import { EmptyAvatarComponent } from '@features/empty-avatar';
-import { DeleteButtonComponent } from '@features/delete-button';
-import { CheckboxComponent } from '@features/checkbox';
+import { AvatarComponent, DeleteButtonComponent, CheckboxComponent } from '@features';
 import { Router, RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AppStoreFacade } from '@store';
 import { Observable, Subscription } from 'rxjs';
-import { ImageModalComponent } from '@features/image-modal';
 import { TrustedPersonI } from '@shared/interfaces';
 import { TrustedRequestComponent } from '@features/trusted-request';
 
@@ -27,19 +24,18 @@ import { TrustedRequestComponent } from '@features/trusted-request';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    EmptyAvatarComponent,
+    AvatarComponent,
     TextDirective,
     DeleteButtonComponent,
     CheckboxComponent,
     RouterModule,
-    ImageModalComponent,
     TrustedRequestComponent
   ],
   templateUrl: './trusted-people.component.html',
   styleUrl: './trusted-people.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TrustedPeopleComponent implements OnDestroy {
+export class TrustedPeopleComponent implements OnInit, OnDestroy {
   // private formBuilder = inject(FormBuilder);
   private appStoreFacade = inject(AppStoreFacade);
   private router = inject(Router);
@@ -48,6 +44,10 @@ export class TrustedPeopleComponent implements OnDestroy {
 
   public trustedPeople$: Observable<TrustedPersonI[]> = this.appStoreFacade.trustedPeople$;
   public isChecked = false;
+
+  public ngOnInit(): void {
+    this.appStoreFacade.getUserData();
+  }
 
   // public keyIdForm: FormGroup = this.formBuilder.group({
   //   keyId: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]]

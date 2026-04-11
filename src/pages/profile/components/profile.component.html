@@ -3,14 +3,7 @@
 <div class="wrapper" [class.--mobile]="isMobile$ | async" *ngIf="userData$ | async as userData">
   <div class="profile container">
     <div class="profile-header">
-      <div class="profile-header_image">
-        @if (userData.image) {
-        <img [src]="userData.image" (click)="imageModal.show()" />
-        <org-image-modal #imageModal [imageUrl]="userData?.image"></org-image-modal>
-        } @else {
-        <img [srcPath]="'camera.svg'" />
-        }
-      </div>
+      <org-avatar class="profile-header_image" [imageUrl]="userData.image" [size]="80"></org-avatar>
       <div class="profile-header_data">
         <div class="profile-header_data--name">
           {{ userData.username }}
@@ -34,19 +27,6 @@
             <img [srcPath]="'settings-icon.svg'" />
           </abbr>
         </button> -->
-
-        <button class="profile-header_buttons--record btn-primary" routerLink="/capture">
-          <p class="circles"></p>
-          <span
-            [orgText]="{
-              ENG: 'Start an emergency video recording!',
-              ESP: 'Iniciar la grabación de vídeo de emergencia!',
-              RUS: 'Начать экстренную видео запись!',
-            }"
-          >
-            Начать экстренную видео запись!
-          </span>
-        </button>
         <!-- <button class="profile-header_buttons--audio btn-third" routerLink="/capture">
           <p class="circles"></p>
           <span
@@ -108,6 +88,17 @@
         }"
         >
           Notification settings
+        </button>
+        <button
+          routerLink="/profile/account-settings"
+          routerLinkActive="active"
+          [orgText]="{
+          ENG: 'Account settings',
+          ESP: 'Configuración de la cuenta',
+          RUS: 'Настройки аккаунта',
+        }"
+        >
+          Account settings
         </button>
       </div>
 

@@ -1,0 +1,34 @@
+{
+  "main": {
+    "input_placeholder": "Ingrese su nombre de usuario",
+    "e-stream": "E-stream",
+    "hero_tagline": "tu aliado en la seguridad personal.",
+    "download_button": "Descargar la app",
+    "innovative": "La transmisión de emergencia permite grabar video y audio, guardándolos automáticamente en un servidor seguro y notificando de inmediato a tus usuarios de confianza, otorgándoles acceso a lo que está ocurriendo. Incluso en situaciones inestables o peligrosas, no te quedas solo y los eventos registrados se conservan.",
+    "read_more": "Más información",
+    "benefits_title": "¿Para quién puede ser útil la aplicación?",
+    "benefits_anyone_title": "Para quienes se preocupan por su seguridad y la de sus seres queridos",
+    "benefits_citizen_title": "Para héroes cotidianos",
+    "benefits_journalist_title": "Para profesionales en ámbitos de riesgo",
+    "benefits_adventurers_title": "Para buscadores de aventuras",
+    "citizen": "Personas que presencian situaciones peligrosas o injustas y desean documentar lo que ocurre sin enfrentarlo en soledad.",
+    "journalists": "Periodistas, investigadores privados y profesionales de la seguridad pueden utilizar la aplicación para documentar eventos y recopilar pruebas con almacenamiento remoto y notificación a personas de confianza.",
+    "adventurers": "Viajeros y exploradores que se encuentran en lugares remotos o potencialmente peligrosos pueden usar la aplicación para registrar su recorrido y los eventos, con almacenamiento seguro de los datos en el servidor.",
+    "anyone": "Para cualquier persona que se preocupe por la seguridad de su familia, hijos y seres queridos, y quiera tener la posibilidad de documentar una situación inquietante o potencialmente peligrosa, con conservación de los datos y notificación inmediata a usuarios de confianza.",
+    "features_title": "Funciones clave de E-stream",
+    "discreet": "Activación con botón: Inicia la grabación con un solo toque, sin acciones complejas, para capturar rápidamente lo que está sucediendo.",
+    "immediate": "Carga automática: Las grabaciones se guardan en un servidor seguro a medida que se crean, reduciendo el riesgo de pérdida de datos en situaciones inestables.",
+    "friendly": "Notificación a usuarios de confianza: Las personas en quienes confías reciben una notificación al iniciar la grabación y pueden acceder a la transmisión y a la información sobre tu ubicación.",
+    "quality": "Control de integridad de los datos: Las grabaciones se almacenan junto con parámetros e información adicional, formando un contexto coherente de los eventos registrados.",
+    "advanced": "Protección y confidencialidad de los datos: El acceso a las grabaciones está restringido y solo se concede a ti y a los usuarios que autorices.",
+    "how_to_use": {
+      "how_use": "Cómo usar E-stream:",
+      "how_use_1": "Regístrate con tu correo electrónico y confirma tu cuenta a través del enlace del mensaje recibido.",
+      "how_use_2": "Añade usuarios de confianza en la página «Personas de confianza» utilizando un identificador único (KeyId). Recibirán notificaciones cuando comience la grabación. Este paso es opcional.",
+      "how_use_3": "Inicia la grabación desde la pantalla principal o desde la página de grabación.",
+      "how_use_4": "El video se graba automáticamente y se guarda en el servidor. \nLos usuarios de confianza reciben una notificación al comenzar la grabación. \nEn la versión gratuita, las grabaciones se almacenan hasta un mes. \nPuedes solicitar la eliminación antes o configurar las condiciones y el momento de eliminación en los ajustes."
+    },
+    "world_title": "Cómo usar E-stream:",
+    "world": "4. El video se graba automáticamente y se guarda en el servidor. \nLos usuarios de confianza reciben una notificación al comenzar la grabación. \nEn la versión gratuita, las grabaciones se almacenan hasta un mes. \nPuedes solicitar la eliminación antes o configurar las condiciones y el momento de eliminación en los ajustes."
+  }
+}

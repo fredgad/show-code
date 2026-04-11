@@ -2,13 +2,12 @@
 
 <div *ngIf="trustedPerson$ | async as trustedPerson" class="trusted container">
   <div class="trusted-header">
-    <div class="trusted-header_image">
-      @if (trustedPerson?.image) {
-      <img [src]="trustedPerson?.image" />
-      } @else {
-      <img [srcPath]="'camera.svg'" />
-      }
-    </div>
+    <org-avatar
+      class="trusted-header_image"
+      [imageUrl]="trustedPerson?.image"
+      [emptyAvatarId]="+(trustedPerson.keyId || 0)"
+      [size]="80"
+    ></org-avatar>
 
     <div class="trusted-header_data">
       <div class="trusted-header_data--name">{{ trustedPerson.username }}</div>

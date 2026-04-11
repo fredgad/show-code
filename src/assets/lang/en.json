@@ -1,0 +1,32 @@
+{
+  "main": {
+    "input_placeholder": "Enter your username",
+    "e-stream": "E-stream",
+    "hero_tagline": "Your partner in personal safety.",
+    "download_button": "Download the app",
+    "innovative": "Emergency streaming allows you to record video and audio while automatically saving them to a secure server, immediately notifying trusted users and granting them access to what is happening. Even in unstable or dangerous situations, you are not left alone, and recorded events will be preserved.",
+    "read_more": "Learn more",
+    "benefits_title": "Who the app may be useful for",
+    "benefits_anyone_title": "For those who care about their own safety and the safety of loved ones",
+    "benefits_citizen_title": "For everyday heroes",
+    "benefits_journalist_title": "For professionals in high-risk fields",
+    "benefits_adventurers_title": "For adventure seekers",
+    "citizen": "For people who witness dangerous or unjust situations and want to document what is happening without facing it alone.",
+    "journalists": "Journalists, private investigators, and security professionals can use the app to document events and collect evidence with remote storage and trusted user notifications.",
+    "adventurers": "Travelers and explorers who find themselves in remote or potentially dangerous locations can use the app to record their route and events while ensuring data is securely stored on the server.",
+    "anyone": "For anyone who cares about the safety of their family, children, and loved ones, and wants the ability to document a concerning or potentially dangerous situation with data preservation and immediate notification of trusted users.",
+    "features_title": "Key features of E-stream",
+    "discreet": "Button-based activation: Start recording with a single tap, without complex actions, to quickly capture what is happening.",
+    "immediate": "Automatic upload: Recordings are saved to a secure server as they are created, reducing the risk of data loss in unstable situations.",
+    "friendly": "Trusted user notifications: People you trust receive a notification when recording starts and can gain access to the live stream and information about your location.",
+    "quality": "Data integrity control: Recordings are stored together with parameters and additional information, forming a coherent context of the recorded events.",
+    "advanced": "Data protection and privacy: Access to recordings is restricted and granted only to you and users you explicitly authorize.",
+    "how_to_use": {
+      "how_use": "How to use E-stream:",
+      "how_use_1": "Register using your email address and confirm your account via the link in the email.",
+      "how_use_2": "Add trusted users on the “Trusted People” page using a unique KeyId. They will receive notifications when recording starts. This step is optional.",
+      "how_use_3": "Start recording from the main screen or the recording page.",
+      "how_use_4": "Video is automatically recorded and saved to the server. \nTrusted users receive a notification when recording starts. \nIn the free version, recordings are stored for up to one month. \nYou can request deletion earlier or configure deletion conditions and timing in the settings."
+    }
+  }
+}

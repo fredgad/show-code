@@ -23,7 +23,7 @@
         <img [srcPath]="'camera-switch-icon.svg'" />
       </abbr>
       <!-- }  -->
-      @if (isRecording) {
+      @if (isRecording$i()) {
       <button
         (click)="stopRecording()"
         class="btn-primary"

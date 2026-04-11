@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TextDirective } from '@shared/directives';
+import { APP_API_URL } from '@shared/constants';
 import { VideoDataI } from '@shared/interfaces';
 import { AppStoreFacade } from '@store';
 import { NotificationService } from '@shared/services';
@@ -23,7 +24,16 @@ export class VideoComponent {
   public videoDuration: string = '';
 
   public get videoPath(): string {
-    return this.videoData.url;
+    if (!this.videoData?.url) {
+      return '';
+    }
+
+    if (/^https?:\/\//i.test(this.videoData.url)) {
+      return this.videoData.url;
+    }
+
+    const apiBase = APP_API_URL || '';
+    return `${apiBase}${this.videoData.url}`;
   }
 
   public get videoDate(): string {

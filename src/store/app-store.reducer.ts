@@ -8,9 +8,16 @@ import {
   getUserDataFailure,
   getUserDataSuccess,
   saveImage,
-  getTrustedUsersByKeyIdsSuccess
+  getTrustedUsersByKeyIdsSuccess,
+  endStreamSuccess,
+  startStreamFailure,
+  startStreamSuccess,
+  endStreamFailure,
+  loadNotifications,
+  loadNotificationsSuccess,
+  loadNotificationsFailure
 } from './app-store.actions';
-import { StoreStateI, StoreUserIN, TrustedPersonIN } from '@shared/interfaces';
+import { StoreStateI, TrustedPersonIN } from '@shared/interfaces';
 
 const initialState: StoreStateI = {
   auth: {
@@ -26,6 +33,16 @@ const initialState: StoreStateI = {
     incomingReq: [],
     trustedPeople: [],
     videos: []
+  },
+  stream: {
+    currentStreamId: null,
+    streaming: false,
+    error: null
+  },
+  notifications: {
+    notificationsList: [],
+    loading: false,
+    error: null
   }
 };
 
@@ -102,20 +119,24 @@ const appReducer = createReducer(
     ...state,
     auth: {
       ...state.auth,
-      token: null,
-      error: null
-    },
-    user: {
-      ...state.user,
-      userId: null,
-      keyId: null,
-      outgoingReq: null,
-      incomingReq: null,
-      trustedPeople: null
+      error: 'Failed to load user data'
     }
   })),
 
   on(getTrustedUsersByKeyIdsSuccess, (state, { data }) => {
+    const trustedPeople = state.user.trustedPeople || [];
+    const existingKeyIds = new Set(trustedPeople.map(person => person?.keyId).filter(Boolean));
+    const enrichedTrustedPeople = trustedPeople.map((person: TrustedPersonIN) => {
+      const enrichedData = data.find(d => d.keyId === person.keyId);
+      return enrichedData ? { ...person, ...enrichedData } : person;
+    });
+    const newTrustedPeople: TrustedPersonIN[] = data
+      .filter(person => person?.keyId && !existingKeyIds.has(person.keyId))
+      .map(person => ({
+        displayed: false,
+        ...person
+      }));
+
     return {
       ...state,
       auth: {
@@ -124,11 +145,7 @@ const appReducer = createReducer(
       },
       user: {
         ...state.user,
-        trustedPeople:
-          state.user.trustedPeople?.map((person: TrustedPersonIN) => {
-            const enrichedData = data.find(d => d.keyId === person.keyId);
-            return enrichedData ? { ...person, ...enrichedData } : person;
-          }) || []
+        trustedPeople: [...enrichedTrustedPeople, ...newTrustedPeople]
       }
     };
   }),
@@ -138,6 +155,62 @@ const appReducer = createReducer(
     user: {
       ...state.user,
       image
+    }
+  })),
+
+  on(startStreamSuccess, (state, { streamId }) => ({
+    ...state,
+    stream: {
+      currentStreamId: streamId,
+      streaming: true,
+      error: null
+    }
+  })),
+  on(startStreamFailure, (state, { error }) => ({
+    ...state,
+    stream: {
+      currentStreamId: null,
+      streaming: false,
+      error
+    }
+  })),
+  on(endStreamSuccess, state => ({
+    ...state,
+    stream: {
+      currentStreamId: null,
+      streaming: false,
+      error: null
+    }
+  })),
+  on(endStreamFailure, (state, { error }) => ({
+    ...state,
+    stream: {
+      ...state.stream,
+      error
+    }
+  })),
+
+  on(loadNotifications, state => ({
+    ...state,
+    notifications: {
+      ...state.notifications,
+      loading: true
+    }
+  })),
+  on(loadNotificationsSuccess, (state, { notifications }) => ({
+    ...state,
+    notifications: {
+      ...state.notifications,
+      notificationsList: notifications,
+      loading: false
+    }
+  })),
+  on(loadNotificationsFailure, (state, { error }) => ({
+    ...state,
+    notifications: {
+      ...state.notifications,
+      error,
+      loading: false
     }
   }))
 );

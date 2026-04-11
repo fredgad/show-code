@@ -34,17 +34,11 @@
 
   @for (person of trustedPeople$ | async; track person?.keyId || 'unknown') {
   <div class="person">
-    @if (person?.image) {
-    <!-- <img class="person-image" [srcPath]="person.image" /> -->
-    <img [src]="person?.image" class="person-image" (click)="imageModal.show()" />
-    <org-image-modal #imageModal [imageUrl]="person?.image"></org-image-modal>
-    } @else {
-    <org-empty-avatar [id]="+person.keyId"></org-empty-avatar>
-    }
+    <org-avatar class="person-avatar" [imageUrl]="person?.image" [emptyAvatarId]="+person.keyId" [size]="60"></org-avatar>
 
     <div class="person-text">
-      <div class="person-text_name">{{ person?.username }}</div>
-      <div class="person-text_email">{{ person?.email }}</div>
+      <div class="person-text_name">{{ person?.username || person?.keyId }}</div>
+      <div class="person-text_email">{{ person?.email || '...' }}</div>
       <div class="person-text_keyId">{{ person?.keyId }}</div>
       <div class="person-text_checkbox">
         <p

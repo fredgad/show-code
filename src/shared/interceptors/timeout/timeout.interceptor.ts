@@ -21,7 +21,9 @@ export class TimeoutInterceptor implements HttpInterceptor {
         if (error.error instanceof ErrorEvent) {
           console.error('An error occurred!!!!!:', error.error.message);
         } else {
-          if (error.status === 403) {
+          const isCurrentUserRequest = request.url.includes('/api/user/me');
+
+          if ((error.status === 401 || error.status === 403) && isCurrentUserRequest) {
             console.error('Access denied (403): Invalid token');
             localStorage.removeItem('token');
             this.facade.logout();
@@ -30,7 +32,7 @@ export class TimeoutInterceptor implements HttpInterceptor {
             console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
           }
         }
-        return throwError('Request timed out');
+        return throwError(() => error);
       })
     );
   }

@@ -6,3 +6,6 @@ export * from './auth/auth.service';
 export * from './notification/notification.service';
 export * from './confirm-popup/confirm-popup.service';
 export * from './push/push.service';
+export * from './stream/stream.service';
+export * from './server-notifications/server-notifications.service';
+export * from './font-scale/font-scale.service';

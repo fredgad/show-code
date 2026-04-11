@@ -7,12 +7,10 @@
   height: 100%;
   @include unselectable;
 
-  &-title {
-    height: 40%;
-    cursor: pointer;
-  }
   &-img {
-    height: 60%;
+    height: 52px;
+    width: auto;
     cursor: pointer;
+    display: block;
   }
 }

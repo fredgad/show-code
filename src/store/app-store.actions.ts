@@ -51,3 +51,17 @@ export const getUserVideosFailure = createAction('[App] Get user videos failure'
 export const deleteUserVideo = createAction('[App] Delete user video', props<{ videoData: VideoDataI }>());
 export const deleteUserVideoSuccess = createAction('[App] Delete user video success');
 export const deleteUserVideoFailure = createAction('[App] Delete user video failure', props<{ error: string }>());
+
+export const startStream = createAction('[Stream] Start Stream', props<{ title: string }>());
+export const startStreamSuccess = createAction('[Stream] Start Stream Success', props<{ streamId: string }>());
+export const startStreamFailure = createAction('[Stream] Start Stream Failure', props<{ error: string }>());
+
+export const endStream = createAction('[Stream] End Stream', props<{ streamId: string }>());
+export const endStreamSuccess = createAction('[Stream] End Stream Success');
+export const endStreamFailure = createAction('[Stream] End Stream Failure', props<{ error: string }>());
+
+export const loadNotifications = createAction('[Notifications] Load');
+export const loadNotificationsSuccess = createAction('[Notifications] Load Success', props<{ notifications: any[] }>());
+export const loadNotificationsFailure = createAction('[Notifications] Load Failure', props<{ error: string }>());
+
+export const markNotificationRead = createAction('[Notifications] Mark Read', props<{ createdAt: string }>());

@@ -1,22 +1,35 @@
 <header class="header">
-  <org-logo [linkToMain]="true" [isTitle]="(isMobile$ | async) === false"></org-logo>
+  <org-logo [linkToMain]="true"></org-logo>
   <div class="header-buttons">
+    <div class="header-controls">
+      <org-lang></org-lang>
+
+      <div *ngIf="showDisplayControls" class="font-control">
+        <button type="button" class="font-control_btn" (click)="decreaseFont()" aria-label="Decrease font size">A-</button>
+        <span class="font-control_value" aria-live="polite">{{ currentFontScale }}</span>
+        <button type="button" class="font-control_btn" (click)="increaseFont()" aria-label="Increase font size">A+</button>
+      </div>
+    </div>
+
     @if (!isLoggedIn) {
-    <button
-      class="header-buttons_auth"
-      (click)="goToPath('/auth')"
-      [orgText]="{
-        ENG: 'AUTHORIZATION',
-        ESP: 'AUTORIZACIÓN',
-        RUS: 'АВТОРИЗАЦИЯ'
-      }"
-    >
-      AUTHORIZATION
-    </button>
+      <button
+        class="header-buttons_auth"
+        (click)="goToPath('/auth')"
+        [orgText]="{
+          ENG: 'ENTER',
+          ESP: 'ENTRAR',
+          RUS: 'ВОЙТИ'
+        }"
+      >
+        ENTER
+      </button>
+    } @else {
+      <button class="header-buttons_profile" (click)="goToPath('/profile')" aria-label="Open profile">
+        <img [srcPath]="'empty-avatar.svg'" alt="" />
+      </button>
     }
 
-    <org-lang></org-lang>
-
+    <!--
     <button class="header-buttons--settings" routerLink="/settings">
       <abbr [title]="abbrTitle$i()">
         <img [srcPath]="'settings-icon.svg'" />
@@ -24,8 +37,8 @@
     </button>
 
     <button class="header-buttons_auth" (click)="goToPath('/profile')">
-      <!-- <span>{{ (userData$ | async)?.username }}</span> -->
       <img [srcPath]="'empty-avatar.svg'" />
     </button>
+    -->
   </div>
 </header>

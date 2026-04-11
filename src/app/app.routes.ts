@@ -2,6 +2,7 @@ import { Route } from '@angular/router';
 import { MainComponent, TrustedProfileComponent } from '@pages';
 import { SavedMediaComponent } from '@widgets/saved-media';
 import { NotificationSettingsComponent } from '@widgets/notification-settings';
+import { AccountSettingsComponent } from '@widgets/account-settings';
 import { TrustedPeopleComponent } from '@widgets/trusted-people';
 import { AuthGuard } from '@shared/guards';
 import { IncomingComponent, OutgoingComponent, RequestsComponent } from '@widgets/requests';
@@ -20,6 +21,10 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@pages').then(x => x.RegistrationComponent)
   },
   {
+    path: 'password-recovery',
+    loadComponent: () => import('../pages/password-recovery').then(x => x.PasswordRecoveryComponent)
+  },
+  {
     path: 'profile',
     loadComponent: () => import('@pages').then(x => x.ProfileComponent),
     children: [
@@ -35,6 +40,7 @@ export const appRoutes: Route[] = [
       },
       { path: 'trusted-people', component: TrustedPeopleComponent },
       { path: 'notification-settings', component: NotificationSettingsComponent },
+      { path: 'account-settings', component: AccountSettingsComponent },
       {
         path: 'requests',
         component: RequestsComponent,

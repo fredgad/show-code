@@ -1,0 +1,14 @@
+{
+    "/api": {
+        "target": "https://api.e-stream.app",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug"
+    },
+    "/uploads": {
+        "target": "https://api.e-stream.app",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug"
+    }
+}

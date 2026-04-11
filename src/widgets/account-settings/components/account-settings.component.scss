@@ -1,0 +1,438 @@
+@import 'mixins';
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.account-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px;
+  color: $text-color;
+
+  @include w-mobile {
+    padding: 16px 0;
+    gap: 18px;
+  }
+
+  &-hero,
+  &-panel {
+    border: 1px solid rgba($prime-grey, 0.2);
+    border-radius: 22px;
+    background-color: rgba($white, 0.98);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.05);
+  }
+
+  &-hero {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    align-items: start;
+    gap: 28px;
+    padding: 24px;
+    background-image:
+      radial-gradient(circle at top right, rgba($prime-blue, 0.08), transparent 38%),
+      linear-gradient(180deg, rgba($white, 1), rgba($prime-blue, 0.03));
+
+    @include w-mobile {
+      padding: 18px;
+    }
+
+    &_media {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      max-width: 240px;
+    }
+
+    &_avatar {
+      border-radius: 50%;
+      box-shadow: 0 14px 28px rgba($prime-blue, 0.18);
+    }
+
+    &_actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    &_button {
+      min-width: 160px;
+    }
+
+    &_file {
+      max-width: 100%;
+      padding: 8px 12px;
+      border: 1px solid rgba($prime-blue, 0.16);
+      border-radius: 999px;
+      background-color: rgba($white, 0.72);
+      color: $prime-grey;
+      font-size: 14px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &_info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    &_heading {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    &_eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: $prime-blue;
+    }
+
+    &_title {
+      font-size: 30px;
+      font-weight: 700;
+      line-height: 1.05;
+      color: $text-color;
+    }
+  }
+
+  &-key {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    width: 100%;
+    padding: 18px 20px;
+    border: 1px solid rgba($prime-grey, 0.16);
+    border-radius: 20px;
+    background:
+      linear-gradient(180deg, rgba($white, 0.98), rgba($prime-blue, 0.03)),
+      rgba($white, 1);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+
+    &:hover:not(:disabled) {
+      border-color: rgba($prime-blue, 0.28);
+      box-shadow: 0 10px 22px rgba($prime-blue, 0.09);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: rgba($prime-blue, 0.38);
+      box-shadow: 0 0 0 4px rgba($prime-blue, 0.08);
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.7;
+    }
+
+    @include w-mobile {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 16px;
+    }
+
+    &_meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    &_label {
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: $prime-grey;
+    }
+
+    &_value {
+      display: block;
+      min-width: 0;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: $text-color;
+      overflow-wrap: anywhere;
+    }
+
+    &_action {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background-color: rgba($prime-blue, 0.06);
+      color: $prime-blue;
+
+      @include w-mobile {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    &_hint {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    &_copyIcon {
+      position: relative;
+      display: block;
+      width: 18px;
+      height: 18px;
+
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        border: 1.5px solid currentColor;
+        border-radius: 4px;
+        background-color: rgba($white, 0.9);
+      }
+
+      &::before {
+        top: 2px;
+        left: 5px;
+        width: 10px;
+        height: 12px;
+      }
+
+      &::after {
+        top: 5px;
+        left: 2px;
+        width: 10px;
+        height: 12px;
+      }
+    }
+  }
+
+  &-panel {
+    padding: 22px;
+
+    @include w-mobile {
+      padding: 18px 14px;
+    }
+
+    &_header {
+      margin-bottom: 16px;
+    }
+
+    &_title {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: $prime-blue;
+    }
+  }
+
+  &-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &-field {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    align-items: stretch;
+    padding: 16px 18px;
+    border: 1px solid rgba($transparent-grey, 0.28);
+    border-radius: 18px;
+    background:
+      linear-gradient(180deg, rgba($white, 1), rgba($prime-blue, 0.03)),
+      rgba($white, 1);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+
+    &:focus-within {
+      border-color: rgba($prime-green, 0.5);
+      box-shadow: 0 0 0 4px rgba($prime-green, 0.12);
+    }
+
+    @include w-mobile {
+      padding: 14px;
+      gap: 12px;
+    }
+
+    &_intro {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    &_label {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: $text-color;
+    }
+
+    &_caption {
+      font-size: 13px;
+      line-height: 1.45;
+      color: rgba($text-color, 0.72);
+    }
+
+    &_stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+      width: 100%;
+    }
+
+    &_control {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      width: 100%;
+    }
+
+    input {
+      width: 100%;
+      height: 48px;
+      padding: 0 16px;
+      border: 1px solid rgba($prime-grey, 0.24);
+      border-radius: 12px;
+      background-color: rgba($white, 0.96);
+      color: $text-color;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+
+      &:focus {
+        border-color: rgba($prime-blue, 0.42);
+        box-shadow: 0 0 0 4px rgba($prime-blue, 0.08);
+      }
+    }
+
+    &_submit {
+      min-width: 190px;
+      height: 48px;
+      align-self: flex-start;
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+
+      @include w-mobile {
+        width: 100%;
+      }
+    }
+
+    &_error {
+      font-size: 13px;
+      line-height: 1.4;
+      color: $red-color;
+    }
+  }
+
+  &-password {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    &_grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 560px;
+    }
+
+    &_field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    &_label {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: $text-color;
+    }
+
+    input {
+      width: 100%;
+      height: 48px;
+      padding: 0 16px;
+      border: 1px solid rgba($prime-grey, 0.24);
+      border-radius: 12px;
+      background-color: rgba($white, 0.96);
+      color: $text-color;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:focus {
+        border-color: rgba($prime-blue, 0.42);
+        box-shadow: 0 0 0 4px rgba($prime-blue, 0.08);
+      }
+    }
+
+    &_note {
+      font-size: 13px;
+      line-height: 1.45;
+      color: rgba($text-color, 0.72);
+    }
+
+    &_error {
+      margin-top: -4px;
+    }
+
+    &_submit {
+      align-self: flex-start;
+      min-width: 190px;
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+
+      @include w-mobile {
+        width: 100%;
+      }
+    }
+  }
+
+  &-logout {
+    display: flex;
+    justify-content: flex-end;
+
+    @include w-mobile {
+      justify-content: flex-start;
+    }
+
+    &_button {
+      min-width: 180px;
+
+      @include w-mobile {
+        width: 100%;
+      }
+    }
+  }
+}

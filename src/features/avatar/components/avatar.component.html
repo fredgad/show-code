@@ -1,0 +1,18 @@
+<div class="avatar" [style.width.px]="size" [style.min-width.px]="size" [style.height.px]="size">
+  @if (imageSrc) {
+  @if (canPreview) {
+  <org-image-modal #imageModal [imageUrl]="imageSrc"></org-image-modal>
+  }
+  <img
+    class="avatar__image"
+    [src]="imageSrc"
+    [alt]="alt"
+    [class.avatar__image--clickable]="canPreview"
+    (click)="showPreview()"
+  />
+  } @else if (emptyAvatarId !== null) {
+  <org-empty-avatar [id]="emptyAvatarId"></org-empty-avatar>
+  } @else {
+  <img class="avatar__placeholder" [srcPath]="'camera.svg'" [alt]="alt" />
+  }
+</div>

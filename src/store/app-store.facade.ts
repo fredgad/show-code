@@ -13,6 +13,10 @@ export class AppStoreFacade {
 
   public userData$: Observable<StoreUserIN> = this.store$.select(selectors.selectUserData);
 
+  public currentStreamId$: Observable<string | null> = this.store$.select(selectors.selectCurrentStreamId);
+
+  public isStreaming$: Observable<boolean> = this.store$.select(selectors.selectIsStreaming);
+
   public outgoingReq$: Observable<string[]> = this.store$.pipe(
     select(selectors.selectUserOutgoingReq),
     map(req => req || [])
@@ -80,5 +84,13 @@ export class AppStoreFacade {
 
   public deleteUserVideo(videoData: VideoDataI): void {
     this.store$.dispatch(actions.deleteUserVideo({ videoData }));
+  }
+
+  startStream(title: string) {
+    this.store$.dispatch(actions.startStream({ title }));
+  }
+
+  endStream(streamId: string) {
+    this.store$.dispatch(actions.endStream({ streamId }));
   }
 }

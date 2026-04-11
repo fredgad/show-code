@@ -13,6 +13,8 @@ type Nullable<T> = {
 export interface StoreStateI {
   auth: StoreAuthI;
   user: StoreUserIN;
+  stream: StoreStreamI;
+  notifications: StoreNotificationsI;
 }
 
 export type TarifType = 'базовый' | 'Премиум';
@@ -47,6 +49,27 @@ export type TrustedPersonIN = Nullable<TrustedPersonI>;
 export interface StoreAuthI {
   token: string | null;
   error: string | null;
+}
+
+export interface StoreStreamI {
+  currentStreamId: string | null;
+  streaming: boolean;
+  error?: string | null;
+}
+
+export interface StoreNotificationsI {
+  notificationsList: StoreNotificationsListI[];
+  loading: boolean;
+  error: string | null;
+}
+
+export interface StoreNotificationsListI {
+  type: string;
+  text: string;
+  streamId: string;
+  fromUser: string;
+  createdAt: string;
+  isRead: boolean;
 }
 
 // export interface UserDataI {
@@ -93,4 +116,28 @@ export interface ResponseErrorListItemProps {
 export interface VideoDataI {
   url: string;
   createdAt: string;
+}
+
+export interface StreamI {
+  streamId: string;
+  streamKey?: string;
+  publish?: {
+    rtmp?: string;
+  };
+  playbackUrl?: string | null;
+  playbackProxyUrl?: string | null;
+  shareId?: string | null;
+  shareUrl?: string | null;
+  quality?: string | null;
+  limits?: Record<string, unknown> | null;
+  plan?: {
+    code?: string;
+    limitPeriod?: string;
+  } | null;
+}
+
+export interface StreamChunkI {
+  streamId: string;
+  chunkNumber: number;
+  file: File;
 }

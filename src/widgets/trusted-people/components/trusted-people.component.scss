@@ -30,20 +30,10 @@
     //   background: $super-transparent-grey;
     // }
 
-    &-image {
+    &-avatar {
       width: 60px;
       min-width: 60px;
       height: 60px;
-      border-radius: 50%;
-      object-fit: contain;
-      cursor: pointer;
-    }
-    org-empty-avatar {
-      width: 60px;
-      min-width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      overflow: hidden;
     }
 
     &-text {

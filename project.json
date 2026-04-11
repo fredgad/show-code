@@ -8,19 +8,31 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:application",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/org",
         "index": "./src/index.html",
         "browser": "./src/main.ts",
-        "polyfills": ["zone.js"],
+        "polyfills": [
+          "zone.js"
+        ],
         "tsConfig": "./tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["./src/assets/favicon/favicon.ico", "./src/assets", "./src/custom-sw.js"],
-        "styles": ["./src/styles/styles.scss"],
+        "assets": [
+          "./src/assets/favicon/favicon.ico",
+          "./src/assets",
+          "./src/custom-sw.js"
+        ],
+        "styles": [
+          "./src/styles/styles.scss"
+        ],
         "scripts": [],
         "stylePreprocessorOptions": {
-          "includePaths": ["./src/styles"]
+          "includePaths": [
+            "./src/styles"
+          ]
         },
         "server": "src/main.server.ts",
         "prerender": true,
@@ -38,8 +50,8 @@
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "4kb",
-              "maximumError": "5kb"
+              "maximumWarning": "7kb",
+              "maximumError": "8kb"
             }
           ],
           "outputHashing": "all"
@@ -47,13 +59,18 @@
         "development": {
           "optimization": false,
           "extractLicenses": false,
-          "sourceMap": true
+          "sourceMap": true,
+          "prerender": false,
+          "ssr": false
         }
       },
       "defaultConfiguration": "production"
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "proxyConfig": "proxy.conf.json"
+      },
       "configurations": {
         "production": {
           "buildTarget": "org:build:production"
@@ -72,14 +89,20 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["./src"]
+        "lintFilePatterns": [
+          "./src"
+        ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectName}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectName}"
+      ],
       "options": {
         "jestConfig": "jest.config.app.ts"
       }

@@ -1,0 +1,410 @@
+<div *ngIf="userData$ | async as userData" class="account-settings">
+  <section class="account-settings-hero">
+    <div class="account-settings-hero_media">
+      <org-avatar class="account-settings-hero_avatar" [imageUrl]="userData?.image || image" [size]="104"></org-avatar>
+
+      <div class="account-settings-hero_actions">
+        <input type="file" #fileInput hidden (change)="onFileSelected($event)" />
+
+        @if (userData?.image || image) {
+        <button
+          type="button"
+          (click)="triggerFileInput()"
+          class="btn-secondary account-settings-hero_button"
+          [orgText]="{
+            ENG: 'Change avatar',
+            ESP: 'Cambiar avatar',
+            RUS: 'Изменить аватарку',
+          }"
+        >
+          Change avatar
+        </button>
+        } @else {
+        <button
+          type="button"
+          (click)="triggerFileInput()"
+          class="btn-secondary account-settings-hero_button"
+          [orgText]="{
+            ENG: 'Add avatar',
+            ESP: 'Agregar avatar',
+            RUS: 'Добавить аватарку',
+          }"
+        >
+          Add avatar
+        </button>
+        }
+
+        @if (image && fileName !== 'Файл не выбран') {
+        <div class="account-settings-hero_file">{{ fileName }}</div>
+        }
+      </div>
+    </div>
+
+    <div class="account-settings-hero_info">
+      <div class="account-settings-hero_heading">
+        <p
+          class="account-settings-hero_eyebrow"
+          [orgText]="{
+            ENG: 'Profile',
+            ESP: 'Perfil',
+            RUS: 'Профиль',
+          }"
+        >
+          Profile
+        </p>
+        <h2
+          class="account-settings-hero_title"
+          [orgText]="{
+            ENG: 'Account settings',
+            ESP: 'Configuración de la cuenta',
+            RUS: 'Настройки аккаунта',
+          }"
+        >
+          Account settings
+        </h2>
+      </div>
+
+      <button type="button" class="account-settings-key" (click)="copyKeyId(userData.keyId)" [disabled]="!userData.keyId">
+        <span class="account-settings-key_meta">
+          <span
+            class="account-settings-key_label"
+            [orgText]="{
+              ENG: 'Key ID',
+              ESP: 'ID clave',
+              RUS: 'Key ID',
+            }"
+          >
+            Key ID
+          </span>
+          <strong class="account-settings-key_value">{{ userData.keyId }}</strong>
+        </span>
+
+        <span class="account-settings-key_action">
+          <span class="account-settings-key_copyIcon" aria-hidden="true"></span>
+          <span
+            class="account-settings-key_hint"
+            [orgText]="{
+              ENG: 'Copy key',
+              ESP: 'Copiar clave',
+              RUS: 'Скопировать ключ',
+            }"
+          >
+            Copy key
+          </span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <section class="account-settings-panel">
+    <div class="account-settings-panel_header">
+      <h3
+        class="account-settings-panel_title"
+        [orgText]="{
+          ENG: 'Profile details',
+          ESP: 'Detalles del perfil',
+          RUS: 'Данные профиля',
+        }"
+      >
+        Profile details
+      </h3>
+    </div>
+
+    <div class="account-settings-fields">
+      <form class="account-settings-field" [formGroup]="usernameForm" (ngSubmit)="submitUsername(userData.username)">
+        <div class="account-settings-field_intro">
+          <p
+            class="account-settings-field_label"
+            [orgText]="{
+              ENG: 'Change your login:',
+              ESP: 'Cambia tu inicio de sesión:',
+              RUS: 'Изменить логин:',
+            }"
+          >
+            Change your login:
+          </p>
+          <p
+            class="account-settings-field_caption"
+            [orgText]="{
+              ENG: 'Use 4-20 characters, latin letters, numbers and underscore.',
+              ESP: 'Usa 4-20 caracteres, letras latinas, números y guion bajo.',
+              RUS: 'Используйте 4-20 символов: латиницу, цифры и нижнее подчёркивание.',
+            }"
+          >
+            Use 4-20 characters, latin letters, numbers and underscore.
+          </p>
+        </div>
+
+        <div class="account-settings-field_stack">
+          <div class="account-settings-field_control">
+            <input type="text" formControlName="newUsername" autocomplete="username" />
+          </div>
+          @if (usernameErrorMessage) {
+          <p class="account-settings-field_error">{{ usernameErrorMessage }}</p>
+          }
+        </div>
+
+        <button
+          type="submit"
+          class="btn-primary account-settings-field_submit"
+          [disabled]="isUsernameSubmitting"
+          [orgText]="{
+            ENG: 'Save login',
+            ESP: 'Guardar usuario',
+            RUS: 'Сохранить логин',
+          }"
+        >
+          Save login
+        </button>
+      </form>
+
+      <form class="account-settings-field" [formGroup]="emailForm" (ngSubmit)="submitEmail(userData.email)">
+        <div class="account-settings-field_intro">
+          <p
+            class="account-settings-field_label"
+            [orgText]="{
+              ENG: 'Change your email:',
+              ESP: 'Cambia tu correo electrónico:',
+              RUS: 'Изменить email:',
+            }"
+          >
+            Change your email:
+          </p>
+          <p
+            class="account-settings-field_caption"
+            [orgText]="{
+              ENG: 'A confirmation email will be sent to the new address.',
+              ESP: 'Se enviará un correo de confirmación a la nueva dirección.',
+              RUS: 'На новый адрес будет отправлено письмо для подтверждения.',
+            }"
+          >
+            A confirmation email will be sent to the new address.
+          </p>
+        </div>
+
+        <div class="account-settings-field_stack">
+          <div class="account-settings-field_control">
+            <input type="email" formControlName="newEmail" autocomplete="email" />
+          </div>
+          @if (emailErrorMessage) {
+          <p class="account-settings-field_error">{{ emailErrorMessage }}</p>
+          }
+        </div>
+
+        <button
+          type="submit"
+          class="btn-primary account-settings-field_submit"
+          [disabled]="isEmailSubmitting"
+          [orgText]="{
+            ENG: 'Save email',
+            ESP: 'Guardar correo',
+            RUS: 'Сохранить email',
+          }"
+        >
+          Save email
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <section class="account-settings-panel">
+    <div class="account-settings-panel_header">
+      <h3
+        class="account-settings-panel_title"
+        [orgText]="{
+          ENG: 'Security',
+          ESP: 'Seguridad',
+          RUS: 'Безопасность',
+        }"
+      >
+        Security
+      </h3>
+    </div>
+
+    <form class="account-settings-password" [formGroup]="passwordForm" (ngSubmit)="submitPassword()">
+      <div class="account-settings-password_grid">
+        <label class="account-settings-password_field">
+          <span
+            class="account-settings-password_label"
+            [orgText]="{
+              ENG: 'Current password',
+              ESP: 'Contraseña actual',
+              RUS: 'Текущий пароль',
+            }"
+          >
+            Current password
+          </span>
+          <input type="password" formControlName="currentPassword" autocomplete="current-password" />
+          @if (currentPasswordErrorMessage) {
+          <span class="account-settings-field_error">{{ currentPasswordErrorMessage }}</span>
+          }
+        </label>
+
+        <label class="account-settings-password_field">
+          <span
+            class="account-settings-password_label"
+            [orgText]="{
+              ENG: 'New password',
+              ESP: 'Nueva contraseña',
+              RUS: 'Новый пароль',
+            }"
+          >
+            New password
+          </span>
+          <input type="password" formControlName="newPassword" autocomplete="new-password" />
+        </label>
+
+        <label class="account-settings-password_field">
+          <span
+            class="account-settings-password_label"
+            [orgText]="{
+              ENG: 'Repeat new password',
+              ESP: 'Repite la nueva contraseña',
+              RUS: 'Повторите новый пароль',
+            }"
+          >
+            Repeat new password
+          </span>
+          <input type="password" formControlName="confirmPassword" autocomplete="new-password" />
+        </label>
+      </div>
+
+      @if (passwordErrorMessage) {
+      <p class="account-settings-field_error account-settings-password_error">{{ passwordErrorMessage }}</p>
+      }
+
+      <p
+        class="account-settings-password_note"
+        [orgText]="{
+          ENG: 'Minimum 8 characters. New passwords must match.',
+          ESP: 'Mínimo 8 caracteres. Las nuevas contraseñas deben coincidir.',
+          RUS: 'Минимум 8 символов. Новые пароли должны совпадать.',
+        }"
+      >
+        Minimum 8 characters. New passwords must match.
+      </p>
+
+      <button
+        type="submit"
+        class="btn-primary account-settings-password_submit"
+        [disabled]="isPasswordSubmitting"
+        [orgText]="{
+          ENG: 'Update password',
+          ESP: 'Actualizar contraseña',
+          RUS: 'Обновить пароль',
+        }"
+      >
+        Update password
+      </button>
+    </form>
+  </section>
+
+  <section class="account-settings-panel">
+    <div class="account-settings-panel_header">
+      <h3
+        class="account-settings-panel_title"
+        [orgText]="{
+          ENG: 'Password recovery',
+          ESP: 'Recuperación de contraseña',
+          RUS: 'Восстановление пароля',
+        }"
+      >
+        Password recovery
+      </h3>
+    </div>
+
+    <div class="account-settings-fields">
+      <div class="account-settings-field">
+        <div class="account-settings-field_intro">
+          <p
+            class="account-settings-field_label"
+          [orgText]="{
+            ENG: 'Lost access to the current password?',
+            ESP: '¿Perdiste acceso a la contraseña actual?',
+            RUS: 'Потеряли доступ к текущему паролю?',
+          }"
+        >
+          Lost access to the current password?
+        </p>
+          <p
+            class="account-settings-field_caption"
+            [orgText]="{
+              ENG: 'Open the recovery flow, receive a code by email and set a new password.',
+              ESP: 'Abre el flujo de recuperación, recibe un código por correo y establece una nueva contraseña.',
+              RUS: 'Откройте восстановление, получите код на email и задайте новый пароль.',
+            }"
+          >
+            Open the recovery flow, receive a code by email and set a new password.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="btn-primary account-settings-field_submit"
+          [routerLink]="'/password-recovery'"
+          [queryParams]="userData.email ? { email: userData.email } : null"
+          [orgText]="{
+            ENG: 'Open recovery',
+            ESP: 'Abrir recuperación',
+            RUS: 'Открыть восстановление',
+          }"
+        >
+          Open recovery
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="account-settings-panel">
+    <div class="account-settings-panel_header">
+      <h3
+        class="account-settings-panel_title"
+        [orgText]="{
+          ENG: 'General settings',
+          ESP: 'Configuración general',
+          RUS: 'Общие настройки',
+        }"
+      >
+        General settings
+      </h3>
+    </div>
+
+    <div class="account-settings-fields">
+      <div class="account-settings-field">
+        <div class="account-settings-field_intro">
+          <p
+            class="account-settings-field_label"
+            [orgText]="{
+              ENG: 'Video deletion request time:',
+              ESP: 'Tiempo de solicitud para eliminar el video:',
+              RUS: 'Время запроса на удаление видео:',
+            }"
+          >
+            Video deletion request time:
+          </p>
+        </div>
+
+        <div class="account-settings-field_stack">
+          <div class="account-settings-field_control">
+            <input type="text" value="72h" readonly />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="account-settings-logout">
+    <button
+      type="button"
+      (click)="logout()"
+      class="btn-err account-settings-logout_button"
+      [orgText]="{
+        ENG: 'Logout',
+        ESP: 'Salir',
+        RUS: 'Выйти из аккаунта',
+      }"
+    >
+      Выйти из аккаунта
+    </button>
+  </div>
+</div>

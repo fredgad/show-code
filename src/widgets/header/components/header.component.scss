@@ -5,7 +5,7 @@
   z-index: $header-zi;
   top: 0;
   width: 100dvw;
-  height: 10dvh;
+  height: 80px;
   background-color: rgba(228, 228, 228, 0.307);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -13,11 +13,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.24s ease, opacity 0.24s ease;
 
   .header {
     display: flex;
     justify-content: space-between;
-    height: 8vh;
+    align-items: center;
+    height: 100%;
     width: 900px;
     max-width: 90dvw;
 
@@ -34,7 +36,7 @@
         justify-content: center;
         min-width: 40px;
         height: 40px;
-        @include fszV(1.8);
+        font-size: 18px;
         border: none;
         background: transparent;
         padding-top: 0.3dvh;
@@ -89,16 +91,147 @@
 
       &_auth {
         color: $prime-green;
-        margin-left: 10px;
+        margin-left: 12px;
+        min-width: auto;
+        padding: 0 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 51, 102, 0.16);
+        background: rgba(255, 255, 255, 0.92);
+        font-size: 0.58rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
 
         img {
           width: 24px;
         }
       }
 
-      org-lang {
-        margin-left: 2dvw;
+      &_profile {
+        margin-left: 12px;
+        border-radius: 50%;
+        border: 1px solid rgba(0, 51, 102, 0.16);
+        background: rgba(255, 255, 255, 0.92);
+
+        img {
+          width: 24px;
+          height: 24px;
+          display: block;
+        }
       }
+
+      .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: 2dvw;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .font-control {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 51, 102, 0.12);
+        background: rgba(255, 255, 255, 0.92);
+      }
+
+      .font-control_value {
+        min-width: 40px;
+        text-align: center;
+        color: $text-color;
+        font-size: 0.78rem;
+        font-weight: 600;
+        line-height: 1;
+      }
+
+      .font-control_btn {
+        min-width: 34px;
+        height: 32px;
+        padding: 6px 10px;
+        border: none;
+        border-radius: 999px;
+        background: transparent;
+        color: $text-color;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+
+        &::after {
+          display: none;
+        }
+
+        &:hover {
+          background: rgba(0, 51, 102, 0.08);
+          color: $prime-blue;
+        }
+      }
+    }
+  }
+}
+
+:host(.header-hidden) {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@include ng-deep {
+  .header-controls .lang {
+    height: auto;
+    align-items: flex-start;
+    position: relative;
+    z-index: 5;
+  }
+
+  .header-controls .lang-select {
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 51, 102, 0.12);
+    background: rgba(255, 255, 255, 0.92);
+    color: $text-color;
+    font-size: 0.85em;
+  }
+
+  .header-controls .lang-options {
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 6;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 51, 102, 0.12);
+    background: #ffffff;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    pointer-events: none;
+  }
+
+  .header-controls .lang-options.--open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .header-controls .lang-options_item {
+    padding: 6px 12px;
+    background: #ffffff;
+    cursor: pointer;
+  }
+}
+
+@include w-mobile {
+  :host {
+    height: 80px;
+    min-height: 80px;
+  }
+
+  .header {
+    min-height: 80px;
+
+    &-buttons {
+      justify-content: flex-end;
     }
   }
 }

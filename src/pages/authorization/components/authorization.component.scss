@@ -1,5 +1,9 @@
 @import 'mixins';
 
+:host {
+  font-size: calc(16px * var(--font-scale, 1));
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -8,6 +12,10 @@
   height: 100dvh;
   width: 100%;
   margin: 0 0 10dvh 0;
+
+  :where(h2, label, p, button, input) {
+    font-size: inherit;
+  }
 
   .container {
     max-width: 400px;
@@ -41,6 +49,24 @@
           padding: 6px;
           border: 1px solid #ccc;
           border-radius: 4px;
+        }
+      }
+
+      .auth-meta {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: -8px;
+        margin-bottom: 20px;
+
+        &_link {
+          color: $prime-blue;
+          font-size: 14px;
+          font-weight: 600;
+          text-decoration: none;
+
+          &:hover {
+            color: $second-blue;
+          }
         }
       }
 

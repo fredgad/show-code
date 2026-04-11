@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { StoreStateI, TrustedPersonI } from '@shared/interfaces';
+import { StoreNotificationsI, StoreStateI, StoreStreamI, TrustedPersonI } from '@shared/interfaces';
 
 export interface State {
   _empty?: boolean;
@@ -29,4 +29,10 @@ export const selectUserOutgoingReq = createSelector(selectUserData, state => sta
 
 export const selectTrustedPeople = createSelector(selectUserData, state => state.trustedPeople as TrustedPersonI[]);
 
-// export const selectUserVideos = createSelector(selectUserData, state => state.videos);
+export const selectStreamState = createSelector(selectFeature, (state: StoreStateI): StoreStreamI => state.stream);
+
+export const selectIsStreaming = createSelector(selectStreamState, (stream: StoreStreamI) => stream.streaming);
+
+export const selectCurrentStreamId = createSelector(selectStreamState, (stream: StoreStreamI) => stream.currentStreamId);
+
+export const selectNotificationsState = createSelector(selectFeature, (state: StoreStateI): StoreNotificationsI => state.notifications);

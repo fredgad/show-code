@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { of, timer } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { AuthService } from '@shared/services';
+import { AuthService, ServerNotificationsService, StreamService } from '@shared/services';
 import * as actions from './app-store.actions';
 import { AppWithAuthState } from './app-store.selectors';
 import { AppStoreFacade } from './app-store.facade';
@@ -13,9 +13,11 @@ export class AppStoreEffects {
   constructor(
     private actions$: Actions,
     private authService: AuthService,
+    private streamService: StreamService,
+    private serverNotificationsService: ServerNotificationsService,
     private facade: AppStoreFacade,
     private store$: Store<AppWithAuthState>
-  ) {}
+  ) { }
 
   updateUserData$ = createEffect(
     () =>
@@ -39,7 +41,7 @@ export class AppStoreEffects {
       this.actions$.pipe(
         ofType(actions.getUserDataSuccess),
         tap(({ data }) => {
-          const keyIds = data.trustedPeople?.map(person => person.keyId) as string[];
+          const keyIds = (data.trustedPeople ?? []).map(person => person.keyId).filter(Boolean) as string[];
 
           if (keyIds.length) {
             this.facade.getTrustedUsersByKeyIds(keyIds);
@@ -212,5 +214,61 @@ export class AppStoreEffects {
   //       )
   //     )
   //   )
+  // );
+
+  startStream$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.startStream),
+      mergeMap(({ title }) =>
+        this.streamService.startStream(title).pipe(
+          map(res => actions.startStreamSuccess({ streamId: res.streamId })),
+          catchError(error => of(actions.startStreamFailure({ error })))
+        )
+      )
+    )
+  );
+
+  endStream$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(actions.endStream),
+      mergeMap(({ streamId }) =>
+        this.streamService.endStream(streamId).pipe(
+          map(() => actions.endStreamSuccess()),
+          catchError(error => of(actions.endStreamFailure({ error })))
+        )
+      )
+    )
+  );
+
+  startStreamSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(actions.startStreamSuccess)
+        // tap(() => this.notificationService.show('Трансляция успешно начата'))
+      ),
+    { dispatch: false }
+  );
+
+  endStreamSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(actions.endStreamSuccess)
+        // tap(() => this.notificationService.show('Трансляция успешно завершена'))
+      ),
+    { dispatch: false }
+  );
+
+  // pollNotifications$ = createEffect(
+  //   () =>
+  //     timer(0, 5000).pipe(
+  //       // Пуллинг раз в 5 сек
+  //       switchMap(() =>
+  //         this.serverNotificationsService.getNotifications().pipe(
+  //           map(notifications => actions.loadNotificationsSuccess({ notifications })),
+  //           catchError(error => of(actions.loadNotificationsFailure({ error })))
+  //         )
+  //       )
+  //     ),
+  //   { dispatch: true }
   // );
 }
