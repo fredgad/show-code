@@ -1,0 +1,154 @@
+<org-header [showDisplayControls]="true"></org-header>
+
+<section class="verify-page">
+  <div class="verify-shell">
+    <p class="verify-eyebrow">{{ t('eyebrow') }}</p>
+    <h1 class="verify-title">{{ t('title') }}</h1>
+    <p class="verify-description">
+      {{ t('description') }}
+    </p>
+
+    <div
+      class="verify-dropzone"
+      [class.--dragging]="isDragging"
+      [class.--busy]="isProcessing"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+    >
+      <p class="verify-dropzone_title">{{ hasFile ? t('drop_replace') : t('drop_empty') }}</p>
+      <p class="verify-dropzone_hint">
+        {{ hasFile ? t('drop_replace_hint') : t('drop_empty_hint') }}
+      </p>
+
+      <div class="verify-picker">
+        <label class="verify-picker_button btn-primary" [class.--disabled]="isProcessing">
+          <span>{{ t('choose_mp4') }}</span>
+          <input class="verify-picker_input" type="file" accept="video/mp4,.mp4" [disabled]="isProcessing" (change)="onFileInput($event, 'mp4')" />
+        </label>
+
+        <label class="verify-picker_button btn-third" [class.--disabled]="isProcessing">
+          <span>{{ t('choose_package') }}</span>
+          <input class="verify-picker_input" type="file" [disabled]="isProcessing" (change)="onFileInput($event, 'package')" />
+        </label>
+      </div>
+    </div>
+
+    <div class="verify-warning">
+      <strong>{{ t('messenger_warning_title') }}</strong>
+      <span>{{ t('messenger_warning_text') }}</span>
+    </div>
+
+    @if (selectedFile) {
+      <div class="verify-file">
+        <div>
+          <p class="verify-file_label">{{ t('selected_file') }}</p>
+          <p class="verify-file_name">{{ selectedFile.name }}</p>
+          <p class="verify-file_meta">
+            {{ verificationModeText }} · {{ selectedFile.size | number }} {{ t('bytes') }}
+          </p>
+          <p class="verify-file_hint">{{ selectedFileHelpText }}</p>
+        </div>
+
+        <div class="verify-actions">
+          <button class="btn-primary" type="button" [disabled]="isProcessing" (click)="verifySelectedFile()">
+            {{ isProcessing ? t('verify_busy') : t('verify_file') }}
+          </button>
+          <button class="btn-third" type="button" [disabled]="isProcessing" (click)="clearSelection()">
+            {{ t('clear') }}
+          </button>
+        </div>
+      </div>
+    }
+
+    @if (errorMessage) {
+      <p class="verify-error">{{ errorMessage }}</p>
+    }
+
+    @if (isProcessing) {
+      <div class="verify-pending">
+        <p class="verify-pending_title">{{ t('processing_title') }}</p>
+        <p class="verify-pending_text">
+          {{ t('processing_text') }}
+        </p>
+      </div>
+    }
+
+    @if (verifyResult) {
+      <div class="verify-result" [class.--success]="statusTone === 'success'" [class.--danger]="statusTone === 'danger'" [class.--pending]="statusTone === 'pending'">
+        <div class="verify-result_header">
+          <div>
+            <p class="verify-result_label">{{ t('status_label') }}</p>
+            <h2 class="verify-result_title">{{ statusTitle }}</h2>
+          </div>
+          <span class="verify-result_badge">{{ statusBadge }}</span>
+        </div>
+
+        @if (verifyResult.reason) {
+          <p class="verify-result_reason">{{ verifyResult.reason }}</p>
+        }
+
+        <div class="verify-grid">
+          <div class="verify-item">
+            <span class="verify-item_label">{{ t('matched_by') }}</span>
+            <strong>{{ matchedByText() }}</strong>
+          </div>
+          <div class="verify-item">
+            <span class="verify-item_label">{{ t('computed_hash') }}</span>
+            <strong class="verify-item_hash">{{ lastHashHex || t('na') }}</strong>
+          </div>
+          <div class="verify-item">
+            <span class="verify-item_label">{{ evidenceIdLabel }}</span>
+            <strong>{{ extractedEvidenceId || t('not_detected') }}</strong>
+          </div>
+          <div class="verify-item">
+            <span class="verify-item_label">{{ t('issuer') }}</span>
+            <strong>{{ verifyResult.evidence?.issuer || t('na') }}</strong>
+          </div>
+        </div>
+
+        @if (verifyResult.evidence) {
+          <div class="verify-details">
+            <div class="verify-item">
+              <span class="verify-item_label">{{ t('evidence_id') }}</span>
+              <strong>{{ verifyResult.evidence.evidenceId }}</strong>
+            </div>
+            <div class="verify-item">
+              <span class="verify-item_label">{{ t('recorded_start') }}</span>
+              <strong>{{ verifyResult.evidence.recordedAtStart ? (verifyResult.evidence.recordedAtStart | date:'medium') : t('na') }}</strong>
+            </div>
+            <div class="verify-item">
+              <span class="verify-item_label">{{ t('recorded_end') }}</span>
+              <strong>{{ verifyResult.evidence.recordedAtEnd ? (verifyResult.evidence.recordedAtEnd | date:'medium') : t('na') }}</strong>
+            </div>
+            <div class="verify-item">
+              <span class="verify-item_label">{{ t('sealed_at') }}</span>
+              <strong>{{ verifyResult.evidence.sealedAt ? (verifyResult.evidence.sealedAt | date:'medium') : t('pending') }}</strong>
+            </div>
+            <div class="verify-item">
+              <span class="verify-item_label">{{ t('signature') }}</span>
+              <strong>
+                {{ verifyResult.evidence.signing.algorithm || t('na') }}
+                @if (verifyResult.evidence.signing.keyId) {
+                  <span>({{ verifyResult.evidence.signing.keyId }})</span>
+                }
+              </strong>
+            </div>
+            <div class="verify-item">
+              <span class="verify-item_label">{{ t('location') }}</span>
+              <strong>
+                @if (hasLocation) {
+                  <span>{{ verifyResult.evidence.location?.lat }}, {{ verifyResult.evidence.location?.lng }}</span>
+                } @else {
+                  <span>{{ t('na') }}</span>
+                }
+              </strong>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<org-footer></org-footer>

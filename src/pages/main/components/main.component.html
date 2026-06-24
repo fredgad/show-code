@@ -26,9 +26,39 @@
     </p>
 
     <div class="hero-actions">
-      <a class="download-button" href="/assets/downloads/e-stream.apk" download="e-stream.apk">
-        <span [orgText]="text['download_button']">Download the app</span>
+      <a class="download-button" href="/assets/downloads/e-stream.apk" download="e-stream-android.apk">
+        <span [orgText]="text['download_button']">Download for Android</span>
         <img class="download-button_icon" [srcPath]="'download-icon.svg'" alt="" />
+      </a>
+    </div>
+
+    <div class="hero-secondary-links" aria-label="Additional links">
+      <a class="hero-secondary-links_item" routerLink="/verify">
+        <span
+          [orgText]="{
+            ENG: 'Verification',
+            ESP: 'Verificación',
+            RUS: 'Верификация'
+          }"
+        >
+          Верификация
+        </span>
+      </a>
+      <a
+        class="hero-secondary-links_item"
+        href="https://presentation.e-stream.app"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span
+          [orgText]="{
+            ENG: 'Presentation',
+            ESP: 'Presentación',
+            RUS: 'Презентация'
+          }"
+        >
+          Презентация
+        </span>
       </a>
     </div>
   </section>

@@ -9,3 +9,4 @@ export * from './push/push.service';
 export * from './stream/stream.service';
 export * from './server-notifications/server-notifications.service';
 export * from './font-scale/font-scale.service';
+export * from './evidence/evidence.service';

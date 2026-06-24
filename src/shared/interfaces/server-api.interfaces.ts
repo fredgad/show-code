@@ -116,6 +116,74 @@ export interface ResponseErrorListItemProps {
 export interface VideoDataI {
   url: string;
   createdAt: string;
+  evidenceId?: string;
+}
+
+export type EvidenceVerificationStatus =
+  | 'valid'
+  | 'pending'
+  | 'unknown'
+  | 'tampered'
+  | 'invalid_signature'
+  | 'failed';
+
+export interface EvidenceLocationI {
+  lat: number | null;
+  lng: number | null;
+  accuracy?: number | null;
+  altitude?: number | null;
+  heading?: number | null;
+  speed?: number | null;
+  capturedAt?: string | null;
+  receivedAt?: string | null;
+  provider?: string | null;
+  source?: string | null;
+}
+
+export interface EvidenceRecordI {
+  evidenceId: string;
+  schemaVersion: number;
+  status: 'pending' | 'sealed' | 'failed';
+  recordingId: string | null;
+  streamId: string | null;
+  streamSessionId: string | null;
+  userId: string | null;
+  userKeyId: string | null;
+  gridfsFilename: string | null;
+  bucketName: string | null;
+  mimeType: string | null;
+  fileSize: number;
+  durationSec: number;
+  hashAlgorithm: string | null;
+  fileHashHex: string | null;
+  recordedAtStart: string | null;
+  recordedAtEnd: string | null;
+  sealedAt: string | null;
+  location: EvidenceLocationI | null;
+  issuer: string | null;
+  failureReason: string | null;
+  signing: {
+    keyId: string | null;
+    algorithm: string | null;
+    signatureValid: boolean | null;
+  };
+}
+
+export interface EvidenceVerifyRequestI {
+  evidenceId?: string;
+  fileHashHex: string;
+  fileSize?: number;
+  fileName?: string;
+  packageManifest?: Record<string, unknown>;
+  packageType?: 'mp4' | 'estream_zip';
+}
+
+export interface EvidenceVerifyResponseI {
+  ok: boolean;
+  status: EvidenceVerificationStatus;
+  reason: string | null;
+  matchedBy: 'evidenceId' | 'hash' | 'filename' | null;
+  evidence: EvidenceRecordI | null;
 }
 
 export interface StreamI {

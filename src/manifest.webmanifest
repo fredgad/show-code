@@ -1,7 +1,7 @@
 {
-  "name": "MSR",
-  "short_name": "PWA",
-  "theme_color": "#1976d2",
+  "name": "E-stream",
+  "short_name": "E-stream",
+  "theme_color": "#245399",
   "background_color": "#ffffff",
   "display": "standalone",
   "scope": "/",

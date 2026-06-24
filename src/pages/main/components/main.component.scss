@@ -184,6 +184,28 @@
   margin-top: 18px;
 }
 
+.hero-secondary-links {
+  display: none;
+}
+
+.hero-secondary-links_item {
+  display: inline-flex;
+  padding: 8px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 51, 102, 0.16);
+  background: rgba(0, 51, 102, 0.055);
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 18px rgba(0, 51, 102, 0.08);
+}
+
+.hero-secondary-links_item:hover,
+.hero-secondary-links_item:focus-visible {
+  border-color: rgba(0, 51, 102, 0.34);
+  background: rgba(255, 255, 255, 0.85);
+}
+
 .download-button {
   display: inline-flex;
   align-items: center;
@@ -482,6 +504,14 @@
 
   .download-button {
     width: 100%;
+  }
+
+  .hero-secondary-links {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 0.9em;
   }
 
   .benefits {

@@ -75,7 +75,7 @@ export class VideoComponent {
         const blobUrl = URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.href = blobUrl;
-        anchor.download = this.videoPath.split('/').pop() || '';
+        anchor.download = this.downloadFileName;
         anchor.click();
         URL.revokeObjectURL(blobUrl);
 
@@ -84,5 +84,35 @@ export class VideoComponent {
       .catch(error => {
         this.notification.showError(`${error}, Error downloading video. Please try again.`);
       });
+  }
+
+  private get downloadFileName(): string {
+    const dateStamp = this.formatDateStamp(this.videoData?.createdAt);
+    const shortId = this.shortEvidenceId(this.videoData?.evidenceId);
+    const suffix = shortId ? `-${shortId}` : '';
+
+    return `e-video-${dateStamp}${suffix}.mp4`;
+  }
+
+  private formatDateStamp(value?: string): string {
+    const date = value ? new Date(value) : new Date();
+    const safeDate = Number.isNaN(date.getTime()) ? new Date() : date;
+    const pad2 = (part: number): string => String(part).padStart(2, '0');
+
+    return [
+      safeDate.getUTCFullYear(),
+      pad2(safeDate.getUTCMonth() + 1),
+      pad2(safeDate.getUTCDate()),
+      '-',
+      pad2(safeDate.getUTCHours()),
+      pad2(safeDate.getUTCMinutes()),
+      pad2(safeDate.getUTCSeconds()),
+      'Z',
+    ].join('');
+  }
+
+  private shortEvidenceId(value?: string): string {
+    const normalized = String(value || '').replace(/[^a-zA-Z0-9]/g, '');
+    return normalized.slice(-8);
   }
 }

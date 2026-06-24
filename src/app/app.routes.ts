@@ -25,6 +25,10 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('../pages/password-recovery').then(x => x.PasswordRecoveryComponent)
   },
   {
+    path: 'verify',
+    loadComponent: () => import('../pages/verify').then(x => x.VerifyComponent)
+  },
+  {
     path: 'profile',
     loadComponent: () => import('@pages').then(x => x.ProfileComponent),
     children: [
