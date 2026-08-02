@@ -212,7 +212,7 @@ export class PasswordRecoveryComponent {
   }
 
   public translate(text: LangTextI): string {
-    return text[this.langService.getLang$i()];
+    return this.langService.resolveText(text);
   }
 
   private extractErrorMessage(error: unknown, fallback: string): string {

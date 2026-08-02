@@ -2,6 +2,7 @@ import { LangEnum, LangTextI } from '@shared/interfaces';
 import mainEn from '../../../assets/lang/en.json';
 import mainRu from '../../../assets/lang/ru.json';
 import mainEs from '../../../assets/lang/es.json';
+import mainEt from '../../../assets/lang/et.json';
 
 type MainSectionValue = string | Record<string, string>;
 
@@ -12,6 +13,7 @@ type MainLangPayload = {
 const mainEnData = mainEn as MainLangPayload;
 const mainRuData = mainRu as MainLangPayload;
 const mainEsData = mainEs as MainLangPayload;
+const mainEtData = mainEt as MainLangPayload;
 
 const flattenSection = (section: Record<string, MainSectionValue>): Record<string, string> => {
   const result: Record<string, string> = {};
@@ -32,9 +34,10 @@ const flattenSection = (section: Record<string, MainSectionValue>): Record<strin
 const buildLangRecord = (
   en: Record<string, string>,
   ru: Record<string, string>,
-  es: Record<string, string>
+  es: Record<string, string>,
+  et: Record<string, string>
 ): Record<string, LangTextI> => {
-  const keys = new Set([...Object.keys(en), ...Object.keys(ru), ...Object.keys(es)]);
+  const keys = new Set([...Object.keys(en), ...Object.keys(ru), ...Object.keys(es), ...Object.keys(et)]);
   const result: Record<string, LangTextI> = {};
 
   keys.forEach(key => {
@@ -42,6 +45,7 @@ const buildLangRecord = (
       [LangEnum.ENG]: en[key] ?? '',
       [LangEnum.RUS]: ru[key] ?? '',
       [LangEnum.ESP]: es[key] ?? '',
+      [LangEnum.EST]: et[key] ?? '',
     };
   });
 
@@ -51,7 +55,8 @@ const buildLangRecord = (
 const mainText = buildLangRecord(
   flattenSection(mainEnData.main ?? {}),
   flattenSection(mainRuData.main ?? {}),
-  flattenSection(mainEsData.main ?? {})
+  flattenSection(mainEsData.main ?? {}),
+  flattenSection(mainEtData.main ?? {})
 );
 
 export const INPUT_PLACEHOLDER: LangTextI = mainText['input_placeholder'];

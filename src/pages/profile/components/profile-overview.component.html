@@ -1,0 +1,36 @@
+@if (userData$ | async; as userData) {
+<section class="profile-header">
+  <org-avatar class="profile-header_image" [imageUrl]="userData.image" [size]="96"></org-avatar>
+
+  <div class="profile-header_data">
+    <p class="profile-header_eyebrow">E-stream</p>
+    <h1 class="profile-header_name">{{ userData.username }}</h1>
+    <p class="profile-header_email">{{ userData.email }}</p>
+
+    <dl class="profile-header_meta">
+      <div>
+        <dt
+          [orgText]="{
+            ENG: 'Plan',
+            ESP: 'Plan',
+            RUS: 'Тариф',
+            EST: 'Pakett',
+          }"
+        >Plan</dt>
+        <dd
+          [orgText]="{
+            ENG: 'Basic',
+            ESP: 'Básico',
+            RUS: 'Базовый',
+            EST: 'Põhipakett',
+          }"
+        >Basic</dd>
+      </div>
+      <div>
+        <dt>Key ID</dt>
+        <dd>{{ userData.keyId }}</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+}

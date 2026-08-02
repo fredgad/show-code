@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Signal, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LangService } from '@shared/services';
+import { AuthService, LangService } from '@shared/services';
 import { LangEnum } from '@shared/interfaces';
 import { LANGUAGES_LIST } from '@shared/constants';
 
@@ -14,6 +14,7 @@ import { LANGUAGES_LIST } from '@shared/constants';
 })
 export class LangComponent {
   public langService = inject(LangService);
+  private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
 
   public languagesList: LangEnum[] = LANGUAGES_LIST;
@@ -39,8 +40,29 @@ export class LangComponent {
 
   public setLanguage(lang: string): void {
     this.langService.setLanguage(lang as LangEnum);
-    console.log('second');
+
+    if (this.authService.isLoggedIn()) {
+      this.authService.updateLanguage(this.toApiLang(lang as LangEnum)).subscribe({
+        error: () => {
+          // The local selection remains active; x-lang keeps current requests localized.
+        }
+      });
+    }
+
     this.isOpen = false;
     this.cdr.markForCheck();
+  }
+
+  private toApiLang(lang: LangEnum): string {
+    switch (lang) {
+      case LangEnum.RUS:
+        return 'ru';
+      case LangEnum.ESP:
+        return 'es';
+      case LangEnum.EST:
+        return 'et';
+      default:
+        return 'en';
+    }
   }
 }

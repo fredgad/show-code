@@ -1,0 +1,35 @@
+:host {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.overflow-marquee {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.overflow-marquee_track {
+  display: inline-block;
+  width: max-content;
+  min-width: max-content;
+  white-space: nowrap;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overflow-marquee_track {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transform: none !important;
+    will-change: auto;
+  }
+}

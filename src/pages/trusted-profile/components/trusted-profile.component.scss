@@ -54,6 +54,10 @@
         transition: 0.3s;
         cursor: pointer;
 
+        org-overflow-marquee {
+          width: 100%;
+        }
+
         &.active {
           color: $prime-green;
           &:nth-child(1) {

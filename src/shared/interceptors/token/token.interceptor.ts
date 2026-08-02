@@ -37,6 +37,8 @@ export class TokenInterceptor implements HttpInterceptor {
         return 'ru';
       case LangEnum.ESP:
         return 'es';
+      case LangEnum.EST:
+        return 'et';
       default:
         return 'en';
     }

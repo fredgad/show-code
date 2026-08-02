@@ -6,12 +6,20 @@ import { INPUT_PLACEHOLDER } from '../common/requests.text';
 import { RouterModule } from '@angular/router';
 import { OutgoingComponent } from './outgoing/outgoing.component';
 import { IncomingComponent } from './incoming/incoming.component';
-import { TrustedRequestComponent } from '@features/trusted-request';
+import { OverflowMarqueeComponent, TrustedRequestComponent } from '@features';
 
 @Component({
   selector: 'org-requests',
   standalone: true,
-  imports: [CommonModule, TextDirective, RouterModule, TrustedRequestComponent, OutgoingComponent, IncomingComponent],
+  imports: [
+    CommonModule,
+    TextDirective,
+    RouterModule,
+    TrustedRequestComponent,
+    OverflowMarqueeComponent,
+    OutgoingComponent,
+    IncomingComponent
+  ],
   templateUrl: './requests.component.html',
   styleUrl: './requests.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -20,6 +28,8 @@ export class RequestsComponent {
   private langService = inject(LangService);
 
   public inputPlaceholder$i: Signal<string> = this.langService.textByLanguage(INPUT_PLACEHOLDER);
+  public incomingLabel$i = this.langService.textByLanguage({ ENG: 'Incoming', ESP: 'Entrante', RUS: 'Входящие' });
+  public outgoingLabel$i = this.langService.textByLanguage({ ENG: 'Outgoing', ESP: 'Saliente', RUS: 'Исходящие' });
 
   public tags: string[] = [];
 

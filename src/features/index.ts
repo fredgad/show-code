@@ -9,3 +9,4 @@ export * from './checkbox';
 export * from './image-modal';
 export * from './confirm-popup';
 export * from './trusted-request';
+export * from './overflow-marquee';

@@ -1,27 +1,10 @@
 <div class="saved container">
   <div class="saved-buttons">
-    <button
-      class="saved-buttons_video"
-      (click)="changeTab(0)"
-      [class.active]="!currentTab"
-      [orgText]="{
-      ENG: 'Video',
-      ESP: 'Video',
-      RUS: 'Видео',
-    }"
-    >
-      Video
+    <button class="saved-buttons_video" (click)="changeTab(0)" [class.active]="!currentTab">
+      <org-overflow-marquee [text]="videoLabel$i()"></org-overflow-marquee>
     </button>
-    <button
-      (click)="changeTab(1)"
-      [class.active]="currentTab"
-      [orgText]="{
-      ENG: 'Audio',
-      ESP: 'Audio',
-      RUS: 'Аудио',
-    }"
-    >
-      Audio
+    <button (click)="changeTab(1)" [class.active]="currentTab">
+      <org-overflow-marquee [text]="audioLabel$i()"></org-overflow-marquee>
     </button>
   </div>
 

@@ -10,10 +10,12 @@ export const decryptLangTextByPass = (
     [LangEnum.ENG]: '',
     [LangEnum.RUS]: '',
     [LangEnum.ESP]: '',
+    [LangEnum.EST]: '',
   };
 
   for (const key in langText) {
-    decrypted[key as keyof LangTextI] = langText[key as keyof LangTextI]
+    const value = langText[key as keyof LangTextI] ?? '';
+    decrypted[key as keyof LangTextI] = value
       .split('')
       .map((char) => String.fromCharCode(char.charCodeAt(0) ^ password))
       .join('');
@@ -29,10 +31,12 @@ export const encryptLangTextByPass = (
     [LangEnum.ENG]: '',
     [LangEnum.RUS]: '',
     [LangEnum.ESP]: '',
+    [LangEnum.EST]: '',
   };
 
   for (const key in langText) {
-    encrypted[key as keyof LangTextI] = langText[key as keyof LangTextI]
+    const value = langText[key as keyof LangTextI] ?? '';
+    encrypted[key as keyof LangTextI] = value
       .split('')
       .map((char) => String.fromCharCode(char.charCodeAt(0) ^ password))
       .join('');

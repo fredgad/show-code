@@ -1,10 +1,10 @@
 import { Route } from '@angular/router';
-import { MainComponent, TrustedProfileComponent } from '@pages';
+import { MainComponent, ProfileOverviewComponent, TrustedProfileComponent } from '@pages';
 import { SavedMediaComponent } from '@widgets/saved-media';
 import { NotificationSettingsComponent } from '@widgets/notification-settings';
 import { AccountSettingsComponent } from '@widgets/account-settings';
 import { TrustedPeopleComponent } from '@widgets/trusted-people';
-import { AuthGuard } from '@shared/guards';
+import { AuthGuard, pendingChangesGuard } from '@shared/guards';
 import { IncomingComponent, OutgoingComponent, RequestsComponent } from '@widgets/requests';
 
 export const appRoutes: Route[] = [
@@ -32,7 +32,7 @@ export const appRoutes: Route[] = [
     path: 'profile',
     loadComponent: () => import('@pages').then(x => x.ProfileComponent),
     children: [
-      { path: '', redirectTo: 'saved-media', pathMatch: 'full' },
+      { path: '', component: ProfileOverviewComponent, pathMatch: 'full' },
       {
         path: 'saved-media',
         component: SavedMediaComponent
@@ -75,6 +75,7 @@ export const appRoutes: Route[] = [
   {
     path: 'capture',
     loadComponent: () => import('@pages').then(x => x.VideoPageComponent),
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    canDeactivate: [pendingChangesGuard]
   }
 ];

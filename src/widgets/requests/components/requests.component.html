@@ -2,28 +2,11 @@
 
 <div class="requests container">
   <div class="requests-buttons">
-    <button
-      class="requests-buttons_video"
-      routerLink="/profile/requests/incoming"
-      routerLinkActive="active"
-      [orgText]="{
-      ENG: 'Incoming',
-      ESP: 'Entrante',
-      RUS: 'Входящие',
-    }"
-    >
-      Incoming
+    <button class="requests-buttons_video" routerLink="/profile/requests/incoming" routerLinkActive="active">
+      <org-overflow-marquee [text]="incomingLabel$i()"></org-overflow-marquee>
     </button>
-    <button
-      routerLink="/profile/requests/outgoing"
-      routerLinkActive="active"
-      [orgText]="{
-      ENG: 'Outgoing',
-      ESP: 'Saliente',
-      RUS: 'Исходящие',
-    }"
-    >
-      Outgoing
+    <button routerLink="/profile/requests/outgoing" routerLinkActive="active">
+      <org-overflow-marquee [text]="outgoingLabel$i()"></org-overflow-marquee>
     </button>
   </div>
 

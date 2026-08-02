@@ -367,7 +367,7 @@ export class AccountSettingsComponent implements OnInit, OnDestroy {
   }
 
   private translate(text: LangTextI): string {
-    return text[this.langService.getLang$i()];
+    return this.langService.resolveText(text);
   }
 
   private extractErrorMessage(error: unknown, fallback: string): string {

@@ -10,3 +10,4 @@ export * from './stream/stream.service';
 export * from './server-notifications/server-notifications.service';
 export * from './font-scale/font-scale.service';
 export * from './evidence/evidence.service';
+export * from './recording-upload/recording-upload.service';

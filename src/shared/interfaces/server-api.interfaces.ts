@@ -140,17 +140,30 @@ export interface EvidenceLocationI {
   source?: string | null;
 }
 
+export interface EvidenceDerivationI {
+  type: 'trim';
+  sourceEvidenceId: string;
+  rootEvidenceId: string;
+  sourceStartMs: number;
+  sourceEndMs: number;
+  rootStartMs: number;
+  rootEndMs: number;
+  rootDurationMs?: number;
+  transformedAt: string | null;
+  tool: string | null;
+  profileVersion: string | null;
+}
+
+export interface EvidenceOriginalAuthorI {
+  confirmed: boolean;
+  disclosed: boolean;
+  displayName: string | null;
+}
+
 export interface EvidenceRecordI {
   evidenceId: string;
   schemaVersion: number;
   status: 'pending' | 'sealed' | 'failed';
-  recordingId: string | null;
-  streamId: string | null;
-  streamSessionId: string | null;
-  userId: string | null;
-  userKeyId: string | null;
-  gridfsFilename: string | null;
-  bucketName: string | null;
   mimeType: string | null;
   fileSize: number;
   durationSec: number;
@@ -160,8 +173,9 @@ export interface EvidenceRecordI {
   recordedAtEnd: string | null;
   sealedAt: string | null;
   location: EvidenceLocationI | null;
+  derivation?: EvidenceDerivationI | null;
+  originalAuthor?: EvidenceOriginalAuthorI | null;
   issuer: string | null;
-  failureReason: string | null;
   signing: {
     keyId: string | null;
     algorithm: string | null;

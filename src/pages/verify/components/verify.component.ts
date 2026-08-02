@@ -9,6 +9,7 @@ import { EvidenceService, LangService, NotificationService } from '@shared/servi
 import { TEXT_VERIFY, VerifyTextKey } from '../common/verify.text';
 
 type VerifyFileKind = 'mp4' | 'package';
+type VerificationSource = 'file' | 'url';
 
 type EvidencePackageEntry = {
   name: string;
@@ -43,12 +44,18 @@ const STATUS_BADGE_KEYS: Record<EvidenceVerificationStatus, VerifyTextKey> = {
   failed: 'badge_failed',
 };
 
+const REMOTE_FILE_TIMEOUT_MS = 5 * 60 * 1000;
+
 @Component({
   selector: 'org-verify',
   standalone: true,
   imports: [CommonModule, HeaderComponent, FooterComponent],
   templateUrl: './verify.component.html',
-  styleUrl: './verify.component.scss',
+  styleUrls: [
+    './verify.component.scss',
+    './verify-source.component.scss',
+    './verify-feedback.component.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VerifyComponent {
@@ -67,6 +74,8 @@ export class VerifyComponent {
   public lastHashHex = '';
   public extractedEvidenceId: string | null = null;
   public selectedFileKind: VerifyFileKind = 'mp4';
+  public verificationSource: VerificationSource = 'file';
+  public sourceUrl = '';
   public packageManifest: Record<string, unknown> | null = null;
   public text: Record<string, LangTextI> = TEXT_VERIFY;
 
@@ -104,14 +113,41 @@ export class VerifyComponent {
     return typeof location?.lat === 'number' && typeof location?.lng === 'number';
   }
 
+  public get originalAuthorText(): string {
+    const author = this.verifyResult?.evidence?.originalAuthor;
+    if (!author?.confirmed) {
+      return this.t('fragment_author_unconfirmed');
+    }
+    if (author.disclosed && author.displayName) {
+      return author.displayName;
+    }
+    return this.t('fragment_author_confirmed_private');
+  }
+
   public get verificationModeText(): string {
+    if (this.verificationSource === 'url') {
+      return this.t('mode_url');
+    }
     return this.selectedFileKind === 'package' ? this.t('mode_package') : this.t('mode_mp4');
   }
 
   public get selectedFileHelpText(): string {
+    if (this.verificationSource === 'url') {
+      return this.t('url_selected_hint');
+    }
     return this.selectedFileKind === 'package'
       ? this.t('package_selected_hint')
       : this.t('mp4_selected_hint');
+  }
+
+  public get processingText(): string {
+    return this.verificationSource === 'url'
+      ? this.t('processing_url_text')
+      : this.t('processing_text');
+  }
+
+  public get canVerifyUrl(): boolean {
+    return !this.isProcessing && this.sourceUrl.trim().length > 0;
   }
 
   public get evidenceIdLabel(): string {
@@ -135,6 +171,15 @@ export class VerifyComponent {
       default:
         return this.t('matched_not_found');
     }
+  }
+
+  public formatFragmentOffset(value: number | null | undefined): string {
+    const totalMs = Math.max(0, Number(value) || 0);
+    const totalSeconds = Math.floor(totalMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const tenths = Math.floor((totalMs % 1000) / 100);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}.${tenths}`;
   }
 
   public onDragOver(event: DragEvent): void {
@@ -162,6 +207,13 @@ export class VerifyComponent {
     input.value = '';
   }
 
+  public onSourceUrlInput(event: Event): void {
+    this.sourceUrl = (event.target as HTMLInputElement).value;
+    if (this.errorMessage) {
+      this.errorMessage = '';
+    }
+  }
+
   public clearSelection(): void {
     this.selectedFile = null;
     this.extractedEvidenceId = null;
@@ -169,6 +221,8 @@ export class VerifyComponent {
     this.verifyResult = null;
     this.errorMessage = '';
     this.selectedFileKind = 'mp4';
+    this.verificationSource = 'file';
+    this.sourceUrl = '';
     this.packageManifest = null;
     this.cdr.markForCheck();
   }
@@ -186,29 +240,7 @@ export class VerifyComponent {
     this.cdr.markForCheck();
 
     try {
-      const target = this.selectedFileKind === 'package'
-        ? await this.extractEvidencePackage(this.selectedFile)
-        : {
-          evidenceId: await this.extractEvidenceId(this.selectedFile),
-          manifest: null,
-          videoFile: this.selectedFile,
-        };
-      const fileHashHex = await this.computeFileHashHex(target.videoFile);
-
-      this.lastHashHex = fileHashHex;
-      this.extractedEvidenceId = target.evidenceId;
-      this.packageManifest = target.manifest;
-
-      this.verifyResult = await firstValueFrom(
-        this.evidenceService.verifyEvidence({
-          evidenceId: target.evidenceId || undefined,
-          fileHashHex,
-          fileSize: target.videoFile.size,
-          fileName: target.videoFile.name,
-          packageManifest: target.manifest || undefined,
-          packageType: this.selectedFileKind === 'package' ? 'estream_zip' : 'mp4',
-        })
-      );
+      await this.performVerification(this.selectedFile, this.selectedFileKind);
     } catch (error) {
       this.errorMessage = this.resolveErrorMessage(error);
       this.notificationService.showError(this.errorMessage);
@@ -218,7 +250,45 @@ export class VerifyComponent {
     }
   }
 
-  private setSelectedFile(file: File | null, preferredKind?: VerifyFileKind): void {
+  public async verifyFromUrl(): Promise<void> {
+    if (!this.canVerifyUrl) {
+      return;
+    }
+
+    let normalizedUrl: string;
+    try {
+      normalizedUrl = this.normalizeSourceUrl(this.sourceUrl);
+    } catch (error) {
+      this.handleVerificationError(error);
+      return;
+    }
+
+    this.isProcessing = true;
+    this.verificationSource = 'url';
+    this.sourceUrl = normalizedUrl;
+    this.errorMessage = '';
+    this.verifyResult = null;
+    this.lastHashHex = '';
+    this.packageManifest = null;
+    this.cdr.markForCheck();
+
+    try {
+      const remoteFile = await this.downloadRemoteMp4(normalizedUrl);
+      this.setSelectedFile(remoteFile, 'mp4', 'url');
+      await this.performVerification(remoteFile, 'mp4');
+    } catch (error) {
+      this.handleVerificationError(error);
+    } finally {
+      this.isProcessing = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  private setSelectedFile(
+    file: File | null,
+    preferredKind?: VerifyFileKind,
+    source: VerificationSource = 'file'
+  ): void {
     if (!file) {
       return;
     }
@@ -260,11 +330,132 @@ export class VerifyComponent {
 
     this.selectedFile = file;
     this.selectedFileKind = fileKind;
+    this.verificationSource = source;
+    if (source === 'file') {
+      this.sourceUrl = '';
+    }
     this.verifyResult = null;
     this.errorMessage = '';
     this.extractedEvidenceId = null;
     this.lastHashHex = '';
     this.packageManifest = null;
+    this.cdr.markForCheck();
+  }
+
+  private async performVerification(file: File, fileKind: VerifyFileKind): Promise<void> {
+    const target = fileKind === 'package'
+      ? await this.extractEvidencePackage(file)
+      : {
+        evidenceId: await this.extractEvidenceId(file),
+        manifest: null,
+        videoFile: file,
+      };
+    const fileHashHex = await this.computeFileHashHex(target.videoFile);
+
+    this.lastHashHex = fileHashHex;
+    this.extractedEvidenceId = target.evidenceId;
+    this.packageManifest = target.manifest;
+
+    this.verifyResult = await firstValueFrom(
+      this.evidenceService.verifyEvidence({
+        evidenceId: target.evidenceId || undefined,
+        fileHashHex,
+        fileSize: target.videoFile.size,
+        fileName: target.videoFile.name,
+        packageManifest: target.manifest || undefined,
+        packageType: fileKind === 'package' ? 'estream_zip' : 'mp4',
+      })
+    );
+  }
+
+  private normalizeSourceUrl(value: string): string {
+    try {
+      const url = new URL(value.trim());
+      if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+        throw new Error();
+      }
+      return url.href;
+    } catch {
+      throw new Error(this.t('url_invalid_error'));
+    }
+  }
+
+  private async downloadRemoteMp4(sourceUrl: string): Promise<File> {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), REMOTE_FILE_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(sourceUrl, {
+        method: 'GET',
+        credentials: 'omit',
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        signal: controller.signal,
+      });
+
+      if (response.status === 425) {
+        throw new Error(this.t('url_pending_error'));
+      }
+      if (!response.ok) {
+        throw new Error(
+          this.t('url_http_error').replace('{status}', response.status.toString())
+        );
+      }
+
+      const contentType = (response.headers.get('content-type') || '')
+        .split(';')[0]
+        .trim()
+        .toLowerCase();
+      const responsePath = new URL(response.url || sourceUrl).pathname.toLowerCase();
+      const isMp4 = contentType === 'video/mp4' || responsePath.endsWith('.mp4');
+      if (!isMp4 || contentType === 'text/html') {
+        throw new Error(this.t('url_not_mp4_error'));
+      }
+
+      const blob = await response.blob();
+      if (!blob.size) {
+        throw new Error(this.t('url_empty_error'));
+      }
+
+      return new File(
+        [blob],
+        this.resolveRemoteFileName(response, sourceUrl),
+        { type: 'video/mp4', lastModified: Date.now() }
+      );
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        throw new Error(this.t('url_timeout_error'));
+      }
+      if (error instanceof TypeError) {
+        throw new Error(this.t('url_fetch_error'));
+      }
+      throw error;
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  }
+
+  private resolveRemoteFileName(response: Response, sourceUrl: string): string {
+    const disposition = response.headers.get('content-disposition') || '';
+    const utfFileName = /filename\*=UTF-8''([^;]+)/i.exec(disposition)?.[1];
+    const plainFileName = /filename="?([^";]+)"?/i.exec(disposition)?.[1];
+    const pathFileName = new URL(response.url || sourceUrl).pathname.split('/').pop();
+    const candidate = utfFileName || plainFileName || pathFileName || 'remote-video.mp4';
+    let decoded = candidate;
+
+    try {
+      decoded = decodeURIComponent(candidate);
+    } catch {
+      decoded = candidate;
+    }
+
+    const safeName = decoded.replace(/[\\/\r\n]/g, '-').trim() || 'remote-video.mp4';
+    return safeName.toLowerCase().endsWith('.mp4') ? safeName : `${safeName}.mp4`;
+  }
+
+  private handleVerificationError(error: unknown): void {
+    this.errorMessage = this.resolveErrorMessage(error);
+    this.notificationService.showError(this.errorMessage);
     this.cdr.markForCheck();
   }
 
@@ -401,6 +592,6 @@ export class VerifyComponent {
   }
 
   private translate(text: LangTextI): string {
-    return text[this.langService.getLang$i()];
+    return this.langService.resolveText(text);
   }
 }

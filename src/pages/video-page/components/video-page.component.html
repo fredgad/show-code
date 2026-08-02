@@ -1,53 +1,135 @@
-<org-header></org-header>
+<org-header [showDisplayControls]="false"></org-header>
 
-<div class="capture wrapper">
-  <video #videoElement autoplay muted></video>
+<main class="recorder-page">
+  <section class="recorder-shell" [attr.data-state]="state$i()">
+    <div class="recorder-viewfinder">
+      <video #videoElement class="recorder-video" [class.--mirrored]="isFrontFacing$i()" autoplay muted playsinline></video>
 
-  <div class="capture-controls">
-    <div class="capture-controls_camera">{{ currentDeviceLabel$i() }}</div>
+      <div class="recorder-shade" aria-hidden="true"></div>
 
-    <!-- @if (isRecording) {
-      <div class="capture-controls_timer">
-        <span [orgText]="{
-          ENG: 'Record: ',
-          ESP: 'Registro: ',
-          RUS: 'Запись: '
-        }">Record: </span>
-        <p>{{currentVideoTimer$i()}}</p>
+      <div class="recorder-viewfinder_top">
+        <div class="recorder-state" [class.--recording]="isRecording$i()" aria-live="polite">
+          <span class="recorder-state_dot" aria-hidden="true"></span>
+          <span>{{ statusText$i() }}</span>
+        </div>
+
+        @if (isRecording$i() || state$i() === 'stopping') {
+        <time class="recorder-timer">{{ timerText$i() }}</time>
+        }
       </div>
-    } -->
 
-    <div class="capture-controls_buttons">
-      <!-- @if (!isRecording) { -->
-      <abbr (click)="switchCamera()" class="capture-controls_buttons--switch" [title]="abbrTitle$i()">
-        <img [srcPath]="'camera-switch-icon.svg'" />
-      </abbr>
-      <!-- }  -->
+      @if (state$i() === 'preparing') {
+      <div class="recorder-loader" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      } @if (state$i() === 'camera-error' || state$i() === 'unsupported') {
+      <section class="recorder-empty" aria-live="assertive">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M6 15.5A3.5 3.5 0 0 1 9.5 12h20a3.5 3.5 0 0 1 3.5 3.5v17a3.5 3.5 0 0 1-3.5 3.5h-20A3.5 3.5 0 0 1 6 32.5z" />
+          <path d="m33 20 9-5v18l-9-5zM12 8l24 32" />
+        </svg>
+        <strong>{{ statusText$i() }}</strong>
+        <p>{{ errorText$i() }}</p>
+        @if (state$i() === 'camera-error') {
+        <button type="button" (click)="retryCamera()" [orgText]="{ ENG: 'Try again', ESP: 'Intentar de nuevo', RUS: 'Повторить' }">
+          Try again
+        </button>
+        }
+      </section>
+      }
+
+      <div class="recorder-viewfinder_bottom">
+        <span class="recorder-camera-name">{{ currentDeviceLabel$i() || cameraFallback$i() }}</span>
+        <span
+          class="recorder-storage-note"
+          [orgText]="{
+            ENG: 'The file remains on this page until the server confirms the upload',
+            ESP: 'El archivo permanece en esta página hasta que el servidor confirme la carga',
+            RUS: 'Файл остаётся на этой странице до подтверждения загрузки сервером'
+          }"
+        ></span>
+      </div>
+    </div>
+
+    <div class="recorder-console">
+      <div class="recorder-console_copy">
+        <strong
+          [orgText]="{
+            ENG: 'Video recorder',
+            ESP: 'Grabadora de vídeo',
+            RUS: 'Видеорегистратор'
+          }"
+          >Video recorder</strong
+        >
+        <span>{{ statusText$i() }}</span>
+      </div>
+
       @if (isRecording$i()) {
-      <button
-        (click)="stopRecording()"
-        class="btn-primary"
-        [orgText]="{
-          ENG: 'Stop recording',
-          ESP: 'Para de grabar',
-          RUS: 'Остановить запись',
-        }"
-      >
-        Stop recording
+      <button type="button" class="recorder-button --stop" (click)="stopRecording()" [attr.aria-label]="statusText$i()">
+        <span aria-hidden="true"></span>
       </button>
       } @else {
       <button
+        type="button"
+        class="recorder-button --record"
+        [disabled]="!canStart$i()"
         (click)="startRecording()"
-        class="btn-secondary"
-        [orgText]="{
-          ENG: 'Start recording',
-          ESP: 'Comience a grabar',
-          RUS: 'Начать запись',
-        }"
+        [attr.aria-label]="statusText$i()"
       >
-        Start recording
+        <span aria-hidden="true"></span>
       </button>
       }
+
+      <button
+        type="button"
+        class="recorder-switch"
+        [disabled]="!canSwitchCamera$i()"
+        (click)="switchCamera()"
+        [attr.aria-label]="cameraFallback$i()"
+      >
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M8.5 9.5A10 10 0 0 1 25 11l1.5 2M23.5 22.5A10 10 0 0 1 7 21l-1.5-2" />
+          <path d="m25 7 .4 6.3-6.2-.3M7 25l-.4-6.3 6.2.3" />
+          <rect x="10.5" y="11.5" width="11" height="9" rx="2.5" />
+          <circle cx="16" cy="16" r="2.5" />
+        </svg>
+      </button>
     </div>
-  </div>
-</div>
+
+    @if (hasPendingRecording$i()) {
+    <section class="recorder-recovery" aria-live="assertive">
+      <div>
+        <strong
+          [orgText]="{
+            ENG: 'The recording was created but not uploaded',
+            ESP: 'La grabación se creó pero no se cargó',
+            RUS: 'Запись создана, но не отправлена'
+          }"
+        ></strong>
+        <p>{{ uploadErrorText$i() }}</p>
+      </div>
+      <div class="recorder-recovery_actions">
+        <button
+          type="button"
+          class="--primary"
+          (click)="retryUpload()"
+          [orgText]="{ ENG: 'Retry upload', ESP: 'Reintentar carga', RUS: 'Повторить отправку' }"
+        ></button>
+        <button
+          type="button"
+          (click)="downloadPendingRecording()"
+          [orgText]="{ ENG: 'Save a copy', ESP: 'Guardar copia', RUS: 'Сохранить копию' }"
+        ></button>
+        <button
+          type="button"
+          class="--danger"
+          (click)="discardPendingRecording()"
+          [orgText]="{ ENG: 'Delete', ESP: 'Eliminar', RUS: 'Удалить' }"
+        ></button>
+      </div>
+    </section>
+    }
+  </section>
+</main>

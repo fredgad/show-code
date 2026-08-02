@@ -183,6 +183,10 @@ export class AuthService {
     );
   }
 
+  public updateLanguage(lang: string): Observable<{ message: string; lang: string }> {
+    return this.http.post<{ message: string; lang: string }>(`${this.baseUrl}/api/user/lang`, { lang });
+  }
+
   public sendRecoveryCode(email: string): Observable<{ message: string; email: string }> {
     return this.http.post<{ message: string; email: string }>(`${this.baseUrl}/api/auth/recovery/send`, { email }).pipe(
       catchError(error => {

@@ -1,63 +1,525 @@
-@import 'mixins';
+@import 'variables';
 
 :host {
-  max-height: 100dvh;
-  overflow: hidden;
+  display: block;
+  min-height: 100dvh;
+  background: #071625;
+  color: #ffffff;
 }
 
-.capture {
-  display: flex;
-  flex-direction: column;
+button {
+  font: inherit;
+}
+
+.recorder-page {
+  min-height: 100dvh;
+  padding-top: 80px;
+  overflow: hidden;
+  background: radial-gradient(circle at 12% 8%, rgba(26, 78, 124, 0.38), transparent 38%),
+    radial-gradient(circle at 92% 88%, rgba(126, 22, 29, 0.18), transparent 35%), #071625;
+}
+
+.recorder-shell {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 14px;
+  width: min(100%, 1080px);
+  height: calc(100dvh - 80px);
+  min-height: 540px;
   margin: 0 auto;
+  padding: 18px 24px 22px;
+}
 
+.recorder-viewfinder {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 28px;
+  background: linear-gradient(145deg, #0d2439, #06111d);
+  isolation: isolate;
+}
+
+.recorder-video {
   width: 100%;
-  max-width: 900px;
-  min-height: 90dvh;
+  height: 100%;
+  object-fit: cover;
+  background: #08131e;
 
-  video {
-    margin-top: 10dvh;
-    width: 100%;
-    height: 70dvh;
+  &.--mirrored {
+    transform: scaleX(-1);
+  }
+}
+
+.recorder-shade {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(2, 12, 22, 0.58), transparent 26%, transparent 65%, rgba(2, 12, 22, 0.72));
+}
+
+.recorder-viewfinder_top,
+.recorder-viewfinder_bottom {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 20px 22px;
+}
+
+.recorder-viewfinder_top {
+  top: 0;
+}
+
+.recorder-viewfinder_bottom {
+  bottom: 0;
+  align-items: flex-end;
+}
+
+.recorder-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(3, 16, 28, 0.58);
+  backdrop-filter: blur(10px);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+
+  &_dot {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #7f97ab;
   }
 
-  &-controls {
-    &_timer {
-      display: flex;
-      justify-content: center;
-      flex-direction: row;
-      justify-content: center;
-      margin-top: 5px;
+  &.--recording {
+    border-color: rgba(255, 89, 95, 0.34);
+
+    .recorder-state_dot {
+      background: #ef3e45;
+      box-shadow: 0 0 0 0 rgba(239, 62, 69, 0.42);
+      animation: recording-pulse 1.8s ease-out infinite;
+    }
+  }
+}
+
+.recorder-timer {
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  font-size: 18px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+
+.recorder-camera-name,
+.recorder-storage-note {
+  min-width: 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.recorder-camera-name {
+  max-width: 38%;
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recorder-storage-note {
+  max-width: 470px;
+  text-align: right;
+}
+
+.recorder-loader {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  gap: 8px;
+  transform: translate(-50%, -50%);
+
+  span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.84);
+    animation: loader-rise 1.2s ease-in-out infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.14s;
     }
 
-    &_buttons {
-      display: flex;
-      justify-content: center;
-      margin: 0 auto;
-      margin-top: 15px;
+    &:nth-child(3) {
+      animation-delay: 0.28s;
+    }
+  }
+}
 
-      button {
-        @include unselectable;
-        // height: fit-content;
-      }
+.recorder-empty {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  width: min(88%, 440px);
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 24px;
+  background: rgba(5, 20, 34, 0.88);
+  backdrop-filter: blur(18px);
+  text-align: center;
+  transform: translate(-50%, -50%);
 
-      &--switch {
-        margin-right: 30px;
-        text-align: center;
-        cursor: pointer;
+  svg {
+    width: 46px;
+    fill: none;
+    stroke: #aebfce;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+  }
 
-        &:hover > img {
-          transform: scale(1.15);
-        }
-        img {
-          transition: 0.2s;
-          height: 45px;
-          width: 45px;
-        }
-      }
+  strong {
+    font-size: 21px;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  button {
+    min-height: 42px;
+    padding: 0 18px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: #ffffff;
+    color: $prime-blue;
+    font-weight: 750;
+    cursor: pointer;
+  }
+}
+
+.recorder-console {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  min-height: 92px;
+  padding: 8px 10px 8px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  background: rgba(10, 31, 50, 0.86);
+  backdrop-filter: blur(16px);
+
+  &_copy {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+
+    strong {
+      font-size: 17px;
     }
 
-    &_camera {
+    span {
+      overflow: hidden;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+.recorder-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.96);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: inherit;
+  }
+
+  span {
+    position: relative;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #d9222b;
+    transition: border-radius 0.24s ease, transform 0.24s ease;
+  }
+
+  &.--stop span {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+  }
+
+  &:not(:disabled):hover {
+    transform: scale(1.035);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.34;
+  }
+}
+
+.recorder-switch {
+  display: grid;
+  place-items: center;
+  justify-self: end;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+
+  svg {
+    width: 28px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.6;
+  }
+
+  &:not(:disabled):hover {
+    background: rgba(255, 255, 255, 0.14);
+    transform: rotate(8deg);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.3;
+  }
+}
+
+.recorder-recovery {
+  display: grid;
+  grid-column: 1;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 16px;
+  border: 1px solid rgba(230, 76, 80, 0.38);
+  border-radius: 20px;
+  background: rgba(63, 16, 22, 0.82);
+
+  strong {
+    font-size: 16px;
+  }
+
+  p {
+    margin-top: 3px;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 14px;
+  }
+
+  &_actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 7px;
+
+    button {
+      min-height: 38px;
+      padding: 0 13px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+
+      &.--primary {
+        background: #ffffff;
+        color: $prime-blue;
+      }
+
+      &.--danger {
+        color: #ffb9bc;
+      }
+    }
+  }
+}
+
+@keyframes recording-pulse {
+  70%,
+  100% {
+    box-shadow: 0 0 0 9px rgba(239, 62, 69, 0);
+  }
+}
+
+@keyframes loader-rise {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-7px);
+  }
+}
+
+@media (max-width: 768px) {
+  .recorder-page {
+    padding-top: 60px;
+  }
+
+  .recorder-shell {
+    height: calc(100dvh - 60px);
+    min-height: 470px;
+    gap: 9px;
+    padding: 8px 8px max(10px, env(safe-area-inset-bottom));
+  }
+
+  .recorder-viewfinder {
+    border-radius: 22px;
+  }
+
+  .recorder-viewfinder_top,
+  .recorder-viewfinder_bottom {
+    padding: 14px;
+  }
+
+  .recorder-viewfinder_bottom {
+    display: block;
+  }
+
+  .recorder-camera-name {
+    display: block;
+    max-width: 72%;
+    font-size: 12px;
+  }
+
+  .recorder-storage-note {
+    display: none;
+  }
+
+  .recorder-state {
+    max-width: calc(100% - 76px);
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+
+  .recorder-timer {
+    font-size: 15px;
+  }
+
+  .recorder-console {
+    min-height: 86px;
+    padding: 7px 9px 7px 14px;
+    border-radius: 21px;
+
+    &_copy {
+      strong {
+        font-size: 14px;
+      }
+
+      span {
+        max-width: 28vw;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .recorder-button {
+    width: 66px;
+    height: 66px;
+
+    span {
+      width: 49px;
+      height: 49px;
+    }
+  }
+
+  .recorder-switch {
+    width: 46px;
+    height: 46px;
+  }
+
+  .recorder-recovery {
+    grid-template-columns: 1fr;
+    gap: 10px;
+
+    &_actions {
+      justify-content: flex-start;
+    }
+  }
+}
+
+@media (max-height: 620px) and (orientation: landscape) {
+  .recorder-shell {
+    grid-template-columns: minmax(0, 1fr) 250px;
+    grid-template-rows: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .recorder-console {
+    grid-template-columns: 1fr;
+    align-content: center;
+    justify-items: center;
+    gap: 12px;
+
+    &_copy {
+      justify-items: center;
       text-align: center;
     }
+  }
+
+  .recorder-switch {
+    justify-self: center;
+  }
+
+  .recorder-recovery {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recorder-state_dot,
+  .recorder-loader span {
+    animation: none;
+  }
+
+  .recorder-button,
+  .recorder-switch {
+    transition: none;
   }
 }

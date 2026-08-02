@@ -21,7 +21,16 @@
         "tsConfig": "./tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "./src/assets/favicon/favicon.ico",
+          {
+            "glob": "favicon.ico",
+            "input": "./src/assets/favicon",
+            "output": "."
+          },
+          {
+            "glob": "manifest.webmanifest",
+            "input": "./src",
+            "output": "."
+          },
           "./src/assets",
           "./src/custom-sw.js"
         ],

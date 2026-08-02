@@ -1,0 +1,141 @@
+<button
+  type="button"
+  class="app-drawer-backdrop"
+  [class.--open]="open"
+  [attr.aria-hidden]="!open"
+  [attr.tabindex]="open ? 0 : -1"
+  aria-label="Close navigation menu"
+></button>
+
+<aside
+  #drawer
+  id="app-navigation-drawer"
+  class="app-drawer"
+  [class.--open]="open"
+  [attr.aria-hidden]="!open"
+  [attr.inert]="open ? null : ''"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="app-drawer-title"
+  (touchstart)="onTouchStart($event)"
+  (touchmove)="onTouchMove($event)"
+  (touchend)="onTouchEnd($event)"
+  (touchcancel)="onTouchCancel()"
+>
+  <svg class="app-drawer_sprite" aria-hidden="true">
+    <defs>
+      <symbol id="app-drawer-icon-home" viewBox="0 0 24 24">
+        <path d="M3.5 10.5 12 3.6l8.5 6.9v9a1 1 0 0 1-1 1h-5v-6h-5v6h-5a1 1 0 0 1-1-1z" />
+      </symbol>
+      <symbol id="app-drawer-icon-requests" viewBox="0 0 24 24">
+        <path d="M4 5.5h16v12H8l-4 3z" />
+        <path d="M8 9h8M8 13h5" />
+      </symbol>
+      <symbol id="app-drawer-icon-trusted" viewBox="0 0 24 24">
+        <circle cx="9" cy="8" r="3" />
+        <circle cx="17" cy="9" r="2.3" />
+        <path d="M3.5 20c.4-4 2.2-6 5.5-6s5.1 2 5.5 6M14 15.2c3.5-.6 5.6.9 6.3 4.8" />
+      </symbol>
+      <symbol id="app-drawer-icon-notifications" viewBox="0 0 24 24">
+        <path d="M6 17h12l-1.4-2.1V10a4.6 4.6 0 0 0-9.2 0v4.9zM10 20h4" />
+      </symbol>
+      <symbol id="app-drawer-icon-videos" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="m10 9 5 3-5 3z" />
+      </symbol>
+      <symbol id="app-drawer-icon-recorder" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="13.5" height="14" rx="3" />
+        <path d="m16.5 10 4.5-2.5v9L16.5 14z" />
+        <circle cx="9.75" cy="12" r="2.5" />
+      </symbol>
+      <symbol id="app-drawer-icon-settings" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 3v2.1M12 18.9V21M3 12h2.1M18.9 12H21M5.6 5.6l1.5 1.5M16.9 16.9l1.5 1.5M18.4 5.6l-1.5 1.5M7.1 16.9l-1.5 1.5" />
+        <circle cx="12" cy="12" r="7" />
+      </symbol>
+      <symbol id="app-drawer-icon-profile" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="3.5" />
+        <path d="M5 20c.6-4.2 2.9-6.3 7-6.3s6.4 2.1 7 6.3" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <header class="app-drawer_header">
+    <div class="app-drawer_brand">
+      <span class="app-drawer_brand-mark" aria-hidden="true">E</span>
+      <span class="app-drawer_brand-copy">
+        <strong>E-stream</strong>
+        <small
+          [orgText]="{
+            ENG: 'Safety workspace',
+            ESP: 'Espacio de seguridad',
+            RUS: 'Пространство безопасности'
+          }"
+        ></small>
+      </span>
+    </div>
+
+    <button
+      #closeButton
+      type="button"
+      class="app-drawer_close"
+      [attr.tabindex]="open ? 0 : -1"
+      aria-label="Close navigation menu"
+      (click)="requestClose()"
+    >
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <div class="app-drawer_body">
+    <p
+      class="app-drawer_eyebrow"
+      [orgText]="{
+        ENG: 'Application sections',
+        ESP: 'Secciones de la aplicación',
+        RUS: 'Разделы приложения'
+      }"
+    ></p>
+    <h2
+      id="app-drawer-title"
+      class="app-drawer_title"
+      [orgText]="{
+        ENG: 'Your E-stream space',
+        ESP: 'Tu espacio E-stream',
+        RUS: 'Ваше пространство E-stream'
+      }"
+    ></h2>
+
+    <nav class="app-drawer_navigation" aria-label="Application navigation">
+      @for (item of items; track item.id) {
+      <a
+        class="app-drawer_item"
+        [attr.data-menu-item]="item.id"
+        [routerLink]="item.route"
+        routerLinkActive="--active"
+        [routerLinkActiveOptions]="{ exact: item.exact === true }"
+        (click)="requestClose()"
+      >
+        <span class="app-drawer_item-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <use [attr.href]="'#app-drawer-icon-' + item.icon"></use>
+          </svg>
+        </span>
+        <org-overflow-marquee class="app-drawer_item-label" [text]="resolveLabel(item.label)"></org-overflow-marquee>
+      </a>
+      }
+    </nav>
+  </div>
+
+  <footer class="app-drawer_footer">
+    <span class="app-drawer_status" aria-hidden="true"></span>
+    <span
+      [orgText]="{
+        ENG: 'PWA environment',
+        ESP: 'Entorno PWA',
+        RUS: 'PWA-среда'
+      }"
+    ></span>
+  </footer>
+</aside>

@@ -12,7 +12,26 @@
   @include unselectable;
 
   &-select {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    background: transparent;
     color: $prime-grey;
+    cursor: pointer;
+
+    &_icon {
+      display: block;
+      width: 29px;
+      height: 29px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
   }
 
   .--open {
@@ -56,6 +75,9 @@
       transition: 0.3s;
       @include glass-bg;
       padding: 2dvh;
+      border: 0;
+      color: inherit;
+      font: inherit;
 
       &:hover {
         background-color: $super-transparent-grey;

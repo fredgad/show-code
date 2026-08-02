@@ -1,4 +1,5 @@
 export * from './header';
+export * from './app-drawer';
 export * from './footer';
 export * from './saved-media';
 export * from './trusted-people';

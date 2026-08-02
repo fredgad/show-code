@@ -14,3 +14,9 @@
     display: block;
   }
 }
+
+@include w-mobile {
+  .logo-img {
+    height: 32px;
+  }
+}

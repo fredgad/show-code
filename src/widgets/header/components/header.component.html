@@ -1,6 +1,8 @@
 <header class="header">
   <org-logo [linkToMain]="true"></org-logo>
 
+  <org-overflow-marquee class="header-page-title" [text]="pageTitle$i()"></org-overflow-marquee>
+
   <nav class="header-nav" aria-label="Secondary navigation">
     <a class="header-nav_link" routerLink="/verify">
       <span
@@ -13,7 +15,7 @@
         Верификация
       </span>
     </a>
-    <a class="header-nav_link" href="https://presentation.e-stream.app" target="_blank" rel="noopener noreferrer">
+    <a class="header-nav_link" [href]="presentationUrl$i()" target="_blank" rel="noopener noreferrer">
       <span
         [orgText]="{
           ENG: 'Presentation',
@@ -31,29 +33,61 @@
       <org-lang></org-lang>
 
       <div *ngIf="showDisplayControls" class="font-control">
-        <button type="button" class="font-control_btn" (click)="decreaseFont()" aria-label="Decrease font size">A-</button>
+        <button type="button" class="font-control_btn" (click)="decreaseFont()" aria-label="Decrease font size">−</button>
         <span class="font-control_value" aria-live="polite">{{ currentFontScale }}</span>
-        <button type="button" class="font-control_btn" (click)="increaseFont()" aria-label="Increase font size">A+</button>
+        <button type="button" class="font-control_btn" (click)="increaseFont()" aria-label="Increase font size">+</button>
       </div>
     </div>
 
-    @if (!isLoggedIn) {
-      <button
-        class="header-buttons_auth"
-        (click)="goToPath('/auth')"
-        [orgText]="{
-          ENG: 'ENTER',
-          ESP: 'ENTRAR',
-          RUS: 'ВОЙТИ'
-        }"
-      >
-        ENTER
-      </button>
+    @if (isMainRoute) { @if (!isLoggedIn) {
+    <button
+      class="header-buttons_auth"
+      (click)="goToPath('/auth')"
+      [orgText]="{
+        ENG: 'ENTER',
+        ESP: 'ENTRAR',
+        RUS: 'ВОЙТИ'
+      }"
+    >
+      ENTER
+    </button>
     } @else {
-      <button class="header-buttons_profile" (click)="goToPath('/profile')" aria-label="Open profile">
-        <img [srcPath]="'empty-avatar.svg'" alt="" />
-      </button>
-    }
+    <button class="header-buttons_profile" (click)="goToPath('/profile')" aria-label="Open profile">
+      <img [srcPath]="'empty-avatar.svg'" alt="" />
+    </button>
+    } } @else {
+    <button
+      #menuButton
+      type="button"
+      class="header-buttons_menu"
+      [class.--open]="isMenuOpen"
+      [attr.aria-expanded]="isMenuOpen"
+      aria-controls="app-navigation-drawer"
+      aria-label="Open navigation menu"
+      (click)="toggleMenu()"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    @if (!isLoggedIn) {
+    <button
+      class="header-buttons_auth header-buttons_desktop-account"
+      (click)="goToPath('/auth')"
+      [orgText]="{
+        ENG: 'ENTER',
+        ESP: 'ENTRAR',
+        RUS: 'ВОЙТИ'
+      }"
+    >
+      ENTER
+    </button>
+    } @else {
+    <button class="header-buttons_profile header-buttons_desktop-account" (click)="goToPath('/profile')" aria-label="Open profile">
+      <img [srcPath]="'empty-avatar.svg'" alt="" />
+    </button>
+    } }
 
     <!--
     <button class="header-buttons--settings" routerLink="/settings">
@@ -68,3 +102,7 @@
     -->
   </div>
 </header>
+
+@if (!isMainRoute) {
+<org-app-drawer [open]="isMenuOpen" (closeRequested)="closeMenu()"></org-app-drawer>
+}

@@ -15,6 +15,10 @@
       transition: 0.3s;
       cursor: pointer;
 
+      org-overflow-marquee {
+        width: 100%;
+      }
+
       &.active {
         &:nth-child(1) {
           box-shadow: inset -8px 0px 5px -5px $transparent-grey;
