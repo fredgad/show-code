@@ -1,7 +1,17 @@
-<org-header></org-header>
+<org-header layout="profile"></org-header>
 
-<main class="profile-screen">
-  <router-outlet></router-outlet>
-</main>
+<div class="profile-shell profile-layout">
+  <aside class="sidebar">
+    <nav [attr.aria-label]="text(copy.sections)">
+      <org-profile-navigation></org-profile-navigation>
+    </nav>
+  </aside>
 
-<org-footer></org-footer>
+  <main class="profile-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<footer class="profile-shell profile-footer">
+  <a href="mailto:support@e-stream.app">{{ text(copy.support) }}</a>
+</footer>

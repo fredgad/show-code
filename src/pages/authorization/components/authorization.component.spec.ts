@@ -1,7 +1,10 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute, ActivatedRouteSnapshot, RouterModule, convertToParamMap } from '@angular/router';
 import { HeaderComponent, FooterComponent } from '@widgets';
 import { ImageDirective, TextDirective } from '@shared/directives';
 import { LangService } from '@shared/services';
+import { LangEnum } from '@shared/interfaces';
 import { MockBuilder } from 'ng-mocks';
 import { CommonModule } from '@angular/common';
 import { AuthorizationComponent } from './authorization.component';
@@ -15,12 +18,14 @@ describe('AuthorizationComponent', () => {
 
   beforeEach(() => MockBuilder(AuthorizationComponent)
     .keep(CommonModule)
+    .keep(RouterModule)
+    .mock(ActivatedRoute, { snapshot: { queryParamMap: convertToParamMap({}) } as ActivatedRouteSnapshot })
     .mock(HttpClientTestingModule)
     .mock(HeaderComponent)
     .mock(FooterComponent)
     .mock(ImageDirective)
     .mock(TextDirective)
-    .mock(LangService)
+    .mock(LangService, { getLang$i: signal(LangEnum.ENG) })
     .mock(AppStoreFacade)
   );
 

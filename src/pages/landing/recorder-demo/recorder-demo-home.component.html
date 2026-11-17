@@ -1,0 +1,51 @@
+<header class="demo-home-header">
+  <span>{{ copy.home }}</span>
+  <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'menu' }"></ng-container>
+</header>
+<div class="demo-home-body">
+  <section class="demo-sos">
+    <p class="demo-sos-hint">{{ copy.holdSos }}</p>
+    <div class="demo-sos-button">
+      <img class="demo-sos-mark" src="assets/images/e-stream-logotype.svg" alt="" />
+      <span class="demo-sos-label">
+        <span class="demo-sos-icon">
+          <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'warning' }"></ng-container>
+        </span>
+        SOS
+      </span>
+    </div>
+    <div class="demo-sos-settings">
+      <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'settings' }"></ng-container>
+      <span class="demo-geo">GEO</span>
+    </div>
+  </section>
+  <span class="demo-drag-handle"></span>
+  <div class="demo-presets-window">
+    <ol class="demo-presets">
+      @for (preset of presets; track preset) {
+        <li class="demo-preset" [class.is-selection-target]="preset === selectedPreset">
+          <div class="demo-preset-card">
+            <strong>{{ copy.preset }}{{ preset === 1 ? '' : ' ' + preset }}</strong>
+            <div class="demo-preset-delivery">
+              <span>{{ preset === selectedPreset ? copy.recipient : copy.onlyMe }}</span>
+              <span class="demo-geo">GEO</span>
+            </div>
+            @if (preset === selectedPreset) {
+              <span class="demo-preset-tap"></span>
+            }
+          </div>
+          <span class="demo-preset-settings">
+            <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'settings' }"></ng-container>
+          </span>
+        </li>
+      }
+      <li class="demo-add-preset">
+        <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'plus' }"></ng-container>
+        {{ copy.addPreset }}
+      </li>
+    </ol>
+  </div>
+</div>
+<footer class="demo-home-footer">
+  <img src="assets/images/e-stream-logotype.svg" alt="" />
+</footer>

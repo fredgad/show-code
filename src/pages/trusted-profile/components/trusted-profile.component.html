@@ -1,36 +1,191 @@
-<org-header></org-header>
+<org-header layout="profile" />
 
-<div *ngIf="trustedPerson$ | async as trustedPerson" class="trusted container">
-  <div class="trusted-header">
-    <org-avatar
-      class="trusted-header_image"
-      [imageUrl]="trustedPerson?.image"
-      [emptyAvatarId]="+(trustedPerson.keyId || 0)"
-      [size]="80"
-    ></org-avatar>
-
-    <div class="trusted-header_data">
-      <div class="trusted-header_data--name">{{ trustedPerson.username }}</div>
-      <div class="trusted-header_data--email">{{ trustedPerson.email }}</div>
-    </div>
+<main class="trusted-shell">
+  <div class="page-actions">
+    <a class="back-link" [routerLink]="people.route">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H5m6 6-6-6 6-6"/></svg>
+      {{ peopleLabel() }}
+    </a>
+    <button type="button" class="control" [disabled]="loading()" (click)="refresh()">{{ text('refresh') }}</button>
   </div>
 
-  <div class="trusted-body">
-    <div class="trusted-body_buttons">
-      <button class="saved-buttons_video" (click)="changeTab(0)" [class.active]="!currentTab">
-        <org-overflow-marquee [text]="videoLabel$i()"></org-overflow-marquee>
-      </button>
-      <button (click)="changeTab(1)" [class.active]="currentTab">
-        <org-overflow-marquee [text]="audioLabel$i()"></org-overflow-marquee>
-      </button>
+  @if (contact(); as person) {
+    <section class="identity-card" aria-labelledby="trusted-name">
+      <div class="identity">
+        <span class="identity-avatar">
+          @if (person.image) {
+            <org-avatar [imageUrl]="person.image" [size]="68" alt="" />
+          } @else {
+            <span aria-hidden="true">{{ (person.username || person.keyId).slice(0, 1).toUpperCase() }}</span>
+          }
+        </span>
+        <div class="identity-text">
+          <span class="contact-badge">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22c4-2.5 8-5.1 8-11V5L12 2 4 5v6c0 5.9 4 8.5 8 11zM8.5 11.5l2.2 2.2 4.8-4.8"/></svg>
+            {{ text('trusted') }}
+          </span>
+          <h1 id="trusted-name">{{ person.username || person.keyId }}</h1>
+          @if (person.email) { <p>{{ person.email }}</p> }
+        </div>
+      </div>
+      <div class="key-block">
+        <span class="key-label">Key ID</span>
+        <button type="button" class="key-button" [attr.aria-label]="text('copyKey') + ' ' + person.keyId" (click)="copyKey(person.keyId)">
+          <code>{{ person.keyId }}</code>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use [attr.href]="copyFeedback() === 'copied' ? 'assets/icons/profile.svg#check' : 'assets/icons/profile.svg#copy'"/></svg>
+        </button>
+        @if (copyFeedback()) { <span class="key-feedback" role="status">{{ text(copyFeedback()!) }}</span> }
+      </div>
+    </section>
 
-      @if(currentTab) {
-      <org-audio-block></org-audio-block>
+    <section class="access-panel" aria-labelledby="access-heading">
+      <div class="access-copy">
+        <h2 id="access-heading">{{ text('settings') }}</h2>
+        @if (person.policy?.access; as access) {
+          <dl class="access-directions">
+            <div>
+              <dt>{{ text('myData') }}</dt>
+              <dd class="status-chip" [class.restricted]="!access.sharesMyData">{{ text(access.sharesMyData ? 'accessOpen' : 'accessClosed') }}</dd>
+            </div>
+            <div>
+              <dt>{{ text('theirData') }}</dt>
+              <dd class="status-chip" [class.restricted]="!incoming()">{{ text(incoming() ? 'accessOpen' : 'accessClosed') }}</dd>
+            </div>
+          </dl>
+        } @else {
+          <p>{{ text('unknown') }}</p>
+        }
+      </div>
+      <button type="button" class="control access-button" (click)="settings.open(person)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#settings"/></svg>
+        {{ text('settings') }}
+      </button>
+    </section>
+  }
+
+  @if (profileError()) {
+    <p class="trusted-access-notice" role="alert">{{ text('profileError') }}</p>
+  } @else if (!contact()) {
+    @if (loading()) {
+      <p class="trusted-access-notice" role="status">{{ text('loading') }}</p>
+    } @else {
+      <p class="trusted-access-notice" role="status">{{ text('missing') }}</p>
+    }
+  } @else if (!incoming()) {
+    <p class="trusted-access-notice" role="status">{{ text('restricted') }}</p>
+  } @else {
+    <section class="shared-content" [attr.aria-label]="text('content')">
+      <div class="content-tabs" role="tablist" [attr.aria-label]="text('content')">
+        <button type="button" id="trusted-tab-sos" role="tab" aria-controls="trusted-panel-sos"
+          [attr.aria-selected]="tab() === 'sos'" [attr.tabindex]="tab() === 'sos' ? 0 : -1" (click)="tab.set('sos')"
+          (keydown)="keyInTabs($event, 'sos')">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#videos"/></svg>
+          {{ text('recordings') }} <span class="tab-count">{{ archived().length }}</span>
+        </button>
+        <button type="button" id="trusted-tab-messages" role="tab" aria-controls="trusted-panel-messages"
+          [attr.aria-selected]="tab() === 'messages'" [attr.tabindex]="tab() === 'messages' ? 0 : -1" (click)="tab.set('messages')"
+          (keydown)="keyInTabs($event, 'messages')">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#requests"/></svg>
+          {{ text('messages') }} <span class="tab-count">{{ delivered().length }}</span>
+          @if (unread()) { <span class="unread-count" [attr.aria-label]="text('unreadCount').replace('{count}', '' + unread())">{{ unread() }}</span> }
+        </button>
+      </div>
+
+      <div id="trusted-panel-sos" role="tabpanel" aria-labelledby="trusted-tab-sos" [hidden]="tab() !== 'sos'" tabindex="0">
+        @if (tab() === 'sos') {
+          @if (live(); as stream) {
+            <article class="live-card">
+              <div class="live-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#recorder"/></svg></div>
+              <div class="live-details">
+                <span class="status-chip live-dot">{{ text('live') }}</span>
+                <h3>{{ stream.title || text('stream') }}</h3>
+                <time [attr.datetime]="stream.startedAt">{{ date(stream.startedAt) }}</time>
+                @if (mapUrl(stream.location); as url) {
+                  <a [href]="url" target="_blank" rel="noopener noreferrer">{{ text('location') }}</a>
+                }
+              </div>
+              <button #watchLive type="button" class="control primary" (click)="openLive(stream, watchLive)">{{ text('watchLive') }}</button>
+            </article>
+          }
+          @if (liveError()) { <p class="trusted-access-notice" role="status">{{ text('liveError') }}</p> }
+          @if (archived().length) {
+            <div class="record-grid">
+              @for (record of archived(); track record.id) {
+                <org-trusted-record-card [record]="record" (play)="openRecording(record, $event)">
+                  @if (record.item.mediaAssetId && record.item.evidenceStatus === 'sealed') {
+                    @if (saveState(record.item.mediaAssetId) === 'saved') {
+                      <span class="status-chip" role="status">{{ vaultLabel('saved') }}</span>
+                    } @else {
+                      <button type="button" class="control compact" [disabled]="saveState(record.item.mediaAssetId) === 'saving'" (click)="saveToVault(record.item)">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#vault"/></svg>
+                        {{ vaultLabel(saveState(record.item.mediaAssetId) === 'saving' ? 'saving' : 'save') }}
+                      </button>
+                      @if (saveState(record.item.mediaAssetId) !== 'save' && saveState(record.item.mediaAssetId) !== 'saving') {
+                        <span class="record-note" role="status">{{ vaultLabel(saveState(record.item.mediaAssetId)) }}</span>
+                      }
+                    }
+                  }
+                </org-trusted-record-card>
+              }
+            </div>
+          } @else if (!live()) {
+            <p class="trusted-access-notice" role="status">{{ text('noRecordings') }}</p>
+          }
+        }
+      </div>
+
+      <div id="trusted-panel-messages" role="tabpanel" aria-labelledby="trusted-tab-messages" [hidden]="tab() !== 'messages'" tabindex="0">
+        @if (tab() === 'messages') {
+          @if (messagesLoading()) {
+            <p class="trusted-access-notice" role="status">{{ text('loading') }}</p>
+          } @else if (messagesError()) {
+            <p class="trusted-access-notice" role="alert">{{ text('messageError') }}</p>
+          } @else if (delivered().length) {
+            <div class="record-grid">
+              @for (record of delivered(); track record.id) {
+                <org-trusted-record-card [record]="record" (play)="openRecording(record, $event)" />
+              }
+            </div>
+          } @else {
+            <p class="trusted-access-notice" role="status">{{ text('noMessages') }}</p>
+          }
+        }
+      </div>
+    </section>
+  }
+</main>
+
+<org-trusted-access-settings #settings [catalog]="catalog()" [loading]="loading()"
+  (changed)="accessChanged($event)" (refreshCatalog)="refresh()" (removeContact)="confirmRemove($event)" />
+
+<dialog #viewer class="viewer" aria-labelledby="trusted-viewer-title" (close)="viewerClosed()" (click)="$event.target === viewer && closeViewer()">
+  @if (selection()) {
+    <div class="dialog-content">
+      <div class="dialog-heading">
+        <h2 id="trusted-viewer-title">{{ viewerTitle() }}</h2>
+        <button class="control" type="button" (click)="closeViewer()" autofocus>{{ text('close') }}</button>
+      </div>
+      @if (activeRecording(); as record) {
+        <org-vault-player [item]="record.item" />
       } @else {
-      <org-video-block [videos]="trustedPerson?.videos || []"></org-video-block>
+        @if (liveUrl(); as url) {
+          <iframe class="live-frame" [src]="url" [title]="text('stream')" referrerpolicy="no-referrer" allow="autoplay; fullscreen" allowfullscreen></iframe>
+        }
       }
     </div>
-  </div>
+  }
+</dialog>
 
-  <org-footer></org-footer>
-</div>
+<dialog #removeDialog aria-labelledby="trusted-remove-title" (cancel)="removing() && $event.preventDefault()"
+  (click)="$event.target === removeDialog && !removing() && closeRemove()">
+  <div class="dialog-content">
+    <h2 id="trusted-remove-title">{{ text('confirmRemove').replace('{name}', contact()?.username || contact()?.keyId || '') }}</h2>
+    @if (removeError()) { <p role="alert">{{ text('actionError') }}</p> }
+    <div class="dialog-actions">
+      <button type="button" class="control" [disabled]="removing()" (click)="closeRemove()" autofocus>{{ text('removeCancel') }}</button>
+      <button type="button" class="control danger" [disabled]="removing()" (click)="removeContact()">{{ text('remove') }}</button>
+    </div>
+  </div>
+</dialog>
+
+<footer class="trusted-footer"><a href="mailto:support@e-stream.app">{{ text('support') }}</a></footer>

@@ -1,7 +1,9 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HeaderComponent, FooterComponent } from '@widgets';
 import { ImageDirective, TextDirective } from '@shared/directives';
 import { AuthService, LangService } from '@shared/services';
+import { LangEnum } from '@shared/interfaces';
 import { MockBuilder } from 'ng-mocks';
 import { CommonModule } from '@angular/common';
 import { RegistrationComponent } from './registration.component';
@@ -17,7 +19,7 @@ describe('RegistrationComponent', () => {
     .mock(FooterComponent)
     .mock(ImageDirective)
     .mock(TextDirective)
-    .mock(LangService)
+    .mock(LangService, { getLang$i: signal(LangEnum.ENG) })
     .mock(AuthService)
     .mock(AppStoreFacade)
   );

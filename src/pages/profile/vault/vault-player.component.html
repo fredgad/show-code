@@ -1,0 +1,135 @@
+<div class="player" [class.editor-player]="trim">
+  @if (failed()) {
+    <div class="player-message" role="alert">
+      <p>{{ text('unavailable') }}</p>
+      <button type="button" (click)="load()">{{ text('retry') }}</button>
+    </div>
+  } @else if (source()) {
+    <video
+      #film
+      [src]="source() ?? ''"
+      [poster]="poster() ?? ''"
+      [controls]="!trim"
+      [autoplay]="!trim"
+      playsinline
+      preload="metadata"
+      controlslist="nodownload"
+      (loadedmetadata)="metadata(film)"
+      (timeupdate)="updatePosition(film)"
+      (seeked)="updatePosition(film)"
+      (play)="playing.set(true)"
+      (pause)="playing.set(false)"
+      (ended)="ended(film)"
+      (error)="mediaError()"
+    ></video>
+    @if (!ready()) {
+      <p class="player-message loading" role="status">{{ text('loading') }}</p>
+    }
+  } @else {
+    <p class="player-message" role="status">{{ text('loading') }}</p>
+  }
+</div>
+
+@if (trim && ready()) {
+  <form class="trim" (submit)="$event.preventDefault(); submit(title.value)">
+    <fieldset [disabled]="saving || duration() < 1000">
+      <legend>{{ text('interval') }}</legend>
+      <div class="boundaries">
+        <div class="boundary">
+          <label for="vault-trim-start">{{ text('start') }} <output>{{ time(start(), true) }}</output></label>
+          <div class="range">
+            <button type="button" [attr.aria-label]="text('start') + ' · ' + text('earlier')" [disabled]="start() <= 0" (click)="changeBoundary('start', start() - 100)">−</button>
+            <input #startInput id="vault-trim-start" type="range" min="0" [max]="end() - 1000" [value]="start()" [attr.aria-valuetext]="time(start(), true)" (input)="changeBoundary('start', startInput.valueAsNumber)" />
+            <button type="button" [attr.aria-label]="text('start') + ' · ' + text('later')" [disabled]="start() >= end() - 1000" (click)="changeBoundary('start', start() + 100)">+</button>
+          </div>
+        </div>
+        <div class="boundary">
+          <label for="vault-trim-end">{{ text('end') }} <output>{{ time(end(), true) }}</output></label>
+          <div class="range">
+            <button type="button" [attr.aria-label]="text('end') + ' · ' + text('earlier')" [disabled]="end() <= start() + 1000" (click)="changeBoundary('end', end() - 100)">−</button>
+            <input #endInput id="vault-trim-end" type="range" [min]="start() + 1000" [max]="duration()" [value]="end()" [attr.aria-valuetext]="time(end(), true)" (input)="changeBoundary('end', endInput.valueAsNumber)" />
+            <button type="button" [attr.aria-label]="text('end') + ' · ' + text('later')" [disabled]="end() >= duration()" (click)="changeBoundary('end', end() + 100)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button type="button" (click)="preview()">{{ text(playing() ? 'pause' : 'playSelection') }}</button>
+        <output>{{ text('duration') }} · {{ time(selectedDuration(), true) }}</output>
+      </div>
+    </fieldset>
+    @if (selectedDuration() < 1000) {
+      <p class="hint">{{ text('minDuration') }}</p>
+    } @else if (selectedDuration() < 3000) {
+      <p class="hint">{{ text('shortHint') }}</p>
+    }
+    <label class="title-label">
+      {{ text('title') }}
+      <input #title type="text" maxlength="16" autocomplete="off" [disabled]="saving" />
+    </label>
+    <p class="hint">{{ text('evidence') }}</p>
+    <button class="submit" type="submit" [disabled]="saving || selectedDuration() < 1000">{{ text(saving ? 'saving' : 'submit') }}</button>
+  </form>
+}
+
+@if (!trim) {
+  @if (geoTrack(); as track) {
+    <section class="location" [attr.aria-label]="text('location')">
+      @if (geoPoint(); as geo) {
+        @if (geo.point; as point) {
+          <div class="location-summary">
+            <strong>{{ coordinates(point) }}</strong>
+            <div class="location-details">
+              @if (geo.preview) { <span>{{ text('nearest') }} · {{ time(point.videoOffsetMs) }}</span> }
+              @if (track.state === 'legacy') { <span>{{ text('legacy') }}</span> }
+              @if (point.inherited) { <span>{{ text('inherited') }}</span> }
+              @if (point.measuredVideoOffsetMs != null) {
+                @if (position() - point.measuredVideoOffsetMs > 30000) {
+                  <span>{{ text('old') }} · {{ ageSeconds(point.measuredVideoOffsetMs) }} {{ text('seconds') }}</span>
+                } @else if (position() < point.measuredVideoOffsetMs && !geo.preview) {
+                  <span>{{ text('nearestAfter') }}</span>
+                }
+              }
+              @if (point.accuracy != null) { <span>±{{ point.accuracy }} {{ text('meters') }}</span> }
+              @if (point.capturedAt) { <span>{{ text('measured') }} {{ point.capturedAt | date:'HH:mm:ss' }}</span> }
+              @if (point.mock) { <span>{{ text('mock') }}</span> }
+              @if (!track.signatureValid) { <span>{{ text('unsealed') }}</span> }
+            </div>
+          </div>
+          <div class="actions">
+            <button type="button" (click)="openMap(point)" [attr.aria-expanded]="!!mapPoint()">{{ text('map') }}</button>
+            <button type="button" (click)="copyCoordinates(point)">{{ text('copy') }}</button>
+          </div>
+        } @else {
+          <p>{{ text(emptyGeoLabel(track)) }}</p>
+        }
+      }
+      @if (mapPoint(); as point) {
+        <div class="map-panel">
+          @if (measurements().length > 1) {
+            <label>
+              {{ text('measurements') }} · {{ measurements().length }}
+              <select #measure [value]="measurementIndex(point)" (change)="selectMeasurement(+measure.value)">
+                @for (measurement of measurements(); track $index) {
+                  <option [value]="$index">{{ time(measurement.videoOffsetMs) }} · {{ coordinates(measurement) }}</option>
+                }
+              </select>
+            </label>
+          }
+          <strong>{{ coordinates(point) }}</strong>
+          <p class="hint">{{ text('mapPrivacy') }}</p>
+          <div class="actions">
+            <a [href]="mapUrl(point)" target="_blank" rel="noopener noreferrer">{{ text('mapLink') }}</a>
+            <button type="button" (click)="copyCoordinates(point)">{{ text('copy') }}</button>
+            <button type="button" (click)="mapPoint.set(null)">{{ text('close') }}</button>
+          </div>
+        </div>
+      }
+      @if (copyFeedback(); as feedback) {
+        <p class="hint" role="status">{{ text(feedback) }}</p>
+      }
+    </section>
+  }
+  @if (geoFailed()) {
+    <button class="geo-retry" type="button" (click)="loadGeo()">{{ text('geoRetry') }}</button>
+  }
+}

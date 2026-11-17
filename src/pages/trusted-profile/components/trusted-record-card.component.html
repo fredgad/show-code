@@ -1,0 +1,83 @@
+<article class="record-card" [class.unread-record]="record.message && !record.message.isRead">
+  <div class="record-poster">
+    <org-vault-poster [item]="record.item" />
+    @if (available) {
+      <button #watch type="button" class="watch-poster" [attr.aria-label]="text('play') + ' — ' + title" (click)="play.emit(watch)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg>
+      </button>
+    }
+    @if (duration) { <span class="record-duration">{{ duration }}</span> }
+  </div>
+  <div class="record-meta">
+    <div class="record-heading">
+      <h3>{{ title }}</h3>
+      @if (record.message && !record.message.isRead) { <span class="status-chip new">{{ text('unread') }}</span> }
+    </div>
+    <div class="record-subtitle">
+      <time [attr.datetime]="record.message?.sentAt ?? record.item.createdAt">{{ date(record.message?.sentAt ?? record.item.createdAt) }}</time>
+      @if (evidenceLabel; as evidence) { <span class="status-chip">{{ text(evidence) }}</span> }
+    </div>
+    @if (record.message && record.item.customTitle) {
+      <p class="record-note">{{ text('message') }}</p>
+    }
+    @if (record.message?.recordedAt && record.message?.recordedAt !== record.message?.sentAt) {
+      <p class="record-note">{{ text('recordedOn').replace('{date}', date(record.message?.recordedAt)) }}</p>
+    }
+    @if (record.item.captureRecovery?.completeness === 'incomplete') {
+      <p class="record-note">{{ text('incomplete') }}</p>
+    }
+    @if (record.item.evidenceStatus === 'failed' && record.item.evidenceFailureReason) {
+      <p class="record-note">{{ record.item.evidenceFailureReason }}</p>
+    }
+    @if (available) {
+      <div class="record-actions" [attr.aria-busy]="busy()">
+        <button type="button" class="control compact" [disabled]="busy()" [title]="text('download')" (click)="download()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></svg>
+          {{ text('download') }}
+        </button>
+        @if (!record.message) {
+          @if (record.item.evidenceId && record.item.evidenceStatus === 'sealed') {
+            <button type="button" class="control glyph" [disabled]="busy()" [attr.aria-label]="text('sharePackage')" [title]="text('sharePackage')" (click)="show('package')">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6zM14 3v5h4m-9 6h6m-6 3h6"/></svg>
+            </button>
+          }
+          <button type="button" class="control glyph" [attr.aria-label]="text('copy')" [title]="text('copy')" (click)="copyLink()">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#copy"/></svg>
+          </button>
+          @if (publicWatchUrl) {
+            <button type="button" class="control glyph" [attr.aria-label]="text('qr')" [title]="text('qr')" (click)="show('qr')">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h6v6H3zm12 0h6v6h-6zM3 15h6v6H3zm12 0h3v3h3v3h-6zm6-3v3m-9-3v3m0-12v3M3 12h3"/></svg>
+            </button>
+          }
+          <ng-content />
+        }
+      </div>
+    } @else {
+      <p class="record-note">{{ text(record.message || !record.item.url ? 'unavailable' : 'processing') }}</p>
+    }
+    @if (feedback() && !dialog()) { <p class="record-note" role="status">{{ text(feedback()!) }}</p> }
+  </div>
+</article>
+
+<dialog #details [attr.aria-label]="text(dialog() === 'qr' ? 'qr' : 'sharePackage')" (close)="dialog.set(null)" (click)="$event.target === details && close()">
+  @if (dialog(); as kind) {
+    <div class="dialog-content">
+      <h2>{{ text(kind === 'qr' ? 'qr' : 'sharePackage') }}</h2>
+      @if (kind === 'qr') {
+        @if (qrImage()) { <img class="qr-image" [src]="qrImage()" [alt]="text('qr')" /> }
+        <p>{{ text('qrAccess') }}</p>
+      } @else {
+        <p>{{ text('evidenceWarning') }}</p>
+      }
+      @if (feedback()) { <p role="status">{{ text(feedback()!) }}</p> }
+      <div class="dialog-actions">
+        <button class="control" type="button" (click)="close()" autofocus>{{ text('close') }}</button>
+        @if (kind === 'qr') {
+          <button class="control primary" type="button" (click)="copyLink(true)">{{ text('copy') }}</button>
+        } @else {
+          <button class="control primary" type="button" (click)="download(true)">{{ text('packageDownload') }}</button>
+        }
+      </div>
+    </div>
+  }
+</dialog>

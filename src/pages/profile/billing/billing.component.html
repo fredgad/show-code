@@ -1,0 +1,245 @@
+<section class="billing" aria-labelledby="billing-title" [attr.aria-busy]="busy()">
+  <header class="billing-header">
+    <div>
+      @if (admin) {
+        <a class="billing-link" routerLink="/admin/payments">{{ text('backToPurchases') }}</a>
+      }
+      <h1 id="billing-title">{{ text(admin ? 'manageAccess' : 'title') }}</h1>
+    </div>
+    <div class="actions">
+      @if (!admin || account()) {
+        <button class="button secondary" type="button" (click)="refresh()" [disabled]="busy()">{{ text('refresh') }}</button>
+      }
+    </div>
+  </header>
+
+  @if (error(); as message) {
+    <p class="feedback error" role="alert">
+      {{ text(message) }}
+      @if (message === 'signedOut') {
+        <a routerLink="/auth" [queryParams]="admin ? { destination: 'admin' } : {}">{{ text('signIn') }}</a>
+      }
+    </p>
+  }
+  @if (saved()) {
+    <p class="feedback success" role="status">{{ text('saved') }}</p>
+  }
+
+  @if (admin && canManage()) {
+    <section class="panel" aria-labelledby="billing-lookup">
+      <h2 id="billing-lookup">{{ text('lookup') }}</h2>
+      <form class="lookup" (ngSubmit)="lookup()">
+        <label class="field">
+          {{ text('query') }}
+          <input name="query" type="text" [(ngModel)]="query" required maxlength="254" autocomplete="off" spellcheck="false" />
+        </label>
+        <button class="button" type="submit" [disabled]="busy() || !query.trim()">{{ text('search') }}</button>
+      </form>
+    </section>
+  }
+
+  @if (account(); as current) {
+    <section class="plan-panel" aria-labelledby="billing-plan">
+      @if (current.account; as owner) {
+        <p class="owner"><strong>{{ owner.username }}</strong><span>{{ owner.email }}</span><span>{{ owner.keyId }}</span></p>
+      }
+      <div class="plan-top">
+        <div>
+          <h2 id="billing-plan">{{ text('currentPlan') }}</h2>
+          <p class="plan-name">{{ plan(current.planCode) }}</p>
+          @if (giftUntil(); as expiresAt) {
+            <p class="gift-until">{{ text('giftUntil') }} <time [attr.datetime]="expiresAt">{{ date(expiresAt) }}</time></p>
+          }
+        </div>
+        <div class="plan-usage">
+          <div>
+            <div class="usage-label">
+              <span id="recording-allowance">{{ text('recording') }}</span>
+              <strong>{{ bytes(current.recording.usedBytes) }} / {{ bytes(current.recording.limitBytes) }}</strong>
+            </div>
+            <progress aria-labelledby="recording-allowance" [value]="current.recording.usedBytes" [max]="current.recording.limitBytes"></progress>
+          </div>
+          @if (!admin) {
+            <div [attr.aria-busy]="vaultQuotaLoading()">
+              <div class="usage-label">
+                <span id="vault-allowance">{{ text('storage') }}</span>
+                @if (vaultQuota(); as quota) {
+                  <strong id="vault-usage">{{ bytes(quota.usedBytes) }} / {{ bytes(quota.limitBytes) }}</strong>
+                } @else {
+                  <strong>— / {{ bytes(current.storageLimitBytes) }}</strong>
+                }
+              </div>
+              @if (vaultQuota(); as quota) {
+                @if (quota.limitBytes > 0) {
+                  <progress
+                    aria-labelledby="vault-allowance"
+                    aria-describedby="vault-usage"
+                    [value]="quota.usedBytes > quota.limitBytes ? quota.limitBytes : quota.usedBytes"
+                    [max]="quota.limitBytes"
+                  ></progress>
+                }
+              } @else {
+                <p class="usage-note" role="status">{{ text(vaultQuotaLoading() ? 'loading' : 'storageUnavailable') }}</p>
+              }
+            </div>
+          }
+        </div>
+      </div>
+      <dl class="plan-details">
+        <div><dt>{{ text('resets') }}</dt><dd><time [attr.datetime]="current.recording.resetsAt">{{ date(current.recording.resetsAt, true) }}</time></dd></div>
+        @if (admin) {
+          <div><dt>{{ text('recordingStorage') }}</dt><dd>{{ bytes(current.storageLimitBytes) }}</dd></div>
+        }
+        <div><dt>{{ text('trusted') }}</dt><dd>{{ current.maxTrusted }}</dd></div>
+      </dl>
+    </section>
+
+    <section class="panel" aria-labelledby="billing-subscriptions">
+      <h2 id="billing-subscriptions">{{ text('subscriptions') }}</h2>
+      @for (subscription of current.subscriptions; track subscription.id) {
+        <article class="detail">
+          <div class="detail-heading">
+            <div><h3>{{ text('monthly') }}</h3><p>{{ provider(subscription.provider) }}</p></div>
+            <span class="status" [class.positive]="subscription.active">{{ text(subscription.status) }}</span>
+          </div>
+          <dl class="details">
+            <div>
+              <dt>{{ text('period') }}</dt>
+              <dd><time [attr.datetime]="subscription.periodStartsAt">{{ date(subscription.periodStartsAt) }}</time> – <time [attr.datetime]="subscription.periodEndsAt">{{ date(subscription.periodEndsAt) }}</time></dd>
+            </div>
+            @if (subscription.active && subscription.accessUntil; as end) {
+              <div><dt>{{ text('accessUntil') }}</dt><dd><time [attr.datetime]="end">{{ date(end) }}</time></dd></div>
+            }
+            @if (subscription.renewsAt; as renewal) {
+              <div><dt>{{ text('nextRenewal') }}</dt><dd><time [attr.datetime]="renewal">{{ date(renewal) }}</time></dd></div>
+            }
+          </dl>
+          @if (!admin && subscription.manageable && managementUrl(subscription.provider); as url) {
+            <a class="billing-link" [href]="url">{{ text('manage') }}</a>
+          } @else if (!admin && subscription.manageable && subscription.provider.startsWith('web:')) {
+            <button class="button secondary" type="button" (click)="manage(subscription.id)" [disabled]="busy()">{{ text('manage') }}</button>
+          }
+        </article>
+      } @empty {
+        <p class="empty">{{ text('noSubscriptions') }}</p>
+      }
+
+      @if (!admin && !hasSubscription()) {
+        @if (offers(); as products) {
+          @for (offer of products; track offer.code) {
+            <div class="offer">
+              <h3>{{ text('monthly') }}</h3>
+              @for (option of offer.providers; track option.id) {
+                <button type="button" class="button" (click)="checkout(offer, option.id)" [disabled]="busy()">
+                  {{ text('buy') }} @if (offer.providers.length > 1) { · {{ option.name }} } @if (option.displayPrice) { · {{ option.displayPrice }} }
+                </button>
+              } @empty {
+                <p class="empty">{{ text('checkoutUnavailable') }}</p>
+              }
+            </div>
+          }
+        } @else if (offersError()) {
+          <div class="offer"><p class="empty">{{ text('error') }}</p><button class="button secondary" type="button" (click)="loadOffers()">{{ text('refresh') }}</button></div>
+        }
+      }
+    </section>
+
+    <section class="panel" aria-labelledby="billing-payments">
+      <h2 id="billing-payments">{{ text('history') }}</h2>
+      @if (current.payments.length) {
+        <div class="payment-table">
+          <table [attr.aria-label]="text('history')">
+            <thead>
+              <tr><th scope="col">{{ text('date') }}</th><th scope="col">{{ text('source') }}</th><th scope="col">{{ text('status') }}</th><th scope="col">{{ text('amount') }}</th></tr>
+            </thead>
+            <tbody>
+              @for (payment of current.payments; track payment.id) {
+                <tr>
+                  <td><time [attr.datetime]="payment.paidAt">{{ date(payment.paidAt) }}</time></td>
+                  <td>{{ provider(payment.provider) }} <small>{{ text('monthly') }}</small></td>
+                  <td><span class="status" [class.positive]="payment.status === 'paid'">{{ text(payment.status) }}</span></td>
+                  <td>
+                    {{ amount(payment.amountMinor, payment.currency, payment.currencyDecimals) }}
+                    @if (payment.refundedMinor) {
+                      <small>−{{ amount(payment.refundedMinor, payment.currency, payment.currencyDecimals) }} · <time [attr.datetime]="payment.updatedAt">{{ date(payment.updatedAt) }}</time></small>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        @if (current.nextCursor) {
+          <button class="button secondary more" type="button" (click)="loadMore()" [disabled]="busy()">{{ text('more') }}</button>
+        }
+      } @else {
+        <p class="empty">{{ text('noPayments') }}</p>
+      }
+    </section>
+
+    <section class="panel" aria-labelledby="billing-grants">
+      <h2 id="billing-grants">{{ text('grants') }}</h2>
+      @if (admin) {
+        <form class="grant-form" (ngSubmit)="issue()">
+          <label class="field">
+            {{ text('grantKind') }}
+            <select name="grantKind" [(ngModel)]="grantKind" [disabled]="busy()">
+              <option value="temporary">{{ text('temporaryPro') }}</option>
+              <option value="gift">{{ text('giftPro30') }}</option>
+            </select>
+          </label>
+          @if (grantKind === 'temporary') {
+            <label class="field">{{ text('days') }}<input name="days" type="number" min="1" max="365" step="1" [(ngModel)]="grantDays" required /></label>
+          }
+          <label class="field">{{ text('reason') }}<input name="grantReason" type="text" maxlength="500" [(ngModel)]="grantReason" required /></label>
+          <button class="button" type="submit" [disabled]="!canIssue">{{ text(grantKind === 'gift' ? 'grantGift' : 'grant') }}</button>
+        </form>
+      }
+      @for (grant of current.accessGrants; track grant.id) {
+        <article class="detail">
+          <div class="detail-heading">
+            <div>
+              @if (grant.kind === 'gift') {
+                <h3>{{ text('giftPro') }}</h3>
+              } @else {
+                <h3>{{ plan(grant.code) }}</h3><p>{{ source(grant.sourceType) }}</p>
+              }
+            </div>
+            <span class="status" [class.positive]="grant.status === 'active'">{{ text(grant.status) }}</span>
+          </div>
+          <dl class="details">
+            @if (grant.issuedAt; as issuedAt) {
+              <div><dt>{{ text('issued') }}</dt><dd><time [attr.datetime]="issuedAt">{{ date(issuedAt) }}</time></dd></div>
+            }
+            <div><dt>{{ text('accessUntil') }}</dt><dd>{{ grant.expiresAt ? date(grant.expiresAt) : text('indefinite') }}</dd></div>
+            @if (grant.revokedAt; as revokedAt) {
+              <div><dt>{{ text('revokedAt') }}</dt><dd><time [attr.datetime]="revokedAt">{{ date(revokedAt) }}</time></dd></div>
+            }
+            @if (grant.support; as support) {
+              <div><dt>{{ text('reason') }}</dt><dd>{{ support.reason }}</dd></div>
+              <div><dt>{{ text('actor') }}</dt><dd>{{ support.issuedBy }}</dd></div>
+              @if (support.revokedBy) {
+                <div><dt>{{ text('revoke') }}</dt><dd>{{ support.revocationReason }} <small>{{ support.revokedBy }}</small></dd></div>
+              }
+            }
+          </dl>
+          @if (admin && grant.status === 'active' && grant.sourceType === 'support') {
+            @if (revokeId === grant.id) {
+              <form class="lookup" (ngSubmit)="revoke()">
+                <label class="field">{{ text('reason') }}<input name="reason" [(ngModel)]="revokeReason" maxlength="500" required /></label>
+                <button class="button danger" type="submit" [disabled]="busy() || !revokeReason.trim()">{{ text('confirmRevoke') }}</button>
+                <button class="button secondary" type="button" [disabled]="busy()" (click)="revokeId = ''; revokeReason = ''">{{ text('close') }}</button>
+              </form>
+            } @else {
+              <button class="button secondary danger-text" type="button" [disabled]="busy()" (click)="revokeId = grant.id; revokeReason = ''">{{ text('revoke') }}</button>
+            }
+          }
+        </article>
+      } @empty {
+        <p class="empty">{{ text('noGrants') }}</p>
+      }
+    </section>
+  } @else if (busy()) {
+    <p class="panel empty" role="status">{{ text('loading') }}</p>
+  }
+</section>

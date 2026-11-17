@@ -1,0 +1,141 @@
+<section class="results" aria-labelledby="admin-title" [attr.aria-busy]="busy()">
+  <header class="page-header">
+    <h1 id="admin-title">{{ text(section) }}</h1>
+    @if (section === 'payments') {
+      <a class="button secondary" routerLink="/admin/payments/access">{{ text('manageAccess') }}</a>
+    }
+  </header>
+
+  <form class="filters panel" (ngSubmit)="applyFilters()">
+    @switch (section) {
+      @case ('users') {
+        <label class="query">{{ text('searchUsers') }}
+          <input type="search" name="query" [(ngModel)]="query" maxlength="254" autocomplete="off" />
+        </label>
+        <label>{{ text('plan') }}
+          <select name="plan" [(ngModel)]="plan">
+            <option value="">{{ text('allPlans') }}</option><option value="free">Free</option>
+            <option value="free_plus">Free+</option><option value="pro">Pro</option>
+          </select>
+        </label>
+        <label>{{ text('proSource') }}
+          <select name="proSource" [(ngModel)]="proSource">
+            <option value="">{{ text('allSources') }}</option>
+            @for (source of proSourceOptions; track source) {
+              <option [value]="source">{{ text(proSourceLabels[source]) }}</option>
+            }
+          </select>
+        </label>
+      }
+      @case ('payments') {
+        <label>{{ text('source') }}
+          <select name="provider" [(ngModel)]="providerFilter">
+            <option value="">{{ text('allSources') }}</option><option value="app_store">App Store</option>
+            <option value="google_play">Google Play</option><option value="web">{{ text('website') }}</option>
+          </select>
+        </label>
+        <label>{{ text('status') }}
+          <select name="status" [(ngModel)]="status">
+            <option value="">{{ text('allStatuses') }}</option>
+            @for (status of paymentStatuses; track status) { <option [value]="status">{{ text(status) }}</option> }
+          </select>
+        </label>
+      }
+      @case ('audit') {
+        <label>{{ text('action') }}
+          <select name="action" [(ngModel)]="action">
+            <option value="">{{ text('allActions') }}</option>
+            <option value="pro_granted">{{ text('granted') }}</option>
+            <option value="pro_revoked">{{ text('revokedPro') }}</option>
+            <option value="gift_pro_granted">{{ text('giftGranted') }}</option>
+            <option value="gift_pro_revoked">{{ text('giftRevoked') }}</option>
+          </select>
+        </label>
+        <label class="check"><input type="checkbox" name="mine" [(ngModel)]="mine" />{{ text('onlyMine') }}</label>
+      }
+    }
+    <button class="button" type="submit" [disabled]="busy()">{{ text(section === 'users' ? 'search' : 'apply') }}</button>
+  </form>
+
+  @if (error(); as message) {
+    <p class="notice panel" role="alert">
+      {{ text(message) }}
+      @if (message === 'loginRequired') { <a routerLink="/auth" [queryParams]="{ destination: 'admin' }">{{ text('signIn') }}</a> }
+    </p>
+  }
+
+  @if (section === 'users' && users().length) {
+    <div class="table-wrap panel">
+      <table [attr.aria-label]="text('users')">
+        <thead><tr><th scope="col">{{ text('account') }}</th><th scope="col">{{ text('keyId') }}</th><th scope="col">{{ text('plan') }}</th><th scope="col">{{ text('proSource') }}</th></tr></thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+            <tr>
+              <td><a [routerLink]="['/admin/payments/access', user.id]">{{ user.username }}</a><small>{{ user.email }}</small></td>
+              <td>{{ user.keyId }}</td>
+              <td><span class="badge" [class.emphasis]="user.planCode !== 'free'">{{ plans[user.planCode] }}</span></td>
+              <td>
+                <div class="pro-sources">
+                  @for (source of user.proSources ?? []; track source) {
+                    <span class="badge" [class.positive]="source === 'paid'">{{ text(proSourceLabels[source]) }}</span>
+                  } @empty { <span>—</span> }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else if (section === 'payments' && payments().length) {
+    <div class="table-wrap panel">
+      <table [attr.aria-label]="text('payments')">
+        <thead><tr><th scope="col">{{ text('date') }}</th><th scope="col">{{ text('account') }}</th><th scope="col">{{ text('source') }}</th><th scope="col">{{ text('status') }}</th><th scope="col">{{ text('amount') }}</th></tr></thead>
+        <tbody>
+          @for (payment of payments(); track payment.id) {
+            <tr>
+              <td><time [attr.datetime]="payment.paidAt">{{ date(payment.paidAt) }}</time></td>
+              <td>
+                @if (payment.account; as owner) {
+                  <a [routerLink]="['/admin/payments/access', payment.ownerId]">{{ owner.username }}</a><small>{{ owner.email }}</small>
+                } @else { {{ payment.ownerId }} }
+              </td>
+              <td>{{ provider(payment.provider) }}</td>
+              <td><span class="badge" [class.positive]="payment.status === 'paid'">{{ text(payment.status) }}</span></td>
+              <td class="money">{{ money(payment.amountMinor, payment) }}
+                @if (payment.refundedMinor) { <small>{{ money(-payment.refundedMinor, payment) }}</small> }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else if (section === 'audit' && audit().length) {
+    <div class="table-wrap panel">
+      <table [attr.aria-label]="text('audit')">
+        <thead><tr><th scope="col">{{ text('date') }}</th><th scope="col">{{ text('administrator') }}</th><th scope="col">{{ text('account') }}</th><th scope="col">{{ text('action') }}</th><th scope="col">{{ text('reason') }}</th></tr></thead>
+        <tbody>
+          @for (event of audit(); track event.id) {
+            <tr>
+              <td><time [attr.datetime]="event.occurredAt">{{ date(event.occurredAt) }}</time></td>
+              <td><span [attr.title]="event.actor.id">{{ event.actor.username || event.actor.id }}</span></td>
+              <td><a [routerLink]="['/admin/payments/access', event.account.id]">{{ event.account.username }}</a><small>{{ event.account.email }}</small></td>
+              <td>{{ text(auditActionLabels[event.action]) }}
+                @if ((event.action === 'pro_granted' || event.action === 'gift_pro_granted') && event.expiresAt; as expiresAt) {
+                  <small>{{ text('accessUntil') }} <time [attr.datetime]="expiresAt">{{ date(expiresAt) }}</time></small>
+                }
+              </td>
+              <td>{{ event.reason }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else if (!error() && !busy()) {
+    <p class="empty panel" role="status">{{ text(section === 'users' ? 'noUsers' : section === 'payments' ? 'noPurchases' : 'noAudit') }}</p>
+  }
+
+  @if (cursor(); as next) {
+    <button class="button secondary" type="button" (click)="refresh(next)" [disabled]="busy()">{{ text('loadMore') }}</button>
+  }
+  @if (busy()) { <p class="loading" role="status">{{ text('loading') }}</p> }
+</section>

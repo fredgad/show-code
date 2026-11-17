@@ -1,13 +1,16 @@
 import { Injectable, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { LangEnum, LangTextI } from '../../interfaces';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { resolveEstonianInlineText } from './estonian-inline-translations';
+import { resolveArmenianInlineText } from './armenian-inline-translations';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LangService {
   private storage = inject(LocalStorageService);
+  private document = inject(DOCUMENT);
 
   private _lang$i: WritableSignal<LangEnum> = signal(LangEnum.ENG);
 
@@ -20,6 +23,7 @@ export class LangService {
 
     this.storage.setItem('lang', normalizedLang);
     this._lang$i.set(normalizedLang);
+    this.applyDocumentLanguage(normalizedLang);
   }
 
   public setStorageLanguage(): void {
@@ -28,6 +32,7 @@ export class LangService {
     if (storageLang) {
       this.storage.setItem('lang', storageLang);
       this._lang$i.set(storageLang);
+      this.applyDocumentLanguage(storageLang);
     }
   }
 
@@ -40,11 +45,26 @@ export class LangService {
       return '';
     }
 
+    if (this._lang$i() === LangEnum.ARM && !text[LangEnum.ARM]) {
+      return resolveArmenianInlineText(text[LangEnum.ENG] || '');
+    }
+
     if (this._lang$i() === LangEnum.EST && !text[LangEnum.EST]) {
       return resolveEstonianInlineText(text[LangEnum.ENG] || '');
     }
 
     return text[this._lang$i()] || text[LangEnum.ENG] || text[LangEnum.RUS] || text[LangEnum.ESP] || text[LangEnum.EST] || '';
+  }
+
+  public uiText(english: string): string {
+    return this.resolveText({ ENG: english, RUS: english, ESP: english });
+  }
+
+  private applyDocumentLanguage(lang: LangEnum): void {
+    const tags: Record<LangEnum, string> = {
+      ENG: 'en', RUS: 'ru', ESP: 'es', EST: 'et', ARM: 'hy'
+    };
+    this.document.documentElement.lang = tags[lang];
   }
 
   private normalizeLang(lang: string | null): LangEnum {
@@ -65,6 +85,10 @@ export class LangService {
       case 'et':
       case 'ET':
         return LangEnum.EST;
+      case LangEnum.ARM:
+      case 'hy':
+      case 'HY':
+        return LangEnum.ARM;
       default:
         return LangEnum.ENG;
     }

@@ -1,0 +1,200 @@
+<header class="vault-header">
+  <h1>{{ title() }}</h1>
+  <button type="button" class="button" [disabled]="itemsLoading() || foldersLoading()" (click)="refresh()">{{ t('refresh') }}</button>
+</header>
+
+@if (quota(); as usage) {
+  <section class="capacity" aria-labelledby="vault-capacity">
+    <div class="row">
+      <span id="vault-capacity">{{ t('capacity') }}</span>
+      <strong id="vault-capacity-amount">{{ bytes(usage.usedBytes) }} / {{ bytes(usage.limitBytes) }}</strong>
+    </div>
+    @if (usage.limitBytes > 0) {
+      <progress aria-labelledby="vault-capacity" aria-describedby="vault-capacity-amount"
+        [value]="usage.usedBytes > usage.limitBytes ? usage.limitBytes : usage.usedBytes" [max]="usage.limitBytes"></progress>
+    }
+  </section>
+}
+
+<div class="segments" role="group" [attr.aria-label]="title()">
+  <button type="button" [attr.aria-pressed]="tab() === 'recording'" (click)="tab.set('recording'); notice.set('')">
+    {{ t('recordings') }} <span>{{ recordings().length }}</span>
+  </button>
+  <button type="button" [attr.aria-pressed]="tab() === 'saved'" (click)="tab.set('saved'); notice.set('')">
+    {{ t('saved') }} <span>{{ saved().length }}</span>
+  </button>
+</div>
+
+@if (notice()) {
+  <p class="vault-notice" role="status">{{ notice() }}</p>
+}
+
+@if (tab() === 'saved') {
+  <div class="vault-toolbar">
+    <div class="segments secondary" role="group" [attr.aria-label]="t('saved')">
+      <button type="button" [attr.aria-pressed]="view() === 'all'" (click)="setView('all')">{{ t('all') }}</button>
+      <button type="button" [attr.aria-pressed]="view() === 'folders'" (click)="setView('folders')">{{ t('folders') }}</button>
+    </div>
+    @if (view() === 'all') {
+      <details class="filters">
+        <summary class="button">{{ t('filters') }}</summary>
+        <div class="filter-fields">
+          <label>{{ t('titleSearch') }}
+            <input type="search" [value]="titleSearch()" (input)="titleSearch.set($any($event.target).value)" />
+          </label>
+          <label>{{ t('source') }}
+            <select [value]="ownership()" (change)="ownership.set($any($event.target).value)">
+              <option value="all">{{ t('all') }}</option><option value="own">{{ t('own') }}</option><option value="added">{{ t('added') }}</option>
+            </select>
+          </label>
+          <label>{{ t('type') }}
+            <select [value]="kind()" (change)="kind.set($any($event.target).value)">
+              <option value="all">{{ t('all') }}</option><option value="recording">{{ t('recording') }}</option>
+              <option value="fragment">{{ t('fragment') }}</option><option value="qrCopy">{{ t('qrCopy') }}</option>
+            </select>
+          </label>
+          <label>{{ t('sort') }}
+            <select [value]="sort()" (change)="sort.set($any($event.target).value)">
+              <option value="newest">{{ t('newest') }}</option><option value="oldest">{{ t('oldest') }}</option>
+            </select>
+          </label>
+          <button class="button" type="button" (click)="resetFilters()">{{ t('reset') }}</button>
+        </div>
+      </details>
+    } @else {
+      <button type="button" class="button" (click)="openFolderAction('create')">{{ t('createFolder') }}</button>
+    }
+
+    @if (view() === 'folders' && folderSelection() === undefined) {
+      <div class="folder-controls">
+        <label>{{ t('folderSearch') }}
+          <input type="search" [value]="folderSearch()" (input)="folderSearch.set($any($event.target).value)" />
+        </label>
+        <div class="segments secondary" role="group" [attr.aria-label]="t('folderLayout')">
+          <button type="button" [disabled]="layoutPending()" [attr.aria-pressed]="folderLayout() === 'grid'" (click)="setLayout('grid')">{{ t('grid') }}</button>
+          <button type="button" [disabled]="layoutPending()" [attr.aria-pressed]="folderLayout() === 'list'" (click)="setLayout('list')">{{ t('list') }}</button>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+@if (itemsError()) {
+  <p class="vault-notice error" role="alert">{{ t('loadError') }}</p>
+}
+@if (tab() === 'saved' && foldersError()) {
+  <p class="vault-notice error" role="alert">{{ t('folderLoadError') }}</p>
+}
+
+@if (tab() === 'saved' && view() === 'folders' && folderSelection() === undefined) {
+  @if (foldersLoading() && !folders().length) {
+    <p class="empty" role="status">{{ t('loading') }}</p>
+  } @else if (!foldersError() || folders().length) {
+    <ul class="folder-grid" [class.folder-list]="folderLayout() === 'list'">
+      @for (folder of visibleFolders(); track folder.folderId) {
+        <li class="folder">
+          <button type="button" class="folder-open" (click)="folderSelection.set(folder.folderId)">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><use href="assets/icons/profile.svg#vault" /></svg>
+            <strong>{{ folder.name }}</strong><span>{{ folderCounts().get(folder.folderId) ?? 0 }}</span>
+          </button>
+          <div class="folder-actions">
+            <button type="button" class="button" (click)="openFolderAction('rename', folder)">{{ t('renameFolder') }}</button>
+            <button type="button" class="button" (click)="openFolderAction('delete', folder)">{{ t('delete') }}</button>
+          </div>
+        </li>
+      }
+      @if (showUngrouped()) {
+        <li class="folder">
+          <button type="button" class="folder-open" (click)="folderSelection.set(null)">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><use href="assets/icons/profile.svg#vault" /></svg>
+            <strong>{{ t('ungrouped') }}</strong><span>{{ folderCounts().get(null) ?? 0 }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+    @if (!visibleFolders().length && !showUngrouped()) { <p class="empty">{{ t('foldersEmpty') }}</p> }
+  }
+} @else {
+  @if (tab() === 'saved' && view() === 'folders') {
+    <div class="folder-heading row">
+      <button type="button" class="button" (click)="folderSelection.set(undefined)">{{ t('folders') }}</button>
+      <h2>{{ selectedFolderName() }}</h2><span>{{ visibleItems().length }}</span>
+    </div>
+  }
+  <ul class="vault-items" [attr.aria-busy]="itemsLoading()">
+    @for (item of visibleItems(); track key(item)) {
+      <li class="vault-card">
+        <div class="card-main">
+          <div class="card-preview">
+            <org-vault-poster [item]="item"></org-vault-poster>
+            @if (canPlay(item)) {
+              <button type="button" class="play" [attr.aria-label]="t('play') + ' · ' + itemTitle(item)" (click)="openPlayer(item)">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z" /></svg>
+              </button>
+            }
+            @if (item.duration) { <span class="duration">{{ duration(item.duration) }}</span> }
+          </div>
+          <div class="card-copy">
+            <h2>{{ itemTitle(item) }}</h2>
+            @if (origin(item); as source) { <p class="origin">{{ source }}</p> }
+            @if (date(item.originalRecordedAt || item.recordedAt || item.createdAt); as recorded) {
+              <p>{{ t('recordedAt') }} · {{ recorded }}</p>
+            }
+            @if (item.fragment; as fragment) {
+              <p>{{ t('interval') }} · {{ duration((fragment.rootStartMs ?? fragment.sourceStartMs) / 1000) }}–{{ duration((fragment.rootEndMs ?? fragment.sourceEndMs) / 1000) }}</p>
+            }
+            @if (item.itemType === 'saved' && date(item.savedAt); as savedAt) { <p>{{ t('savedAt') }} · {{ savedAt }}</p> }
+            @if (date(item.scheduledForDeletionAt || item.autoDeleteAt); as deletion) { <p class="deletion">{{ t('autoDelete') }} · {{ deletion }}</p> }
+            @if (evidence(item); as status) {
+              <p class="badge" [class.sealed]="item.evidenceStatus === 'sealed'">{{ status }}</p>
+            }
+          </div>
+        </div>
+        <org-vault-actions [item]="item" [folders]="folders()" [folderCounts]="folderCounts()"
+          [deletionPasswordRequired]="requiresPassword()"
+          (changed)="refresh()" (openTrim)="openPlayer($event, true)" (notice)="notice.set($event)"></org-vault-actions>
+      </li>
+    } @empty {
+      @if (itemsLoading()) {
+        <li class="empty" role="status">{{ t('loading') }}</li>
+      } @else if (!itemsError()) {
+        <li class="empty">{{ t(tab() === 'recording' ? 'noRecordings' : 'noFiles') }}</li>
+      }
+    }
+  </ul>
+}
+
+<dialog #folderDialog aria-labelledby="vault-folder-dialog-title" (cancel)="folderPending() && $event.preventDefault()">
+  @if (folderAction(); as action) {
+    <form class="dialog-body" (submit)="saveFolder($event)">
+      <h2 id="vault-folder-dialog-title">{{ t(action.kind === 'create' ? 'createFolder' : action.kind === 'rename' ? 'renameFolder' : 'deleteFolder') }}</h2>
+      @if (action.kind === 'delete') {
+        <p><strong>{{ action.folder.name }}</strong></p>
+        <p>{{ t('deleteFolderNote') }}</p>
+      } @else {
+        <label>{{ t('folderName') }}
+          <input required maxlength="60" autocomplete="off" autofocus [value]="folderName()" (input)="folderName.set($any($event.target).value)" />
+        </label>
+      }
+      @if (folderError()) { <p class="vault-notice error" role="alert">{{ folderError() }}</p> }
+      <div class="row">
+        <button type="button" class="button" [disabled]="folderPending()" (click)="folderDialog.close()">{{ t('cancel') }}</button>
+        <button type="submit" class="button primary" [disabled]="folderPending()">{{ t(action.kind === 'delete' ? 'delete' : 'save') }}</button>
+      </div>
+    </form>
+  }
+</dialog>
+
+<dialog #playerDialog class="player-dialog" aria-labelledby="vault-player-dialog-title"
+  (close)="playerItem.set(null)" (cancel)="trimPending() && $event.preventDefault()">
+  @if (playerItem(); as item) {
+    <div class="dialog-body">
+      <header class="row">
+        <h2 id="vault-player-dialog-title">{{ trimming() ? t('fragment') : itemTitle(item) }}</h2>
+        <button type="button" class="button" [disabled]="trimPending()" (click)="playerDialog.close()">{{ t('close') }}</button>
+      </header>
+      <org-vault-player [item]="item" [trim]="trimming()" [saving]="trimPending()" (trimSubmit)="saveFragment($event)"></org-vault-player>
+      @if (trimError()) { <p class="vault-notice error" role="alert">{{ trimError() }}</p> }
+    </div>
+  }
+</dialog>

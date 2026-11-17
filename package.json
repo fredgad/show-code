@@ -6,6 +6,7 @@
     "start": "nx serve",
     "reset": "nx reset",
     "build": "nx build",
+    "sync:presentation": "node scripts/sync-landing-presentation.mjs",
     "apk:site": "cd ../secure_recorder_app && flutter build apk --release --split-per-abi && cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk ../show-code/src/assets/downloads/e-stream.apk && cd ../show-code && npm run build -- --skip-nx-cache",
     "deploy:site:dry-run": "npm run build -- --skip-nx-cache && rsync -avnc --delete -e \"ssh -i ~/.ssh/id_ed25519_timeweb\" dist/org/browser/ root@147.45.233.212:/var/www/e-stream.app/current/",
     "deploy:site": "npm run build -- --skip-nx-cache && rsync -avc --delete -e \"ssh -i ~/.ssh/id_ed25519_timeweb\" dist/org/browser/ root@147.45.233.212:/var/www/e-stream.app/current/ && ssh -i ~/.ssh/id_ed25519_timeweb root@147.45.233.212 \"nginx -t && systemctl reload nginx\"",
@@ -39,6 +40,7 @@
     "@ngrx/store-devtools": "^17.1.1",
     "@nx/angular": "17.2.8",
     "express": "~4.18.2",
+    "qrcode": "1.5.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.0"
@@ -67,6 +69,7 @@
     "@types/express": "4.17.14",
     "@types/jest": "^29.4.0",
     "@types/node": "18.16.9",
+    "@types/qrcode": "1.5.5",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "@typescript-eslint/parser": "^6.9.1",
     "cypress": "^13.0.0",

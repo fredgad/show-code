@@ -1,0 +1,153 @@
+<org-header layout="profile"></org-header>
+
+<main class="organization-shell">
+  <div class="page-navigation">
+    <a class="back-link" [routerLink]="destination.route"
+      [queryParams]="relation()?.status === 'pending' ? { requests: 'incoming' } : null">
+      <span aria-hidden="true">←</span> {{ peopleLabel() }}
+    </a>
+    <button class="control" type="button" (click)="refresh()" [disabled]="working() || refreshing() || contractBusy()">
+      {{ text('refresh') }}
+    </button>
+  </div>
+
+  @if (notice()) { <p class="access-notice" role="status">{{ notice() }}</p> }
+  @if (error() && !confirmationDialog.open) { <p class="access-notice error" role="alert">{{ error() }}</p> }
+
+  @if (relation(); as item) {
+    <section class="identity-card" aria-labelledby="organization-name">
+      <div class="identity">
+        @if (logo(); as image) {
+          @if (showDetails()) {
+            <button type="button" class="organization-logo" [attr.aria-label]="text('openLogo')" (click)="logoDialog.showModal()">
+              <img [src]="image" alt="" referrerpolicy="no-referrer" (error)="logoFailed.set(true)" />
+            </button>
+          } @else {
+            <div class="organization-logo">
+              <img [src]="image" alt="" referrerpolicy="no-referrer" (error)="logoFailed.set(true)" />
+            </div>
+          }
+        } @else {
+          <div class="organization-logo" aria-hidden="true">{{ initials() }}</div>
+        }
+
+        <div class="identity-text">
+          <p class="status-badge" [class.pending]="item.status === 'pending'">
+            {{ text(item.status === 'pending' ? 'request' : 'trusted') }}
+          </p>
+          <h1 id="organization-name">{{ organizationName() }}</h1>
+        </div>
+      </div>
+
+      @if (showDetails()) {
+        <p class="description">{{ description() }}</p>
+        @if (item.status === 'active' && since()) { <p class="since">{{ since() }}</p> }
+        @if (item.organization?.publicKeyId; as keyId) {
+          <div class="key-row">
+            <button class="key-button" type="button" [attr.title]="text('copyKey')"
+              (click)="copyKey(keyId)">
+              <span><span class="key-label">Key ID</span><strong>{{ keyId }}</strong></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
+              <span class="visually-hidden">{{ text('copyKey') }}</span>
+            </button>
+            <span role="status">{{ copied() ? text('copied') : '' }}</span>
+          </div>
+        }
+      }
+    </section>
+
+    @if (item.status === 'active') {
+      <div class="access-card" [class.access-restricted]="!canOpenContent()">
+        <button type="button" [disabled]="!contact()" (click)="openSettings(accessSettings)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-3 7-9V5l-7-3-7 3v8c0 6 7 9 7 9Z" /><path d="m9 12 2 2 4-4" /></svg>
+          <span><strong>{{ text('settings') }}</strong><span>{{ accessSummary() }}</span></span>
+          <span class="access-chevron" aria-hidden="true">›</span>
+        </button>
+      </div>
+    }
+
+    @if (showDetails() && hasContract()) {
+      <org-organization-contracts [trustedTargetId]="item.trustedTargetId" [required]="item.contractRequired === true"
+        (currentContractChange)="setContract($event)"></org-organization-contracts>
+    }
+
+    @if (item.status === 'pending') {
+      <section class="panel request-panel" [attr.aria-label]="text('request')">
+        @if (!hasContract()) {
+          <h2>{{ text('noContract') }}</h2>
+          <p>{{ text('noContractBody') }}</p>
+        }
+        <div class="control-row request-actions">
+          <button class="control danger" type="button" [disabled]="working() || contractBusy() || !canRespond()" (click)="ask(confirmationDialog, 'decline')">
+            {{ text('decline') }}
+          </button>
+          <button class="control primary" type="button" [disabled]="working() || contractBusy() || !canAccept()" (click)="respond('accept')">
+            {{ text('acceptOrganization') }}
+          </button>
+        </div>
+      </section>
+    } @else {
+      @if (canOpenContent()) {
+        <section class="panel content-panel" [attr.aria-label]="text('organizationContent')">
+          <div class="content-switch" role="group" [attr.aria-label]="text('organizationContent')">
+            <button type="button" [attr.aria-pressed]="tab() === 'video'" (click)="tab.set('video')">{{ text('video') }}</button>
+            <button type="button" [attr.aria-pressed]="tab() === 'messages'" (click)="tab.set('messages')">{{ text('messages') }}</button>
+          </div>
+          <div class="empty-content" aria-live="polite">
+            @if (tab() === 'video') {
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="m10 9 5 3-5 3z" /></svg>
+              <p>{{ text('noVideos') }}</p>
+            } @else {
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11a8 8 0 0 1-8 8H5l-2 2V11a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8Z" /><path d="M8 10h8M8 14h5" /></svg>
+              <p>{{ text('noMessages') }}</p>
+            }
+          </div>
+        </section>
+      }
+
+      @if (policy()?.actions?.canRemove) {
+        <button class="control danger remove-button" type="button" [disabled]="working() || !item.requestRevision" (click)="ask(confirmationDialog, 'remove')">
+          {{ text('remove') }}
+        </button>
+      }
+    }
+  } @else {
+    <section class="panel state-panel">
+      @switch (status()) {
+        @case ('loading') { <p role="status">{{ text('loading') }}</p> }
+        @case ('error') { <p role="alert">{{ text('loadError') }}</p> }
+        @default { <p role="status">{{ text('unavailable') }}</p> }
+      }
+    </section>
+  }
+</main>
+
+<footer class="organization-footer"><a href="mailto:support@e-stream.app">{{ supportLabel() }}</a></footer>
+
+<org-trusted-access-settings #accessSettings [catalog]="catalog()" [loading]="catalogLoading()"
+  (changed)="catalogChanged($event)" (refreshCatalog)="refreshCatalog()"></org-trusted-access-settings>
+
+<dialog #confirmationDialog class="organization-dialog" aria-labelledby="confirmation-title"
+  (close)="confirmation.set(null)" (cancel)="working() && $event.preventDefault()">
+  @if (confirmation(); as pending) {
+    <form (submit)="submit($event, confirmationDialog, pending)">
+      <h2 id="confirmation-title">{{ confirmationTitle(pending.action) }}</h2>
+      @if (hasContract()) { <p>{{ text(pending.action === 'decline' ? 'declineContract' : 'removeContract') }}</p> }
+      @if (error()) { <p class="access-notice error" role="alert">{{ error() }}</p> }
+      <div class="control-row">
+        <button class="control" type="button" autofocus [disabled]="working()" (click)="confirmationDialog.close()">{{ text('back') }}</button>
+        <button class="control danger" type="submit"
+          [disabled]="working() || !relation() || (pending.action === 'decline' && (contractBusy() || !canRespond()))">
+          {{ text(pending.action) }}
+        </button>
+      </div>
+    </form>
+  }
+</dialog>
+
+<dialog #logoDialog class="organization-dialog logo-dialog" [attr.aria-label]="text('openLogo')">
+  <form method="dialog">
+    @if (logo(); as image) { <img [src]="image" [alt]="organizationName()" referrerpolicy="no-referrer" /> }
+    <button class="control" autofocus>{{ text('close') }}</button>
+  </form>
+</dialog>

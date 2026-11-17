@@ -1,0 +1,47 @@
+import { LOGOUT_POPUP_TEXT } from '@shared/constants';
+import { LangTextI } from '@shared/interfaces';
+
+const label = (ENG: string, RUS: string, ESP: string, EST: string, ARM: string): LangTextI => ({ ENG, RUS, ESP, EST, ARM });
+
+export const ACCOUNT_SETTINGS_TEXT = {
+  details: label('Profile details', 'Данные профиля', 'Datos del perfil', 'Profiili andmed', 'Պրոֆիլի տվյալներ'),
+  security: label('Security', 'Безопасность', 'Seguridad', 'Turvalisus', 'Անվտանգություն'),
+  changePhoto: label('Change photo', 'Изменить фото', 'Cambiar foto', 'Muuda fotot', 'Փոխել լուսանկարը'),
+  addPhoto: label('Add photo', 'Добавить фото', 'Añadir foto', 'Lisa foto', 'Ավելացնել լուսանկար'),
+  photoSaved: label('Photo updated.', 'Фото обновлено.', 'Se ha actualizado la foto.', 'Foto on uuendatud.', 'Լուսանկարը թարմացվել է։'),
+  photoFailed: label('Could not update the photo.', 'Не удалось обновить фото.', 'No se pudo actualizar la foto.', 'Fotot ei õnnestunud uuendada.', 'Չհաջողվեց թարմացնել լուսանկարը։'),
+  photoTooLarge: label('The photo is too large. Choose a smaller image.', 'Фото слишком большое. Выберите файл меньшего размера.', 'La foto es demasiado grande. Elige una imagen más pequeña.', 'Foto on liiga suur. Vali väiksem pilt.', 'Լուսանկարը չափազանց մեծ է։ Ընտրեք ավելի փոքր պատկեր։'),
+  photoInvalid: label('Choose an image file.', 'Выберите файл изображения.', 'Elige un archivo de imagen.', 'Vali pildifail.', 'Ընտրեք պատկերային ֆայլ։'),
+  username: label('Login', 'Логин', 'Nombre de usuario', 'Kasutajanimi', 'Օգտանուն'),
+  usernameHint: label('4–20 characters. Use Latin letters, numbers or underscores.', 'От 4 до 20 символов. Латинские буквы, цифры или нижнее подчёркивание.', 'De 4 a 20 caracteres. Usa letras latinas, números o guiones bajos.', '4–20 märki. Kasuta ladina tähti, numbreid või alakriipse.', '4–20 նիշ։ Օգտագործեք լատինատառ տառեր, թվեր կամ ընդգծման նշաններ։'),
+  usernameInvalid: label('Check your login format.', 'Проверьте формат логина.', 'Revisa el formato del nombre de usuario.', 'Kontrolli kasutajanime vormingut.', 'Ստուգեք օգտանվան ձևաչափը։'),
+  usernameSaved: label('Login updated.', 'Логин обновлён.', 'Se ha actualizado el nombre de usuario.', 'Kasutajanimi on uuendatud.', 'Օգտանունը թարմացվել է։'),
+  usernameFailed: label('Could not update the login.', 'Не удалось обновить логин.', 'No se pudo actualizar el nombre de usuario.', 'Kasutajanime ei õnnestunud uuendada.', 'Չհաջողվեց թարմացնել օգտանունը։'),
+  email: label('Email', 'Электронная почта', 'Correo electrónico', 'E-post', 'Էլ. փոստ'),
+  emailHint: label('We’ll send a confirmation link to the new address.', 'Отправим ссылку для подтверждения на новый адрес.', 'Enviaremos un enlace de confirmación a la nueva dirección.', 'Saadame uuele aadressile kinnituslingi.', 'Հաստատման հղումը կուղարկենք նոր հասցեին։'),
+  emailInvalid: label('Enter a valid email address.', 'Введите корректный адрес почты.', 'Introduce una dirección de correo válida.', 'Sisesta kehtiv e-posti aadress.', 'Մուտքագրեք վավեր էլ. փոստի հասցե։'),
+  emailSent: label('Confirmation email sent to the new address.', 'Письмо для подтверждения отправлено на новый адрес.', 'Se ha enviado un correo de confirmación a la nueva dirección.', 'Kinnituskiri saadeti uuele aadressile.', 'Հաստատման նամակն ուղարկվել է նոր հասցեին։'),
+  emailFailed: label('Could not send the confirmation email.', 'Не удалось отправить письмо для подтверждения.', 'No se pudo enviar el correo de confirmación.', 'Kinnituskirja ei õnnestunud saata.', 'Չհաջողվեց ուղարկել հաստատման նամակը։'),
+  saveUsername: label('Save login', 'Сохранить логин', 'Guardar usuario', 'Salvesta kasutajanimi', 'Պահպանել օգտանունը'),
+  sendEmailLink: label('Send confirmation link', 'Отправить ссылку', 'Enviar enlace de confirmación', 'Saada kinnituslink', 'Ուղարկել հաստատման հղումը'),
+  sending: label('Sending…', 'Отправляем…', 'Enviando…', 'Saatmine…', 'Ուղարկվում է…'),
+  saving: label('Saving…', 'Сохраняем…', 'Guardando…', 'Salvestamine…', 'Պահպանվում է…'),
+  changePassword: label('Change password', 'Изменить пароль', 'Cambiar contraseña', 'Muuda parooli', 'Փոխել գաղտնաբառը'),
+  forgotPassword: label('Forgot your password?', 'Забыли пароль?', '¿Olvidaste tu contraseña?', 'Unustasid parooli?', 'Մոռացե՞լ եք գաղտնաբառը։'),
+  showPasswords: label('Show passwords', 'Показать пароли', 'Mostrar contraseñas', 'Näita paroole', 'Ցույց տալ գաղտնաբառերը'),
+  hidePasswords: label('Hide passwords', 'Скрыть пароли', 'Ocultar contraseñas', 'Peida paroolid', 'Թաքցնել գաղտնաբառերը'),
+  currentPassword: label('Current password', 'Текущий пароль', 'Contraseña actual', 'Praegune parool', 'Ընթացիկ գաղտնաբառ'),
+  newPassword: label('New password', 'Новый пароль', 'Nueva contraseña', 'Uus parool', 'Նոր գաղտնաբառ'),
+  confirmPassword: label('Repeat new password', 'Повторите новый пароль', 'Repite la nueva contraseña', 'Korda uut parooli', 'Կրկնեք նոր գաղտնաբառը'),
+  passwordHint: label('At least 8 characters.', 'Не менее 8 символов.', 'Al menos 8 caracteres.', 'Vähemalt 8 märki.', 'Առնվազն 8 նիշ։'),
+  passwordRequired: label('Fill in all password fields.', 'Заполните все поля пароля.', 'Completa todos los campos de contraseña.', 'Täida kõik parooliväljad.', 'Լրացրեք գաղտնաբառի բոլոր դաշտերը։'),
+  passwordMismatch: label('The new passwords do not match.', 'Новые пароли не совпадают.', 'Las contraseñas nuevas no coinciden.', 'Uued paroolid ei kattu.', 'Նոր գաղտնաբառերը չեն համընկնում։'),
+  passwordSaved: label('Password updated.', 'Пароль обновлён.', 'Se ha actualizado la contraseña.', 'Parool on uuendatud.', 'Գաղտնաբառը թարմացվել է։'),
+  passwordFailed: label('Could not update the password.', 'Не удалось обновить пароль.', 'No se pudo actualizar la contraseña.', 'Parooli ei õnnestunud uuendada.', 'Չհաջողվեց թարմացնել գաղտնաբառը։'),
+  deletionDelay: label('Deletion delay for new recordings', 'Задержка удаления новых записей', 'Demora al eliminar grabaciones nuevas', 'Uute salvestiste kustutamise viivitus', 'Նոր տեսագրությունների ջնջման ուշացում'),
+  immediateDeletion: label('Immediate', 'Без задержки', 'Sin demora', 'Viivituseta', 'Առանց ուշացման'),
+  signOut: label('Sign out of the account', 'Выйти из аккаунта', 'Cerrar sesión', 'Logi kontolt välja', 'Դուրս գալ հաշվից'),
+  signOutPrompt: { ...LOGOUT_POPUP_TEXT, ARM: 'Իսկապե՞ս ցանկանում եք դուրս գալ հաշվից։' },
+  cancel: label('Cancel', 'Отмена', 'Cancelar', 'Loobu', 'Չեղարկել'),
+  locale: label('en', 'ru', 'es', 'et', 'hy')
+};

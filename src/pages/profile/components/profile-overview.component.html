@@ -1,36 +1,76 @@
-@if (userData$ | async; as userData) {
-<section class="profile-header">
-  <org-avatar class="profile-header_image" [imageUrl]="userData.image" [size]="96"></org-avatar>
-
-  <div class="profile-header_data">
-    <p class="profile-header_eyebrow">E-stream</p>
-    <h1 class="profile-header_name">{{ userData.username }}</h1>
-    <p class="profile-header_email">{{ userData.email }}</p>
-
-    <dl class="profile-header_meta">
-      <div>
-        <dt
-          [orgText]="{
-            ENG: 'Plan',
-            ESP: 'Plan',
-            RUS: 'Тариф',
-            EST: 'Pakett',
-          }"
-        >Plan</dt>
-        <dd
-          [orgText]="{
-            ENG: 'Basic',
-            ESP: 'Básico',
-            RUS: 'Базовый',
-            EST: 'Põhipakett',
-          }"
-        >Basic</dd>
+@if (user(); as account) {
+  @if (account.username || account.keyId || account.email) {
+    <section class="identity-card">
+      <div class="identity">
+        <div class="identity-avatar">
+          @if (account.image) {
+            <org-avatar [imageUrl]="account.image" [size]="68" [alt]="account.username || ''"></org-avatar>
+          } @else {
+            <span aria-hidden="true">{{ (account.username || account.email || 'E').charAt(0).toUpperCase() }}</span>
+          }
+        </div>
+        <div class="identity-copy">
+          <h2>{{ account.username || account.email }}</h2>
+          @if (account.username && account.email) {
+            <p>{{ account.email }}</p>
+          }
+        </div>
       </div>
-      <div>
-        <dt>Key ID</dt>
-        <dd>{{ userData.keyId }}</dd>
-      </div>
-    </dl>
-  </div>
-</section>
+
+      @if (account.keyId; as keyId) {
+        <div class="key-block">
+          <span class="key-label">Key ID</span>
+          <button
+            class="key-button"
+            type="button"
+            [attr.aria-label]="text(copy.copy) + ' ' + keyId"
+            (click)="copyKeyId(keyId)"
+          >
+            <code>{{ keyId }}</code>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <use [attr.href]="copyFeedback() === 'copied' ? 'assets/icons/profile.svg#check' : 'assets/icons/profile.svg#copy'" />
+            </svg>
+          </button>
+          <span class="copy-feedback" role="status">
+            @if (copyFeedback(); as feedback) {
+              {{ text(copy[feedback]) }}
+            }
+          </span>
+        </div>
+      }
+    </section>
+  } @else {
+    <div class="profile-status" role="status">
+      @if (loadStatus() === 'error' || loadStatus() === 'ready') {
+        <p>{{ text(copy.loadError) }}</p>
+        <button type="button" (click)="reload()">{{ text(copy.retry) }}</button>
+      } @else {
+        <p>{{ text(copy.loading) }}</p>
+      }
+    </div>
+  }
 }
+
+<div class="shortcuts">
+  <a class="shortcut shortcut-vault" [routerLink]="links.vault.route">
+    <div class="shortcut-top">
+      <span class="shortcut-icon">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#vault" /></svg>
+      </span>
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#next" /></svg>
+    </div>
+    <h2>{{ text(links.vault.label) }}</h2>
+    <p>{{ text(copy.vaultSummary) }}</p>
+  </a>
+
+  <a class="shortcut" [routerLink]="links.billing.route">
+    <div class="shortcut-top">
+      <span class="shortcut-icon">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#billing" /></svg>
+      </span>
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#next" /></svg>
+    </div>
+    <h2>{{ text(links.billing.label) }}</h2>
+    <p>{{ text(copy.billingSummary) }}</p>
+  </a>
+</div>

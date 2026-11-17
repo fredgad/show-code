@@ -1,11 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, inject } from '@angular/core';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Injector, ViewChild, afterNextRender, computed, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { SITE_LANGUAGES } from '@features/lang';
 import { HeaderComponent } from '@widgets/header';
-import { FooterComponent } from '@widgets/footer';
-import { EvidenceVerificationStatus, EvidenceVerifyResponseI, LangTextI } from '@shared/interfaces';
-import { EvidenceService, LangService, NotificationService } from '@shared/services';
+import { copyText } from '@shared/helpers';
+import { EvidenceCaptureSource, EvidenceLocationI, EvidenceVerificationStatus, EvidenceVerifyResponseI } from '@shared/interfaces';
+import { EvidenceService, LangService } from '@shared/services';
+import { PROFILE_TEXT } from '../../profile/profile.text';
 import { TEXT_VERIFY, VerifyTextKey } from '../common/verify.text';
 
 type VerifyFileKind = 'mp4' | 'package';
@@ -35,13 +37,18 @@ const STATUS_TITLE_KEYS: Record<EvidenceVerificationStatus, VerifyTextKey> = {
   failed: 'status_failed',
 };
 
-const STATUS_BADGE_KEYS: Record<EvidenceVerificationStatus, VerifyTextKey> = {
-  valid: 'badge_valid',
-  pending: 'badge_pending',
-  unknown: 'badge_unknown',
-  tampered: 'badge_tampered',
-  invalid_signature: 'badge_invalid_signature',
-  failed: 'badge_failed',
+const CAMERA_VERIFICATION_TEXT: Record<
+  EvidenceCaptureSource | 'derived' | 'unavailable' | 'details_unavailable',
+  { status: VerifyTextKey; detail: VerifyTextKey }
+> = {
+  device_segments: { status: 'camera_segments_status', detail: 'camera_segments_detail' },
+  live_recovery: { status: 'camera_live_status', detail: 'camera_live_detail' },
+  camera_gateway: { status: 'camera_gateway_status', detail: 'camera_gateway_detail' },
+  camera_stream: { status: 'camera_stream_status', detail: 'camera_stream_detail' },
+  test_source: { status: 'camera_test_status', detail: 'camera_test_detail' },
+  derived: { status: 'camera_unavailable_status', detail: 'camera_derived_detail' },
+  unavailable: { status: 'camera_unavailable_status', detail: 'camera_unavailable_detail' },
+  details_unavailable: { status: 'camera_details_unavailable_status', detail: 'camera_details_unavailable_detail' },
 };
 
 const REMOTE_FILE_TIMEOUT_MS = 5 * 60 * 1000;
@@ -49,7 +56,7 @@ const REMOTE_FILE_TIMEOUT_MS = 5 * 60 * 1000;
 @Component({
   selector: 'org-verify',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent],
+  imports: [NgTemplateOutlet, HeaderComponent],
   templateUrl: './verify.component.html',
   styleUrls: [
     './verify.component.scss',
@@ -59,14 +66,24 @@ const REMOTE_FILE_TIMEOUT_MS = 5 * 60 * 1000;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VerifyComponent {
-  private evidenceService = inject(EvidenceService);
-  private notificationService = inject(NotificationService);
-  private langService = inject(LangService);
-  private cdr = inject(ChangeDetectorRef);
+  private readonly evidenceService = inject(EvidenceService);
+  private readonly langService = inject(LangService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly injector = inject(Injector);
+  private readonly document = inject(DOCUMENT);
+  private readonly dateFormat = computed(() => new Intl.DateTimeFormat(this.locale(), {
+    dateStyle: 'medium', timeStyle: 'medium'
+  }));
+  private readonly secondsFormat = computed(() => new Intl.NumberFormat(this.locale(), {
+    style: 'unit', unit: 'second', maximumFractionDigits: 1
+  }));
 
-  @HostBinding('class') hostClass = 'page';
+  @ViewChild('resultHeading') private resultHeading?: ElementRef<HTMLHeadingElement>;
 
+  public readonly locale = computed(() => SITE_LANGUAGES.find(language => language.id === this.langService.getLang$i())?.tag ?? 'en');
+  public readonly support = computed(() => this.langService.resolveText(PROFILE_TEXT.support));
   public selectedFile: File | null = null;
+  public verifiedFileName = '';
   public isDragging = false;
   public isProcessing = false;
   public errorMessage = '';
@@ -76,12 +93,7 @@ export class VerifyComponent {
   public selectedFileKind: VerifyFileKind = 'mp4';
   public verificationSource: VerificationSource = 'file';
   public sourceUrl = '';
-  public packageManifest: Record<string, unknown> | null = null;
-  public text: Record<string, LangTextI> = TEXT_VERIFY;
-
-  public get hasFile(): boolean {
-    return !!this.selectedFile;
-  }
+  public hashCopyStatus: VerifyTextKey | null = null;
 
   public get statusTone(): string {
     switch (this.verifyResult?.status) {
@@ -103,41 +115,35 @@ export class VerifyComponent {
     return this.t(STATUS_TITLE_KEYS[status]);
   }
 
-  public get statusBadge(): string {
-    const status = this.verifyResult?.status ?? 'unknown';
-    return this.t(STATUS_BADGE_KEYS[status]);
+  public get statusHint(): string {
+    switch (this.verifyResult?.status) {
+      case 'valid': return this.t('video_integrity_detail');
+      case 'pending': return this.t('result_pending_hint');
+      case 'unknown':
+      case 'tampered': return this.t('result_original_hint');
+      default: return '';
+    }
   }
 
-  public get hasLocation(): boolean {
-    const location = this.verifyResult?.evidence?.location;
-    return typeof location?.lat === 'number' && typeof location?.lng === 'number';
+  public get cameraVerificationText() {
+    const evidence = this.verifyResult?.evidence;
+    if (!evidence) return CAMERA_VERIFICATION_TEXT.details_unavailable;
+    if (evidence.derivation) return CAMERA_VERIFICATION_TEXT.derived;
+    const proof = this.cameraAndroidProof;
+    if (proof) {
+      const status = proof.invalidSegments > 0 ? 'camera_android_problem'
+        : proof.verifiedSegments === proof.segmentCount ? 'camera_android_checked'
+        : 'camera_android_partial';
+      return { status, detail: proof.verifiedSegments > 0 ? 'camera_android_detail' : 'camera_segments_detail' };
+    }
+    const source = evidence.captureSource ?? 'unavailable';
+    return CAMERA_VERIFICATION_TEXT[source] ?? CAMERA_VERIFICATION_TEXT.unavailable;
   }
 
-  public get originalAuthorText(): string {
-    const author = this.verifyResult?.evidence?.originalAuthor;
-    if (!author?.confirmed) {
-      return this.t('fragment_author_unconfirmed');
-    }
-    if (author.disclosed && author.displayName) {
-      return author.displayName;
-    }
-    return this.t('fragment_author_confirmed_private');
-  }
-
-  public get verificationModeText(): string {
-    if (this.verificationSource === 'url') {
-      return this.t('mode_url');
-    }
-    return this.selectedFileKind === 'package' ? this.t('mode_package') : this.t('mode_mp4');
-  }
-
-  public get selectedFileHelpText(): string {
-    if (this.verificationSource === 'url') {
-      return this.t('url_selected_hint');
-    }
-    return this.selectedFileKind === 'package'
-      ? this.t('package_selected_hint')
-      : this.t('mp4_selected_hint');
+  public get cameraAndroidProof() {
+    const evidence = this.verifyResult?.evidence;
+    return !evidence?.derivation && evidence?.captureSource === 'device_segments' && evidence.androidKeyProof?.version === 1
+      ? evidence.androidKeyProof : null;
   }
 
   public get processingText(): string {
@@ -147,17 +153,17 @@ export class VerifyComponent {
   }
 
   public get canVerifyUrl(): boolean {
-    return !this.isProcessing && this.sourceUrl.trim().length > 0;
+    return this.verificationSource === 'url' && !this.isProcessing && this.sourceUrl.trim().length > 0;
   }
 
   public get evidenceIdLabel(): string {
-    return this.selectedFileKind === 'package'
+    return this.verificationSource === 'file' && this.selectedFileKind === 'package'
       ? this.t('package_evidence_id')
       : this.t('embedded_evidence_id');
   }
 
   public t(key: VerifyTextKey): string {
-    return this.translate(this.text[key]);
+    return this.langService.resolveText(TEXT_VERIFY[key]);
   }
 
   public matchedByText(): string {
@@ -173,7 +179,7 @@ export class VerifyComponent {
     }
   }
 
-  public formatFragmentOffset(value: number | null | undefined): string {
+  public formatDurationMs(value: number): string {
     const totalMs = Math.max(0, Number(value) || 0);
     const totalSeconds = Math.floor(totalMs / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -182,13 +188,49 @@ export class VerifyComponent {
     return `${minutes}:${seconds.toString().padStart(2, '0')}.${tenths}`;
   }
 
+  public formatDate(value: string | null | undefined): string {
+    const date = new Date(value ?? '');
+    return Number.isNaN(date.getTime()) ? this.t('na') : this.dateFormat().format(date);
+  }
+
+  public formatSeconds(value: number): string {
+    return this.secondsFormat().format(value);
+  }
+
+  public formatLocation(location: EvidenceLocationI | null): string {
+    return typeof location?.lat === 'number' && typeof location.lng === 'number'
+      ? `${location.lat}, ${location.lng}`
+      : this.t('na');
+  }
+
+  public formatFileSize(bytes: number): string {
+    const units = ['byte', 'kilobyte', 'megabyte', 'gigabyte'];
+    let unit = 0;
+    while (bytes >= 1000 && unit < units.length - 1) {
+      bytes /= 1000;
+      unit += 1;
+    }
+    return new Intl.NumberFormat(this.locale(), {
+      style: 'unit', unit: units[unit], maximumFractionDigits: 1
+    }).format(bytes);
+  }
+
+  public selectSource(source: VerificationSource): void {
+    if (this.isProcessing || this.verificationSource === source) return;
+    this.verificationSource = source;
+    this.isDragging = false;
+    this.resetResult();
+  }
+
   public onDragOver(event: DragEvent): void {
     event.preventDefault();
-    this.isDragging = true;
+    if (!event.dataTransfer) return;
+    this.isDragging = !this.isProcessing && event.dataTransfer.types.includes('Files');
+    event.dataTransfer.dropEffect = this.isDragging ? 'copy' : 'none';
   }
 
   public onDragLeave(event: DragEvent): void {
-    event.preventDefault();
+    if (event.relatedTarget instanceof Node && (event.currentTarget as HTMLElement).contains(event.relatedTarget)) return;
     this.isDragging = false;
   }
 
@@ -200,54 +242,39 @@ export class VerifyComponent {
     this.setSelectedFile(file);
   }
 
-  public onFileInput(event: Event, preferredKind?: VerifyFileKind): void {
+  public onFileInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.item(0) || null;
-    this.setSelectedFile(file, preferredKind);
+    this.setSelectedFile(file);
     input.value = '';
   }
 
   public onSourceUrlInput(event: Event): void {
     this.sourceUrl = (event.target as HTMLInputElement).value;
-    if (this.errorMessage) {
-      this.errorMessage = '';
-    }
+    this.resetResult();
   }
 
   public clearSelection(): void {
     this.selectedFile = null;
+    this.resetResult();
+  }
+
+  private resetResult(): void {
     this.extractedEvidenceId = null;
     this.lastHashHex = '';
     this.verifyResult = null;
+    this.verifiedFileName = '';
     this.errorMessage = '';
-    this.selectedFileKind = 'mp4';
-    this.verificationSource = 'file';
-    this.sourceUrl = '';
-    this.packageManifest = null;
-    this.cdr.markForCheck();
+    this.hashCopyStatus = null;
   }
 
   public async verifySelectedFile(): Promise<void> {
-    if (!this.selectedFile || this.isProcessing) {
+    if (this.verificationSource !== 'file' || !this.selectedFile || this.isProcessing) {
       return;
     }
 
-    this.isProcessing = true;
-    this.errorMessage = '';
-    this.verifyResult = null;
-    this.lastHashHex = '';
-    this.packageManifest = null;
-    this.cdr.markForCheck();
-
-    try {
-      await this.performVerification(this.selectedFile, this.selectedFileKind);
-    } catch (error) {
-      this.errorMessage = this.resolveErrorMessage(error);
-      this.notificationService.showError(this.errorMessage);
-    } finally {
-      this.isProcessing = false;
-      this.cdr.markForCheck();
-    }
+    const file = this.selectedFile;
+    await this.runVerification(() => file, this.selectedFileKind);
   }
 
   public async verifyFromUrl(): Promise<void> {
@@ -259,39 +286,51 @@ export class VerifyComponent {
     try {
       normalizedUrl = this.normalizeSourceUrl(this.sourceUrl);
     } catch (error) {
-      this.handleVerificationError(error);
+      this.errorMessage = this.resolveErrorMessage(error);
       return;
     }
 
-    this.isProcessing = true;
-    this.verificationSource = 'url';
     this.sourceUrl = normalizedUrl;
-    this.errorMessage = '';
-    this.verifyResult = null;
-    this.lastHashHex = '';
-    this.packageManifest = null;
+    await this.runVerification(() => this.downloadRemoteMp4(normalizedUrl), 'mp4');
+  }
+
+  public async copyHash(): Promise<void> {
+    const hash = this.lastHashHex;
+    if (!hash) return;
+    let status: VerifyTextKey;
+    try {
+      await copyText(this.document, hash);
+      status = 'hash_copied';
+    } catch {
+      status = 'hash_copy_error';
+    }
+    if (hash === this.lastHashHex) {
+      this.hashCopyStatus = status;
+      this.cdr.markForCheck();
+    }
+  }
+
+  private async runVerification(getFile: () => File | Promise<File>, kind: VerifyFileKind): Promise<void> {
+    this.resetResult();
+    this.isProcessing = true;
     this.cdr.markForCheck();
 
     try {
-      const remoteFile = await this.downloadRemoteMp4(normalizedUrl);
-      this.setSelectedFile(remoteFile, 'mp4', 'url');
-      await this.performVerification(remoteFile, 'mp4');
+      const file = await getFile();
+      await this.performVerification(file, kind);
+      this.verifiedFileName = file.name;
+      afterNextRender(() => this.resultHeading?.nativeElement.focus(), { injector: this.injector });
     } catch (error) {
-      this.handleVerificationError(error);
+      this.errorMessage = this.resolveErrorMessage(error);
     } finally {
       this.isProcessing = false;
       this.cdr.markForCheck();
     }
   }
 
-  private setSelectedFile(
-    file: File | null,
-    preferredKind?: VerifyFileKind,
-    source: VerificationSource = 'file'
-  ): void {
-    if (!file) {
-      return;
-    }
+  private setSelectedFile(file: File | null): void {
+    if (!file || this.isProcessing) return;
+    this.resetResult();
 
     const fileName = file.name.toLowerCase();
     const fileType = file.type.toLowerCase();
@@ -299,47 +338,17 @@ export class VerifyComponent {
     const isZip =
       fileName.endsWith('.estream') ||
       fileName.endsWith('.zip') ||
-      fileName.endsWith('.estream.zip') ||
       fileType === 'application/zip' ||
       fileType === 'application/x-zip-compressed' ||
-      fileType === 'application/octet-stream' ||
-      preferredKind === 'package';
-    const fileKind: VerifyFileKind = preferredKind ?? (isMp4 ? 'mp4' : 'package');
-
-    if (fileKind === 'mp4' && !isMp4) {
+      fileType === 'application/octet-stream';
+    if (!isMp4 && !isZip) {
       this.errorMessage = this.t('unsupported_file_error');
       this.selectedFile = null;
-      this.verifyResult = null;
-      this.extractedEvidenceId = null;
-      this.lastHashHex = '';
-      this.packageManifest = null;
-      this.cdr.markForCheck();
-      return;
-    }
-
-    if (fileKind === 'package' && !isZip) {
-      this.errorMessage = this.t('unsupported_file_error');
-      this.selectedFile = null;
-      this.verifyResult = null;
-      this.extractedEvidenceId = null;
-      this.lastHashHex = '';
-      this.packageManifest = null;
-      this.cdr.markForCheck();
       return;
     }
 
     this.selectedFile = file;
-    this.selectedFileKind = fileKind;
-    this.verificationSource = source;
-    if (source === 'file') {
-      this.sourceUrl = '';
-    }
-    this.verifyResult = null;
-    this.errorMessage = '';
-    this.extractedEvidenceId = null;
-    this.lastHashHex = '';
-    this.packageManifest = null;
-    this.cdr.markForCheck();
+    this.selectedFileKind = isMp4 ? 'mp4' : 'package';
   }
 
   private async performVerification(file: File, fileKind: VerifyFileKind): Promise<void> {
@@ -354,7 +363,6 @@ export class VerifyComponent {
 
     this.lastHashHex = fileHashHex;
     this.extractedEvidenceId = target.evidenceId;
-    this.packageManifest = target.manifest;
 
     this.verifyResult = await firstValueFrom(
       this.evidenceService.verifyEvidence({
@@ -451,12 +459,6 @@ export class VerifyComponent {
 
     const safeName = decoded.replace(/[\\/\r\n]/g, '-').trim() || 'remote-video.mp4';
     return safeName.toLowerCase().endsWith('.mp4') ? safeName : `${safeName}.mp4`;
-  }
-
-  private handleVerificationError(error: unknown): void {
-    this.errorMessage = this.resolveErrorMessage(error);
-    this.notificationService.showError(this.errorMessage);
-    this.cdr.markForCheck();
   }
 
   private async computeFileHashHex(file: File): Promise<string> {
@@ -591,7 +593,4 @@ export class VerifyComponent {
     return this.t('verification_failed');
   }
 
-  private translate(text: LangTextI): string {
-    return this.langService.resolveText(text);
-  }
 }

@@ -1,22 +1,41 @@
-@import 'mixins';
+@use 'site-theme';
 
 :host {
+  @include site-theme.palette;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: #f7f9fc;
 }
 
-.profile-screen {
+.profile-shell { @include site-theme.shell; }
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: clamp(13.5rem, 20vw, 16.25rem) minmax(0, 1fr);
+  align-items: start;
   flex: 1;
-  width: 100%;
-  min-height: 100dvh;
-  padding: 112px clamp(24px, 5vw, 72px) 48px;
+  gap: clamp(1.5rem, 4vw, 3.75rem);
+  padding-block: clamp(1.5rem, 4vw, 3.5rem);
 }
 
-@include w-mobile {
-  .profile-screen {
-    min-height: calc(100dvh - 60px);
-    padding: 80px 16px 32px;
-  }
+.sidebar {
+  padding: .65rem;
+  border: 1px solid var(--line);
+  border-radius: .9rem;
+  background: #fdfcf9;
+}
+
+.profile-content { min-width: 0; }
+.profile-footer {
+  padding-block: 1.4rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .9rem;
+  font-weight: 600;
+}
+.profile-footer a:hover { text-decoration: underline; text-underline-offset: .24em; }
+
+@media (max-width: site-theme.$mobile-nav-breakpoint) {
+  .profile-layout { grid-template-columns: minmax(0, 1fr); padding-top: 1rem; }
+  .sidebar { display: none; }
 }

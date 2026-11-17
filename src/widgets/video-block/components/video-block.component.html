@@ -1,5 +1,8 @@
 <div class="saved-videos">
   @for (video of videos; track video) {
-  <org-video [videoData]="video" [isOwn]="isOwn"></org-video>
+    <article class="video-item">
+      <org-video [videoData]="video" [isOwn]="isOwn"></org-video>
+      <ng-container *ngTemplateOutlet="itemActions; context: { $implicit: video }"></ng-container>
+    </article>
   }
 </div>

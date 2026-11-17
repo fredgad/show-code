@@ -1,0 +1,171 @@
+<org-header [showDisplayControls]="true"></org-header>
+
+<div class="main">
+  <section class="hero container">
+    <div class="hero-brand">
+      <img class="hero-logo" [srcPath]="'e-stream-logotype.svg'" alt="E-stream logo" />
+    </div>
+
+    <h1 class="hero-title">
+      <span class="hero-title_label" [orgText]="text['e-stream']">E-stream</span>
+    </h1>
+    <h2 class="hero-subtitle">
+      <span [orgText]="text['hero_tagline']">Your partner in personal safety.</span>
+    </h2>
+
+    <p class="hero-description">
+      <span [orgText]="text['innovative']"></span>
+      <a
+        class="hero-description_link"
+        href="https://www.soyuz.app/read/e-stream"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span [orgText]="text['read_more']">Подробнее</span>
+      </a>
+    </p>
+
+    <div class="hero-actions">
+      <a class="download-button" href="/assets/downloads/e-stream.apk" download="e-stream-android.apk">
+        <span [orgText]="text['download_button']">Download for Android</span>
+        <img class="download-button_icon" [srcPath]="'download-icon.svg'" alt="" />
+      </a>
+    </div>
+
+    <div class="hero-secondary-links" [attr.aria-label]="langService.uiText('Additional links')">
+      <a class="hero-secondary-links_item" routerLink="/verify">
+        <span
+          [orgText]="{
+            ENG: 'Verification',
+            ESP: 'Verificación',
+            RUS: 'Верификация'
+          }"
+        >
+          Верификация
+        </span>
+      </a>
+      <a
+        class="hero-secondary-links_item"
+        [href]="presentationUrl$i()"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span
+          [orgText]="{
+            ENG: 'Presentation',
+            ESP: 'Presentación',
+            RUS: 'Презентация'
+          }"
+        >
+          Презентация
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <section class="benefits-section">
+    <div class="section-header container">
+      <h2 class="section-title" [orgText]="text['benefits_title']">Who the app may be useful for</h2>
+    </div>
+    <div class="benefits container">
+      <div (click)="toggleText($event)" class="benefits-item">
+        <img class="logo-img" [srcPath]="'e-stream-safety.png'" />
+        <div class="benefits-item_title">
+          <h3 [orgText]="text['benefits_anyone_title']">For those who care about their own safety and the safety of loved ones</h3>
+          <span class="arrow"></span>
+        </div>
+
+        <div class="benefits-item_text" [orgText]="text['anyone']"></div>
+      </div>
+      <div (click)="toggleText($event)" class="benefits-item">
+        <img class="logo-img" [srcPath]="'e-stream-hero.png'" />
+        <div class="benefits-item_title">
+          <h3 [orgText]="text['benefits_citizen_title']">For everyday heroes</h3>
+          <span class="arrow"></span>
+        </div>
+        <div class="benefits-item_text" [orgText]="text['citizen']"></div>
+      </div>
+      <div (click)="toggleText($event)" class="benefits-item">
+        <img class="logo-img" [srcPath]="'e-stream-professional.png'" />
+        <div class="benefits-item_title">
+          <h3 [orgText]="text['benefits_journalist_title']">For professionals in high-risk fields</h3>
+          <span class="arrow"></span>
+        </div>
+        <div class="benefits-item_text" [orgText]="text['journalists']"></div>
+      </div>
+      <div (click)="toggleText($event)" class="benefits-item">
+        <img class="logo-img" [srcPath]="'e-stream-adventurer.png'" />
+        <div class="benefits-item_title">
+          <h3 [orgText]="text['benefits_adventurers_title']">For adventure seekers</h3>
+          <span class="arrow"></span>
+        </div>
+        <div class="benefits-item_text" [orgText]="text['adventurers']"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="main-third">
+    <div class="container">
+      <h2 class="section-title" [orgText]="text['features_title']">Key features of E-stream</h2>
+      <div class="features">
+        <div class="features-text" [orgText]="text['discreet']"></div>
+        <div class="features-text" [orgText]="text['immediate']"></div>
+        <div class="features-text" [orgText]="text['friendly']"></div>
+        <div class="features-text" [orgText]="text['quality']"></div>
+        <div class="features-text" [orgText]="text['advanced']"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-to-use">
+    <div class="container">
+      <h2 class="section-title" [orgText]="text['how_to_use.how_use']">How to use E-stream:</h2>
+      <div class="how-to-use-grid">
+        <div class="how-step">
+          <span class="how-step_index">1</span>
+          <div class="how-step_content">
+            <h3 class="how-step_title" [orgText]="text['how_to_use.how_use_1_title']"></h3>
+            <p class="how-step_text" [orgText]="text['how_to_use.how_use_1']"></p>
+          </div>
+        </div>
+        <div class="how-step">
+          <span class="how-step_index">2</span>
+          <div class="how-step_content">
+            <h3 class="how-step_title" [orgText]="text['how_to_use.how_use_2_title']"></h3>
+            <p class="how-step_text" [orgText]="text['how_to_use.how_use_2']"></p>
+          </div>
+        </div>
+        <div class="how-step">
+          <span class="how-step_index">3</span>
+          <div class="how-step_content">
+            <h3 class="how-step_title" [orgText]="text['how_to_use.how_use_3_title']"></h3>
+            <p class="how-step_text" [orgText]="text['how_to_use.how_use_3']"></p>
+          </div>
+        </div>
+        <div class="how-step">
+          <span class="how-step_index">4</span>
+          <div class="how-step_content">
+            <h3 class="how-step_title" [orgText]="text['how_to_use.how_use_4_title']"></h3>
+            <p class="how-step_text" [orgText]="text['how_to_use.how_use_4']"></p>
+          </div>
+        </div>
+        <div class="how-step">
+          <span class="how-step_index">5</span>
+          <div class="how-step_content">
+            <h3 class="how-step_title" [orgText]="text['how_to_use.how_use_5_title']"></h3>
+            <p class="how-step_text" [orgText]="text['how_to_use.how_use_5']"></p>
+          </div>
+        </div>
+        <div class="how-step">
+          <span class="how-step_index">6</span>
+          <div class="how-step_content">
+            <h3 class="how-step_title" [orgText]="text['how_to_use.how_use_6_title']"></h3>
+            <p class="how-step_text" [orgText]="text['how_to_use.how_use_6']"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <org-footer></org-footer>
+</div>

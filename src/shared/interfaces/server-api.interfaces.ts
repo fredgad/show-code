@@ -1,3 +1,6 @@
+import type { TrustPolicy } from './trust-policy.interfaces';
+import type { TrustedOrganizationRelationship } from '../../pages/trusted-organization/trusted-organization.api';
+
 export interface TokenI {
   token: string;
 }
@@ -13,6 +16,7 @@ type Nullable<T> = {
 export interface StoreStateI {
   auth: StoreAuthI;
   user: StoreUserIN;
+  userLoadStatus: 'idle' | 'loading' | 'ready' | 'error';
   stream: StoreStreamI;
   notifications: StoreNotificationsI;
 }
@@ -27,14 +31,21 @@ interface StoreUserI {
   userId?: string;
   image?: string;
   tarif?: TarifType;
+  deletionPasswordRequired?: boolean;
+  videoDeletionDelayMinutes?: number;
+  preferences?: { vaultFolderLayout?: 'grid' | 'list' };
 
   outgoingReq?: string[];
   incomingReq?: string[];
   trustedPeople?: TrustedPersonIN[];
+  trustedOrganizations?: TrustedOrganizationRelationship[];
+  incomingOrganizationTrustRequests?: TrustedOrganizationRelationship[];
+  organizationTrustRequests?: TrustedOrganizationRelationship[];
 
   videos?: VideoDataI[];
 }
 export type StoreUserIN = Nullable<StoreUserI>;
+export type TrustedUserPreview = StoreUserIN & { trustPolicy?: TrustPolicy | null };
 
 export interface TrustedPersonI {
   keyId: string;
@@ -117,6 +128,8 @@ export interface VideoDataI {
   url: string;
   createdAt: string;
   evidenceId?: string;
+  evidenceStatus?: string | null;
+  mediaAssetId?: string | null;
 }
 
 export type EvidenceVerificationStatus =
@@ -141,26 +154,30 @@ export interface EvidenceLocationI {
 }
 
 export interface EvidenceDerivationI {
-  type: 'trim';
-  sourceEvidenceId: string;
-  rootEvidenceId: string;
-  sourceStartMs: number;
-  sourceEndMs: number;
-  rootStartMs: number;
-  rootEndMs: number;
-  rootDurationMs?: number;
+  type: 'trim' | 'qr_watermark';
+  isFragment: boolean | null;
+  rootDurationMs: number | null;
   transformedAt: string | null;
-  tool: string | null;
-  profileVersion: string | null;
 }
 
-export interface EvidenceOriginalAuthorI {
-  confirmed: boolean;
-  disclosed: boolean;
-  displayName: string | null;
+export interface CaptureManifestI {
+  completeness: 'complete' | 'incomplete' | 'uploading';
+  source: 'device_segments' | 'live_recovery';
+  gaps: Array<{ kind: string; videoOffsetMs?: number; startedAt?: string | null; endedAt?: string | null }>;
 }
+
+export type EvidenceCaptureSource = 'device_segments' | 'live_recovery' | 'camera_gateway' | 'camera_stream' | 'test_source';
 
 export interface EvidenceRecordI {
+  captureManifest?: CaptureManifestI | null;
+  captureSource?: EvidenceCaptureSource | null;
+  androidKeyProof?: {
+    version: 1;
+    segmentCount: number;
+    verifiedSegments: number;
+    invalidSegments: number;
+    attestedAt: string | null;
+  } | null;
   evidenceId: string;
   schemaVersion: number;
   status: 'pending' | 'sealed' | 'failed';
@@ -168,13 +185,11 @@ export interface EvidenceRecordI {
   fileSize: number;
   durationSec: number;
   hashAlgorithm: string | null;
-  fileHashHex: string | null;
   recordedAtStart: string | null;
   recordedAtEnd: string | null;
   sealedAt: string | null;
   location: EvidenceLocationI | null;
   derivation?: EvidenceDerivationI | null;
-  originalAuthor?: EvidenceOriginalAuthorI | null;
   issuer: string | null;
   signing: {
     keyId: string | null;

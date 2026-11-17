@@ -1,0 +1,388 @@
+.hero {
+  --hero-background: #182d44;
+  --hero-content-inset: clamp(1.5rem, 5vw, 4.5rem);
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-areas:
+    '. preview'
+    'copy preview'
+    'actions preview'
+    '. preview';
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  grid-template-rows: minmax(var(--hero-content-inset), 1fr) auto auto minmax(var(--hero-content-inset), 1fr);
+  align-items: center;
+  min-height: clamp(33rem, 44vw, 40rem);
+  overflow: hidden;
+  border-radius: 1.2rem;
+  color: #fffdf7;
+  background: var(--hero-background);
+}
+
+.hero-media,
+.hero-media img,
+.hero-media video,
+.hero-media::after {
+  position: absolute;
+  inset: 0;
+}
+.hero-media {
+  z-index: -1;
+}
+.hero-media img,
+.hero-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 51% 64%;
+}
+.hero-media video {
+  display: block;
+  opacity: 0;
+}
+.hero-media video.is-visible {
+  opacity: 1;
+}
+.hero-media::after {
+  content: '';
+  background: linear-gradient(90deg, #071828f5, #0a1c2ce6 23%, #091a2c7d 48%, #0b1c2d0a 76%),
+    linear-gradient(0deg, #091826a8, transparent 35%);
+}
+
+.hero-copy,
+.hero-actions {
+  width: min(100%, 46rem);
+  padding-inline: var(--hero-content-inset) 0.65rem;
+}
+.hero-copy {
+  grid-area: copy;
+}
+.hero-label {
+  color: #d2deea;
+  font-size: 0.88rem;
+  font-weight: 570;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+.hero h1 {
+  margin-block: 1.15rem 1.25rem;
+  font-size: clamp(3.35rem, 6.05vw, 6.15rem);
+  font-weight: 730;
+  line-height: 0.99;
+  letter-spacing: -0.065em;
+  text-wrap: balance;
+}
+.hero-description {
+  max-width: 28rem;
+  color: #edf0f2;
+  font-size: clamp(1rem, 1.55vw, 1.2rem);
+  line-height: 1.55;
+}
+.hero-actions {
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.75rem;
+}
+
+.hero-preview {
+  grid-area: preview;
+  display: grid;
+  place-items: center;
+  padding-block: clamp(1.5rem, 5vw, 3.5rem);
+  pointer-events: none;
+}
+
+.recorder-showcase {
+  --volume-key-position: 40%;
+  --volume-key-height: 1.45rem;
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+
+.recorder {
+  --frame-radius: clamp(1.6rem, 3vw, 2.15rem);
+  --bezel: 0.3rem;
+  --recorder-aspect: 2.04;
+  --recorder-width: clamp(10.25rem, 17.5vw, 14.5rem);
+  position: relative;
+  display: grid;
+  width: var(--recorder-width);
+  aspect-ratio: 1 / var(--recorder-aspect);
+  border: var(--bezel) solid #18242e;
+  border-radius: var(--frame-radius);
+  box-shadow: 0 0 0 1px #bccee780, 0 1.4rem 3.3rem #05101cbf;
+  color: #fff;
+  font-size: clamp(0.56rem, 0.91vw, 0.74rem);
+  line-height: 1.25;
+}
+
+.recorder-volume-key {
+  position: absolute;
+  z-index: 1;
+  inset: var(--volume-key-position) auto auto -0.43rem;
+  width: 0.18rem;
+  height: var(--volume-key-height);
+  transform: translateY(-50%);
+  border-radius: 0.15rem;
+  background: #a2aab2;
+}
+
+.recorder-volume-key-up {
+  inset-block-start: calc(var(--volume-key-position) - var(--volume-key-height) - 0.3rem);
+}
+
+.recorder-shortcut {
+  --leader-color: #fffdf7ba;
+  position: absolute;
+  inset: calc(var(--volume-key-position) + 0.68rem) calc(100% + 0.8rem) auto auto;
+  width: max-content;
+  max-width: 11rem;
+  padding-bottom: 0.3rem;
+  transform: translateY(-100%);
+  border-bottom: 1px solid var(--leader-color);
+  color: #fffdf7;
+  font-size: 0.78rem;
+  font-weight: 670;
+  line-height: 1.38;
+  text-align: end;
+  text-shadow: 0 1px 3px #071828, 0 0 0.55rem #071828;
+}
+
+.recorder-shortcut span {
+  display: block;
+}
+
+.recorder-shortcut-label,
+.recorder-shortcut-setup {
+  color: #fffdf7dc;
+  font-size: 0.69rem;
+  font-weight: 540;
+}
+
+.recorder-shortcut-gesture {
+  white-space: nowrap;
+}
+
+.recorder-shortcut-setup {
+  margin-top: 0.13rem;
+}
+
+.recorder-shortcut::after {
+  position: absolute;
+  inset: auto auto -1px 100%;
+  width: 1.05rem;
+  height: 1px;
+  transform: rotate(-41deg);
+  transform-origin: left center;
+  background: var(--leader-color);
+  content: '';
+}
+
+.recorder::before {
+  position: absolute;
+  inset: 22% -0.45rem auto auto;
+  width: 0.19rem;
+  height: 14%;
+  border-radius: 0.16rem;
+  background: #a2aab2;
+  content: '';
+}
+
+.recorder::after {
+  position: absolute;
+  inset: auto 34% 0.3rem;
+  height: 0.13rem;
+  border-radius: 1rem;
+  background: #fff9;
+  content: '';
+}
+
+.recorder-screen {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: calc(var(--frame-radius) - var(--bezel));
+  background: #182d44;
+}
+
+.recorder-camera,
+.recorder-camera img,
+.recorder-camera canvas,
+.recorder-camera::after {
+  position: absolute;
+  inset: 0;
+}
+.recorder-camera {
+  z-index: -1;
+}
+.recorder-camera img,
+.recorder-camera canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left center;
+}
+.recorder-camera::after {
+  content: '';
+  background: linear-gradient(0deg, #071320e8, #07132028 39%, transparent 67%);
+}
+.film-toggle {
+  position: absolute;
+  inset: auto 0.85rem 0.85rem auto;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid #ffffff68;
+  border-radius: 50%;
+  background: #122334c9;
+  color: #fff;
+  pointer-events: auto;
+}
+.film-toggle:hover {
+  background: #223a52;
+}
+.hero :focus-visible {
+  outline-color: #ffdfa5;
+}
+
+@media (max-width: 83rem) {
+  .recorder-shortcut {
+    position: relative;
+    inset: auto;
+    margin-top: 1.1rem;
+    padding-bottom: 0;
+    transform: none;
+    border: 0;
+    text-align: center;
+  }
+
+  .recorder-shortcut::after {
+    inset: auto auto calc(100% + 0.2rem) 50%;
+    width: 1px;
+    height: 0.65rem;
+    transform: none;
+  }
+}
+
+@media (max-width: 44rem) {
+  .hero {
+    --hero-content-inset: clamp(1rem, 5vw, 1.25rem);
+    grid-template-areas: 'copy' 'preview' 'actions';
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    min-height: auto;
+    border-radius: 0.95rem;
+  }
+  .hero-copy,
+  .hero-actions {
+    width: 100%;
+    padding-inline: var(--hero-content-inset);
+  }
+  .hero-copy {
+    padding-block: clamp(1rem, 4vw, 1.5rem) 0.65rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.3rem, 8.2vw, 3.85rem);
+    margin-block: 0.55rem 0.6rem;
+  }
+  .hero-label {
+    font-size: 0.82rem;
+  }
+  .hero-description {
+    font-size: 0.96rem;
+    line-height: 1.45;
+  }
+  .hero-actions {
+    justify-content: center;
+    margin-top: 0;
+    padding-block: 0.65rem 1.1rem;
+  }
+  .hero-actions .button {
+    width: min(100%, 26rem);
+    text-align: center;
+  }
+  .hero-media {
+    position: relative;
+    grid-area: preview;
+    align-self: stretch;
+    inset: auto;
+  }
+  .hero-media img,
+  .hero-media video {
+    left: auto;
+    width: min(185%, 61rem);
+    max-width: none;
+    object-position: right min(0px, 50% + 3rem);
+  }
+  .hero-media::after {
+    top: -2px;
+    background: linear-gradient(180deg, var(--hero-background), transparent 15%, transparent 80%, var(--hero-background));
+  }
+  .hero-preview {
+    position: relative;
+    padding: clamp(0.65rem, 2.8vw, 1.15rem) clamp(0.875rem, 4vw, 1.75rem);
+  }
+  .recorder-showcase {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    justify-items: end;
+    column-gap: 1.15rem;
+  }
+  .recorder {
+    --recorder-width: clamp(8rem, min(43vw, (100svh - 19rem) / var(--recorder-aspect)), 12rem);
+    grid-area: 1 / 2;
+    font-size: clamp(0.48rem, var(--recorder-width) / 17, 0.59rem);
+  }
+  .recorder-shortcut {
+    grid-area: 1 / 1;
+    inset: calc(var(--volume-key-position) - 1.1rem) auto auto;
+    max-width: min(11rem, 100%);
+    margin-top: 0;
+    padding-bottom: 0.3rem;
+    transform: translateY(-100%);
+    border-bottom: 1px solid var(--leader-color);
+    text-align: end;
+    text-wrap: balance;
+  }
+  .recorder-shortcut-gesture {
+    white-space: normal;
+  }
+  .recorder-shortcut::after {
+    inset: auto auto -1px 100%;
+    width: 1.6rem;
+    height: 1px;
+    transform: rotate(46deg);
+  }
+  .film-toggle {
+    inset: auto auto 0.6rem 0.6rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .hero h1 {
+    font-size: clamp(1.95rem, 9vw, 2.45rem);
+    line-height: 1.03;
+    letter-spacing: -0.052em;
+  }
+}
+
+@media (max-width: 30rem) and (max-height: 40rem) {
+  .hero-copy {
+    padding-block: 0.875rem 0.35rem;
+  }
+  .hero h1 {
+    margin-block: 0.45rem 0.5rem;
+  }
+  .hero-description {
+    line-height: 1.4;
+  }
+}

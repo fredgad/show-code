@@ -27,10 +27,8 @@
       "@features/login": ["src/features/login"],
       "@features/logo": ["src/features/logo"],
       "@features/video": ["src/features/video"],
-      "@features/trusted-request": ["src/features/trusted-request"],
       "@pages": ["src/pages"],
       "@pages/authorization": ["src/pages/authorization"],
-      "@pages/main": ["src/pages/main"],
       "@pages/profile": ["src/pages/profile"],
       "@pages/registration": ["src/pages/registration"],
       "@pages/trusted-profile": ["src/pages/trusted-profile"],
@@ -50,8 +48,6 @@
       "@widgets/footer": ["src/widgets/footer"],
       "@widgets/header": ["src/widgets/header"],
       "@widgets/notification-settings": ["src/widgets/notification-settings"],
-      "@widgets/requests": ["src/widgets/requests"],
-      "@widgets/saved-media": ["src/widgets/saved-media"],
       "@widgets/trusted-people": ["src/widgets/trusted-people"],
       "@widgets/video-block": ["src/widgets/video-block"]
     }

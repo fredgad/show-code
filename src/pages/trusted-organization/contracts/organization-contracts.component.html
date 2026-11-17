@@ -1,0 +1,244 @@
+<section class="agreements" [attr.aria-label]="text('heading')" [attr.aria-busy]="busy()">
+  <header class="row agreements-header">
+    <h2>{{ text('heading') }}</h2>
+  </header>
+
+  @if (error(); as errorKey) {
+    <p class="message message-error" role="alert">{{ text(errorKey) }}</p>
+    @if (errorKey === 'unavailable') {
+      <button type="button" class="button" [disabled]="busy()" (click)="refresh()">{{ text('refresh') }}</button>
+    }
+  }
+  @if (notice(); as noticeKey) {
+    <p class="message message-success" role="status">{{ text(noticeKey) }}</p>
+  }
+  @if (!loaded() && busy()) {
+    <p class="muted" role="status">{{ text('loading') }}</p>
+  }
+
+  @if (current(); as currentContract) {
+    <ng-container [ngTemplateOutlet]="agreement" [ngTemplateOutletContext]="{ $implicit: currentContract }" />
+  } @else if (loaded() && (required || !history().length)) {
+    <p class="muted">{{ text(required ? 'awaitingPublication' : 'empty') }}</p>
+  }
+
+  @if (history().length) {
+    <details class="history">
+      <summary>{{ text('history') }} <span class="muted">{{ history().length }}</span></summary>
+      <div class="history-items">
+        @for (historical of history(); track historical.contractId) {
+          <ng-container [ngTemplateOutlet]="agreement" [ngTemplateOutletContext]="{ $implicit: historical }" />
+        }
+      </div>
+    </details>
+  }
+</section>
+
+<ng-template #agreement let-contract>
+  <article class="contract" [class.current-contract]="contract.isCurrent">
+    <header class="row contract-header">
+      <div>
+        <p class="contract-kicker">{{ contract.isCurrent ? text('current') : contract.number }}</p>
+        <h3 [attr.lang]="contract.language">{{ contract.title }}</h3>
+        <div class="contract-meta">
+          @if (contract.isCurrent) { <span>{{ contract.number }}</span> }
+          @if (contract.templateVersion) {
+            <span>{{ text('version').replace('{version}', contract.templateVersion) }}</span>
+          }
+          @if (contract.sentAt) { <time [attr.datetime]="contract.sentAt">{{ date(contract.sentAt) }}</time> }
+        </div>
+      </div>
+      <span class="badge" [attr.data-status]="contract.status">{{ text(contract.status) }}</span>
+    </header>
+    <p class="mode">{{ text(contract.mode) }}</p>
+
+    <ol class="steps" [attr.aria-label]="text('progress')">
+      @for (step of steps(contract); track step.label) {
+        <li [class.done]="step.done" [attr.aria-current]="step.current ? 'step' : null">
+          {{ text(step.label) }}
+        </li>
+      }
+    </ol>
+    <button type="button" class="button read-button" [disabled]="busy()"
+      [attr.aria-expanded]="expandedId() === contract.contractId"
+      [attr.aria-controls]="'agreement-' + contract.contractId"
+      (click)="toggle(contract)">
+      {{ text(expandedId() === contract.contractId ? 'collapse' : 'read') }}
+      <span class="chevron" aria-hidden="true"></span>
+    </button>
+
+    @if (expandedId() === contract.contractId) {
+      <div class="agreement-detail" [id]="'agreement-' + contract.contractId">
+        @if (partyRows(contract); as parties) {
+          @if (parties.length) {
+            <section>
+              <h4>{{ text('parties') }}</h4>
+              <div class="party-grid">
+                @for (party of parties; track party.heading) {
+                  <div class="party">
+                    <h5>{{ text(party.heading) }}</h5>
+                    <dl>
+                      @for (field of party.rows; track field.label) {
+                        <div><dt>{{ field.label }}</dt><dd [attr.lang]="contract.language">{{ field.value }}</dd></div>
+                      }
+                    </dl>
+                  </div>
+                }
+              </div>
+            </section>
+          }
+        }
+
+        @if ((contract.price && price(contract.price)) || contract.startDate || contract.endDate) {
+          <section>
+            <h4>{{ text('terms') }}</h4>
+            <dl>
+              @if (contract.price && price(contract.price)) {
+                <div><dt>{{ text('price') }}</dt><dd>{{ price(contract.price) }}</dd></div>
+              }
+              @if (contract.startDate) {
+                <div><dt>{{ text('start') }}</dt><dd>{{ date(contract.startDate) }}</dd></div>
+              }
+              @if (contract.endDate) {
+                <div><dt>{{ text('end') }}</dt><dd>{{ date(contract.endDate) }}</dd></div>
+              }
+            </dl>
+          </section>
+        }
+        @if (selectedServices(contract); as services) {
+          @if (services.length) {
+            <section>
+              <h4>{{ text('services') }}</h4>
+              <ul class="services" [attr.lang]="contract.language">
+                @for (service of services; track service.code) {
+                  <li>
+                    <strong>{{ service.label }}</strong>
+                    @if (service.description) { <p>{{ service.description }}</p> }
+                  </li>
+                }
+              </ul>
+            </section>
+          }
+        }
+        @if (contract.content?.preamble) { <p class="legal-text" [attr.lang]="contract.language">{{ contract.content.preamble }}</p> }
+        @if (contract.content?.body) { <p class="legal-text" [attr.lang]="contract.language">{{ contract.content.body }}</p> }
+        @for (section of contract.sections ?? []; track $index) {
+          <section class="legal-text" [attr.lang]="contract.language">
+            <h4>{{ section.title }}</h4>
+            <p>{{ section.text }}</p>
+          </section>
+        }
+        @if (contract.additionalTerms) {
+          <section>
+            <h4>{{ text('additional') }}</h4>
+            <p class="legal-text" [attr.lang]="contract.language">{{ contract.additionalTerms }}</p>
+          </section>
+        }
+        @if (!contract.content?.body && !contract.sections?.length) {
+          <p class="muted">{{ text('sourceOnly') }}</p>
+        }
+        @if (contract.content?.confirmationText) {
+          <p class="message" [attr.lang]="contract.language">{{ contract.content.confirmationText }}</p>
+        }
+
+        <section class="documents">
+          <h4>{{ text('documents') }}</h4>
+          <div class="row document-actions">
+            @if (contract.sourceDocument; as source) {
+              <button type="button" class="button" [disabled]="busy() || !contract.actions.canDownloadSource"
+                (click)="download(contract, 'source', source)">{{ text('source') }}</button>
+            }
+            @if (contract.signedCopy; as copy) {
+              <button type="button" class="button" [disabled]="busy()"
+                (click)="download(contract, 'signed-copy', copy)">{{ text('signed') }}</button>
+            }
+          </div>
+
+          @if (pending(contract) && contract.mode === 'signed_copy_required' && !contract.progress.termsConfirmed) {
+            <p class="muted">{{ text('downloadLocked') }}</p>
+          }
+          @if (contract.signedCopy?.uploadedAt) {
+            <p class="muted">{{ text('uploadedAt').replace('{date}', date(contract.signedCopy.uploadedAt, true)) }}</p>
+          }
+          @if (contract.signedCopyVersions?.length) {
+            <details class="copy-history">
+              <summary>{{ text('versions') }} <span class="muted">{{ contract.signedCopyVersions.length }}</span></summary>
+              <ul class="versions">
+                @for (version of contract.signedCopyVersions; track version.uploadAttemptId) {
+                  <li class="row version-item">
+                    <div>
+                      <strong>{{ version.originalName || version.filename }}</strong>
+                      <p class="muted">
+                        {{ text(version.status) }}
+                        @if (version.reviewedAt) { · {{ text('reviewedAt').replace('{date}', date(version.reviewedAt, true)) }} }
+                        @else if (version.uploadedAt) { · {{ text('uploadedAt').replace('{date}', date(version.uploadedAt, true)) }} }
+                      </p>
+                      @if (version.rejectionNote) { <p class="legal-text">{{ version.rejectionNote }}</p> }
+                    </div>
+                    <button type="button" class="button" [disabled]="busy()"
+                      (click)="download(contract, { uploadAttemptId: version.uploadAttemptId }, version)">{{ text('download') }}</button>
+                  </li>
+                }
+              </ul>
+            </details>
+          }
+          @if (pending(contract) && contract.actions.canUploadSignedCopy) {
+            <div class="upload">
+              <input #signedFile type="file" hidden accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                (change)="selectCopy(signedFile, contract)">
+              <button type="button" class="button primary" [disabled]="busy()"
+                (click)="signedFile.click()">{{ text('chooseCopy') }}</button>
+              <p class="muted">{{ text('fileHint') }}</p>
+            </div>
+          }
+        </section>
+      </div>
+    }
+
+    @if (pending(contract)) {
+      <div class="next-step">
+        @if (contract.actions.canConfirmTerms) {
+          <button type="button" class="button primary" [disabled]="busy()" (click)="confirm(contract)">{{ text('confirm') }}</button>
+        } @else if (!contract.progress.viewed && contract.actions.canMarkViewed) {
+          <p class="message">{{ text('readFirst') }}</p>
+        } @else if (contract.status === 'awaiting_signed_copy' && !contract.progress.sourceDownloaded) {
+          <p class="message">{{ text('downloadFirst') }}</p>
+        } @else if (contract.status === 'signed_copy_uploaded') {
+          <p class="message message-warning">{{ text('review') }}</p>
+        } @else if (contract.status === 'reupload_required') {
+          <div class="message message-warning">
+            <p>{{ text('reupload') }}</p>
+            @if (contract.signedCopy?.rejectionNote) { <p class="legal-text">{{ contract.signedCopy.rejectionNote }}</p> }
+          </div>
+        } @else if (contract.actions.canAcceptTrust) {
+          <p class="message message-success">{{ text('ready') }}</p>
+        }
+      </div>
+    }
+  </article>
+</ng-template>
+
+<dialog #confirmation aria-labelledby="contract-dialog-title" (cancel)="$event.preventDefault(); closeDialog()">
+  @if (proposal(); as action) {
+    <form (submit)="$event.preventDefault(); submit()">
+      <h2 id="contract-dialog-title">{{ text(action.kind === 'confirm' ? 'confirm' : 'upload') }}</h2>
+      @if (action.kind === 'confirm') {
+        <label class="confirm-check">
+          <input #confirmCheck type="checkbox" [checked]="checked()" (change)="checked.set(confirmCheck.checked)">
+          <span [attr.lang]="action.contract.content?.confirmationText ? action.contract.language : null">
+            {{ action.contract.content?.confirmationText || text('confirmFallback') }}
+          </span>
+        </label>
+      } @else {
+        <p>{{ action.file.name }} · {{ size(action.file.size) }}</p>
+        <p class="muted">{{ text('uploadConfirm') }}</p>
+      }
+      <div class="row dialog-actions">
+        <button type="button" class="button" (click)="closeDialog()">{{ text('cancel') }}</button>
+        <button type="submit" class="button primary" [disabled]="busy() || (action.kind === 'confirm' && !checked())">
+          {{ text(action.kind === 'confirm' ? 'confirm' : 'upload') }}
+        </button>
+      </div>
+    </form>
+  }
+</dialog>

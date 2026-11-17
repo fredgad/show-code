@@ -5,9 +5,9 @@ import {
   registerSuccess,
   registerFailure,
   logout,
+  getUserData,
   getUserDataFailure,
   getUserDataSuccess,
-  saveImage,
   getTrustedUsersByKeyIdsSuccess,
   endStreamSuccess,
   startStreamFailure,
@@ -34,6 +34,7 @@ const initialState: StoreStateI = {
     trustedPeople: [],
     videos: []
   },
+  userLoadStatus: 'idle',
   stream: {
     currentStreamId: null,
     streaming: false,
@@ -74,8 +75,9 @@ const appReducer = createReducer(
     auth: { ...state.auth, token: null, err }
   })),
 
-  on(logout, state => ({
+  on(logout, (state): StoreStateI => ({
     ...state,
+    userLoadStatus: 'idle',
     auth: {
       ...state.auth,
       token: null,
@@ -88,15 +90,24 @@ const appReducer = createReducer(
       email: null,
       image: null,
       keyId: null,
+      deletionPasswordRequired: null,
+      videoDeletionDelayMinutes: null,
+      preferences: null,
       outgoingReq: null,
       incomingReq: null,
+      trustedOrganizations: null,
+      incomingOrganizationTrustRequests: null,
+      organizationTrustRequests: null,
       videos: null
     }
   })),
 
-  on(getUserDataSuccess, (state, { data }) => {
+  on(getUserData, (state): StoreStateI => ({ ...state, userLoadStatus: 'loading' })),
+
+  on(getUserDataSuccess, (state, { data }): StoreStateI => {
     return {
       ...state,
+      userLoadStatus: 'ready',
       auth: {
         ...state.auth,
         error: ''
@@ -107,16 +118,23 @@ const appReducer = createReducer(
         username: data.username,
         email: data.email,
         image: data?.image,
+        deletionPasswordRequired: data.deletionPasswordRequired,
+        videoDeletionDelayMinutes: data.videoDeletionDelayMinutes,
+        preferences: data.preferences,
         outgoingReq: data?.outgoingReq,
         incomingReq: data?.incomingReq,
+        trustedOrganizations: data.trustedOrganizations,
+        incomingOrganizationTrustRequests: data.incomingOrganizationTrustRequests,
+        organizationTrustRequests: data.organizationTrustRequests,
         trustedPeople: data?.trustedPeople,
         videos: data?.videos
       }
     };
   }),
 
-  on(getUserDataFailure, state => ({
+  on(getUserDataFailure, (state): StoreStateI => ({
     ...state,
+    userLoadStatus: 'error',
     auth: {
       ...state.auth,
       error: 'Failed to load user data'
@@ -149,14 +167,6 @@ const appReducer = createReducer(
       }
     };
   }),
-
-  on(saveImage, (state, { image }) => ({
-    ...state,
-    user: {
-      ...state.user,
-      image
-    }
-  })),
 
   on(startStreamSuccess, (state, { streamId }) => ({
     ...state,

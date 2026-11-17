@@ -1,0 +1,70 @@
+<a class="back-link" [routerLink]="busy() ? null : people.route">← {{ title() }}</a>
+<header class="allocation-header">
+  <div>
+    <h1>{{ text('allocation') }}</h1>
+    <p>{{ text('allocationIntro') }}</p>
+  </div>
+  <button type="button" class="control" (click)="refresh()" [disabled]="busy()">{{ text('refresh') }}</button>
+</header>
+
+@if (error()) {
+  <p class="access-notice error" role="alert">{{ error() }}</p>
+} @else if (stale()) {
+  <p class="access-notice warning" role="status">{{ text('allocationStale') }}</p>
+}
+@if (snapshot(); as original) {
+  @if (original.graceCount) {
+    <div class="allocation-summary">
+      <strong>{{ summary(original) }}</strong>
+      @if (nextDeadline(); as end) {
+        <time [attr.datetime]="end">{{ remaining(end) }}</time>
+      }
+    </div>
+    <ul class="targets">
+      @for (target of (reviewed()?.allocation ?? original).targets; track slotIdentity(target)) {
+        <li>
+          <label class="choice" [class.selected]="selected().has(slotIdentity(target))">
+            <input #checkbox type="checkbox" [checked]="selected().has(slotIdentity(target))"
+              [disabled]="!target.eligible || busy() || stale() || !!reviewed()" (change)="toggle(target, checkbox.checked)" />
+            <span class="target-details">
+              <strong>{{ target.name || target.keyId }}</strong>
+              <span class="target-type">{{ text(target.targetType === 'user' ? 'person' : 'organization') }} · {{ target.keyId }}</span>
+              @if (!target.eligible) {
+                <span>{{ text('excludedSlot') }}</span>
+              } @else if (selected().has(slotIdentity(target))) {
+                <span>{{ text('selectedSlot') }}</span>
+              } @else if (target.graceEndsAt) {
+                <time [attr.datetime]="target.graceEndsAt">{{ deadline(target.graceEndsAt) }}</time>
+              } @else {
+                <span>{{ text('awaitingDeadline') }}</span>
+              }
+              @if (target.manualPausedAt) { <span>{{ text('pausedByMe') }}</span> }
+            </span>
+          </label>
+        </li>
+      }
+    </ul>
+    @if (reviewed(); as preview) {
+      <section class="review" aria-labelledby="review-title">
+        <h2 id="review-title">{{ text('reviewHeading') }}</h2>
+        <ul>
+          @for (change of preview.allocation.changes; track slotIdentity(change.to)) {
+            <li>{{ transferText(change) }}</li>
+          }
+        </ul>
+        <div class="control-row">
+          <button class="control" type="button" [disabled]="busy()" (click)="reviewed.set(null)">{{ text('edit') }}</button>
+          <button class="control primary" type="button" [disabled]="busy() || stale()" (click)="save()">{{ text('save') }}</button>
+        </div>
+      </section>
+    } @else {
+      <div class="control-row">
+        <button class="control primary" type="button" [disabled]="!canReview()" (click)="review()">{{ text('review') }}</button>
+      </div>
+    }
+  } @else {
+    <p class="access-notice">{{ text('noGrace') }}</p>
+  }
+} @else if (busy()) {
+  <p role="status">{{ text('loading') }}</p>
+}

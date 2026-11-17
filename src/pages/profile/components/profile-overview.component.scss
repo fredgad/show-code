@@ -1,110 +1,232 @@
-@import 'mixins';
-
 :host {
   display: block;
-  width: 100%;
 }
 
-.profile-header {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+.identity-card {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: clamp(24px, 4vw, 52px);
-  width: min(100%, 1120px);
-  min-height: 360px;
-  margin: 0 auto;
-  padding: clamp(30px, 5vw, 68px);
-  border-top: 1px solid rgba($prime-blue, 0.12);
-  border-bottom: 1px solid rgba($prime-blue, 0.12);
-  color: $text-color;
-  background: radial-gradient(circle at 84% 18%, rgba($prime-blue, 0.09), transparent 34%), transparent;
-
-  &_image {
-    border-radius: 50%;
-    box-shadow: 0 18px 46px rgba($prime-blue, 0.16);
-  }
-
-  &_data {
-    min-width: 0;
-  }
-
-  &_eyebrow {
-    margin-bottom: 10px;
-    color: $prime-blue;
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-
-  &_name {
-    margin: 0;
-    color: $prime-blue;
-    font-size: clamp(34px, 6vw, 64px);
-    font-weight: 750;
-    line-height: 1;
-    overflow-wrap: anywhere;
-  }
-
-  &_email {
-    margin-top: 14px;
-    color: $prime-grey;
-    font-size: 18px;
-    overflow-wrap: anywhere;
-  }
-
-  &_meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin: 32px 0 0;
-
-    div {
-      min-width: min(220px, 100%);
-      padding: 14px 18px;
-      border: 1px solid rgba($prime-blue, 0.12);
-      border-radius: 16px;
-      background: rgba($white, 0.68);
-    }
-
-    dt {
-      color: $prime-grey;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    dd {
-      margin: 5px 0 0;
-      color: $text-color;
-      font-size: 17px;
-      font-weight: 650;
-      overflow-wrap: anywhere;
-    }
-  }
+  justify-content: space-between;
+  gap: clamp(1.1rem, 2.75vw, 2.3rem);
+  min-height: 13rem;
+  padding: clamp(1.3rem, 4vw, 3rem);
+  border-radius: 1rem;
+  background: radial-gradient(ellipse at 95% 0%, #284e65 0, transparent 65%), var(--navy);
+  color: #fffdf7;
 }
 
-@include w-mobile {
-  .profile-header {
-    grid-template-columns: 1fr;
-    justify-items: start;
-    min-height: auto;
-    gap: 22px;
-    padding: 30px 8px;
+.identity {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.85rem, 2vw, 1.35rem);
+  flex: 1 1 15.5rem;
+  min-width: 0;
+}
 
-    &_name {
-      font-size: clamp(32px, 11vw, 48px);
-    }
+.identity-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 50%;
+  outline: 1px solid #f9daa557;
+  outline-offset: 4px;
+  color: #14283f;
+  background: var(--amber);
+}
 
-    &_meta {
-      display: grid;
-      width: 100%;
-      margin-top: 26px;
+.identity-avatar span {
+  font-size: 1.75rem;
+  font-weight: 750;
+  line-height: 1;
+}
 
-      div {
-        width: 100%;
-      }
-    }
+.identity-copy {
+  min-width: 0;
+}
+
+.identity h2,
+.identity p,
+.key-button code {
+  overflow-wrap: anywhere;
+}
+
+.identity h2 {
+  font-size: clamp(1.4rem, 3vw, 2.35rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+}
+
+.identity p {
+  margin-top: 0.4rem;
+  color: #d5dfe8;
+  font-size: 0.95rem;
+}
+
+.key-block {
+  flex: 0 1 16rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.key-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #e6edf2;
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.key-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  width: 100%;
+  min-height: 2.8rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #ffe2ac85;
+  border-radius: 0.55rem;
+  color: #ffe2ac;
+  background: #10273b80;
+  text-align: start;
+  cursor: pointer;
+}
+
+.key-button code {
+  font-size: 0.94rem;
+  font-weight: 640;
+}
+
+.key-button:hover {
+  background: #2e4b62;
+}
+
+.copy-feedback {
+  display: block;
+  min-height: 1.25rem;
+  padding-top: 0.25rem;
+  color: #ffe2ac;
+  font-size: 0.76rem;
+}
+
+.shortcuts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+  margin-top: 1.25rem;
+}
+
+.shortcut {
+  display: block;
+  min-height: 10.25rem;
+  padding: clamp(1rem, 2.1vw, 1.65rem);
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: #fdfcf9;
+}
+
+.shortcut:hover {
+  border-color: #849ba8;
+}
+
+.shortcut-vault {
+  border-color: #e8d5b5;
+  background: #fbf1df;
+}
+
+.shortcut-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.86rem;
+}
+
+.shortcut-icon {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 0.66rem;
+  color: #294b67;
+  background: #e9eef0;
+}
+
+.shortcut-vault .shortcut-icon {
+  color: #724d1b;
+  background: #f6e2ba;
+}
+
+.icon {
+  width: 1.17rem;
+  height: 1.17rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.shortcut h2 {
+  font-size: clamp(1.16rem, 2.2vw, 1.47rem);
+  font-weight: 690;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.shortcut p,
+.profile-status {
+  margin-top: 0.38rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.profile-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  min-height: 5rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: #fdfcf9;
+}
+
+.profile-status button {
+  min-height: 2.75rem;
+  padding-inline: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  color: var(--ink);
+  background: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid #3265a2;
+  outline-offset: 3px;
+}
+
+.key-button:focus-visible {
+  outline-color: #ffe2ac;
+}
+
+@media (max-width: 36rem) {
+  .identity-card {
+    align-items: stretch;
+  }
+
+  .key-block {
+    flex-basis: 100%;
+  }
+
+  .shortcuts {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

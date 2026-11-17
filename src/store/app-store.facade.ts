@@ -13,6 +13,8 @@ export class AppStoreFacade {
 
   public userData$: Observable<StoreUserIN> = this.store$.select(selectors.selectUserData);
 
+  public userLoadStatus$ = this.store$.select(selectors.selectUserLoadStatus);
+
   public currentStreamId$: Observable<string | null> = this.store$.select(selectors.selectCurrentStreamId);
 
   public isStreaming$: Observable<boolean> = this.store$.select(selectors.selectIsStreaming);
@@ -46,16 +48,12 @@ export class AppStoreFacade {
     this.store$.dispatch(actions.logout());
   }
 
-  public getUserData(): void {
-    this.store$.dispatch(actions.getUserData());
+  public getUserData(refresh = false): void {
+    this.store$.dispatch(actions.getUserData(refresh));
   }
 
   public getTrustedUsersByKeyIds(keyIds: string[]): void {
     this.store$.dispatch(actions.getTrustedUsersByKeyIds({ keyIds }));
-  }
-
-  public saveImage(image: string): void {
-    this.store$.dispatch(actions.saveImage({ image }));
   }
 
   public addUserByKeyId(keyId: string): void {

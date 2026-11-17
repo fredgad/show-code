@@ -1,0 +1,51 @@
+.how-to-use.is-motion-preparing .how-step,
+.how-to-use.is-motion-ready .how-step {
+  opacity: 0;
+  transform: translate3d(0, -34px, 0) scale(0.985);
+  transform-origin: center top;
+}
+
+.how-to-use.is-motion-preparing .how-step {
+  transition: none;
+}
+
+.how-to-use.is-motion-ready .how-step {
+  transition:
+    opacity 0.56s ease,
+    transform 0.82s cubic-bezier(0.18, 0.82, 0.24, 1);
+  will-change: opacity, transform;
+}
+
+.how-to-use.is-motion-ready .how-step.is-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  will-change: auto;
+}
+
+.how-step_content {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.how-step_title {
+  margin: 0;
+  color: #0b1a2b;
+  font-size: 1.05em;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .how-to-use.is-motion-ready .how-step {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+@media (max-width: 768px) {
+  org-main .main {
+    padding-top: 60px;
+  }
+}

@@ -1,25 +1,26 @@
-@import 'mixins';
+@use 'site-theme';
 
 :host {
+  @include site-theme.palette;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
+  min-height: 100dvh;
 }
+
+.settings,
+footer { @include site-theme.shell; max-width: 56rem; }
 
 .settings {
-  margin-top: 12dvh;
-  margin-bottom: 2dvh;
-  min-height: 86dvh;
-  width: 90dvw;
-  max-width: 600px;
-  box-sizing: border-box;
-  @include org-border;
-
-  @include w-mobile {
-    width: 100%;
-    padding: 16px;
-    border: none;
-    box-shadow: none;
-  }
+  flex: 1;
+  padding-block: clamp(1rem, 4vw, 3.5rem);
 }
+
+footer {
+  padding-block: 1.4rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+footer a:hover { text-decoration: underline; text-underline-offset: .24em; }

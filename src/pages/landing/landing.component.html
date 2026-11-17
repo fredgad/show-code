@@ -1,0 +1,327 @@
+<ng-template #icon let-name>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+    @switch (name) {
+      @case ('arrow') { <path d="M4 12h15m-6-6 6 6-6 6" /> }
+      @case ('external') { <path d="M6 18 18 6M7 6h11v11" /> }
+      @case ('download') { <path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4" /> }
+      @case ('play') { <path d="m9 5 11 7-11 7z" /> }
+      @case ('pause') { <path d="M9 5v14M15 5v14" /> }
+      @case ('stop') { <rect x="6" y="6" width="12" height="12" rx="1" fill="currentColor" /> }
+      @case ('lock') { <rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 1 1 8 0v4" /> }
+      @case ('settings') { <circle cx="12" cy="12" r="3" /><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4m0-12.8L17 7M7 17l-1.4 1.4" /><circle cx="12" cy="12" r="7" /> }
+      @case ('plus') { <path d="M5 12h14m-7-7v14" /> }
+      @case ('menu') { <path d="M4 7h16M4 12h16M4 17h16" /> }
+      @case ('slides') { <rect x="3" y="3.5" width="18" height="13" rx="2" /><path d="M8 20.5h8m-4-4v4m-2-14 5 3.5-5 3.5z" /> }
+      @case ('record') { <rect x="3" y="6" width="13" height="12" rx="2" /><path d="m16 10 5-3v10l-5-3" /> }
+      @case ('cloud') { <path d="M6.5 18a4.5 4.5 0 0 1-.7-8.95 6 6 0 0 1 11.5.9A4 4 0 0 1 17 18Z" /> }
+      @case ('shield') { <path d="M12 2.8 20 6v5.8c0 4.2-3.4 7.3-8 9.4-4.6-2.1-8-5.2-8-9.4V6z" /><path d="m8.5 12 2.4 2.4 4.6-4.7" /> }
+      @case ('warning') { <path d="m12 3 9 17H3zM12 9v4m0 3v.2" /> }
+    }
+  </svg>
+</ng-template>
+
+@if (copy(); as c) {
+  <a class="skip-link" [href]="sectionHref('landing-content')">{{ c.skip }}</a>
+  <ng-template #primaryNavigation>
+    <a class="primary-link" [href]="sectionHref('how')">{{ c.nav.how }}</a>
+    <button class="primary-link" #navPresentation type="button" aria-haspopup="dialog" (click)="presentation.open(navPresentation)">
+      {{ c.nav.presentation }}
+    </button>
+    <a class="primary-link" routerLink="/verify">{{ c.nav.verify }}</a>
+  </ng-template>
+  <ng-template #menuNavigation let-menu>
+    <a class="menu-link" [href]="sectionHref('how')">{{ c.nav.how }}</a>
+    <button class="menu-link" type="button" aria-haspopup="dialog" (click)="menu.close(); presentation.open(menu.trigger())">
+      {{ c.nav.presentation }}
+    </button>
+    <a class="menu-link" routerLink="/verify">{{ c.hero.verify }}</a>
+    <a class="menu-link" [routerLink]="auth.isLoggedIn() ? '/profile' : '/auth'">{{ auth.isLoggedIn() ? c.nav.account : c.nav.signIn }}</a>
+  </ng-template>
+  <org-header
+    id="landing-start"
+    layout="landing"
+    [navigationLabel]="c.nav.label"
+    [primaryNavigation]="primaryNavigation"
+    [menuNavigation]="menuNavigation"
+  ></org-header>
+
+  <main class="shell" id="landing-content" tabindex="-1">
+    <section class="hero" aria-labelledby="landing-title">
+      <div class="hero-media" aria-hidden="true">
+        <img
+          class="film-poster"
+          src="assets/landing/moment.webp"
+          width="1680"
+          height="1260"
+          fetchpriority="high"
+          alt=""
+        />
+        <video
+          #heroFilm
+          [class.is-visible]="filmVisible()"
+          preload="none"
+          muted
+          loop
+          playsinline
+          (playing)="filmVisible.set(true); filmPlaying.set(true)"
+          (waiting)="filmPlaying.set(false)"
+          (pause)="filmPlaying.set(false)"
+          (error)="filmVisible.set(false); filmPlaying.set(false); recorderIntroDone.set(true)"
+        ></video>
+      </div>
+      <div class="hero-copy">
+        <p class="hero-label">{{ c.hero.label }}</p>
+        <h1 id="landing-title">{{ c.hero.title }}</h1>
+        <p class="hero-description">{{ c.hero.text }}</p>
+      </div>
+      <div class="hero-preview">
+        <div
+          #recorderShowcase
+          class="recorder-showcase"
+          [class.is-locked]="!recorderIntroDone()"
+          [class.is-intro]="filmVisible() && filmAllowed() && !recorderIntroDone()"
+          [class.is-paused]="!filmPlaying()"
+        >
+          <div class="recorder" aria-hidden="true">
+            <span class="recorder-volume-key recorder-volume-key-up"></span>
+            <span class="recorder-volume-key recorder-volume-key-down"></span>
+            <div class="recorder-screen">
+              <div class="recorder-camera">
+                <img src="assets/landing/moment.webp" width="1680" height="1260" alt="" />
+                <canvas #recorderFrame width="440" height="920" hidden></canvas>
+              </div>
+              <div class="recorder-header">
+                <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'record' }"></ng-container>
+                {{ c.hero.recorder.title }}
+              </div>
+              <div class="recorder-modes">
+                <span class="recorder-mode" [class.recorder-mode-sos]="recorderDemoScene() === 'emergency'">
+                  <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'warning' }"></ng-container>
+                  {{ c.hero.recorder.emergency }}
+                </span>
+                <span class="recorder-mode" [class.recorder-mode-verifiable]="recorderDemoScene() !== 'emergency'">
+                  <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'shield' }"></ng-container>
+                  {{ c.hero.recorder.verifiable }}
+                </span>
+              </div>
+              <div class="recorder-panel">
+                @if (recorderPreparing()) {
+                  <p class="recorder-preview-status">
+                    <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'record' }"></ng-container>
+                    {{ recorderDemoCopy().preview }}
+                  </p>
+                } @else {
+                  <p class="recorder-status">{{ recorderTimer() }}</p>
+                }
+                @if (recorderDemoScene() !== 'emergency') {
+                  <div class="recorder-delivery">
+                    <span>{{ recorderDemoCopy().settings }}</span>
+                    <strong>{{ recorderDemoCopy().recipient }} · {{ recorderDemoCopy().immediate }}</strong>
+                  </div>
+                }
+                <div class="recorder-location">
+                  <span>{{ c.hero.recorder.location }}</span>
+                  <span class="recorder-switch"></span>
+                </div>
+                @if (recorderPreparing()) {
+                  <div class="recorder-starting">
+                    <span class="recorder-starting-spinner"></span>
+                    {{ recorderDemoCopy().starting }}
+                  </div>
+                } @else {
+                  <div class="recorder-stop">
+                    <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'stop' }"></ng-container>
+                    {{ c.hero.recorder.stop }}
+                  </div>
+                }
+              </div>
+              <div class="recorder-lock" (animationend)="recorderIntroDone.set(true)">
+                <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'lock' }"></ng-container>
+              </div>
+              @defer (when filmPlaying()) {
+                <org-recorder-demo-home
+                  [class.is-visible]="recorderDemoScene() === 'verifiable-home'"
+                  [copy]="recorderDemoCopy()"
+                  [icon]="icon"
+                ></org-recorder-demo-home>
+              }
+            </div>
+          </div>
+          <p
+            class="recorder-shortcut"
+            [class.is-caption-hidden]="recorderDemoScene() !== 'emergency'"
+            [attr.aria-hidden]="recorderDemoScene() === 'emergency' ? null : 'true'"
+          >
+            <span class="recorder-shortcut-label">{{ c.hero.recorder.shortcutLabel }}</span>
+            <span class="recorder-shortcut-gesture">{{ c.hero.recorder.shortcutGesture }}</span>
+            <span class="recorder-shortcut-setup">{{ c.hero.recorder.shortcutSetup }}</span>
+          </p>
+        </div>
+        @if (filmVisible() && filmAllowed()) {
+          <button
+            class="film-toggle"
+            type="button"
+            [attr.aria-label]="filmPaused() ? c.hero.resume : c.hero.pause"
+            [attr.title]="filmPaused() ? c.hero.resume : c.hero.pause"
+            (click)="toggleFilm()"
+          >
+            <ng-container *ngTemplateOutlet="icon; context: { $implicit: filmPaused() ? 'play' : 'pause' }"></ng-container>
+          </button>
+        }
+      </div>
+      <div class="hero-actions">
+        <a class="button button-primary" [href]="androidDownloadUrl" download="e-stream-android.apk">
+          <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'download' }"></ng-container>
+          {{ c.hero.download }}
+        </a>
+        <a class="button button-ghost hero-verify" routerLink="/verify">
+          {{ c.hero.verify }}
+          <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'arrow' }"></ng-container>
+        </a>
+      </div>
+    </section>
+
+    <section class="how section" id="how" aria-labelledby="how-title">
+      <h2 id="how-title">{{ c.how.title }}</h2>
+      <ol class="steps">
+        @for (step of c.how.steps; track $index) {
+          <li>
+            <div class="step-top">
+              <span class="step-icon">
+                <ng-container *ngTemplateOutlet="icon; context: { $implicit: stepIcons[$index] }"></ng-container>
+              </span>
+              <span class="step-index" aria-hidden="true">0{{ $index + 1 }}</span>
+            </div>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.text }}</p>
+          </li>
+        }
+      </ol>
+    </section>
+
+    <section class="presentation" id="presentation" aria-labelledby="presentation-title">
+      <button
+        #presentationTrigger
+        class="presentation-trigger"
+        type="button"
+        aria-haspopup="dialog"
+        aria-labelledby="presentation-title"
+        aria-describedby="presentation-description"
+        (click)="presentation.open(presentationTrigger)"
+      >
+        <span class="presentation-icon">
+          <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'slides' }"></ng-container>
+        </span>
+        <span class="presentation-copy">
+          <span class="presentation-title" id="presentation-title">{{ c.deck.title }}</span>
+          <span class="presentation-description" id="presentation-description">{{ c.deck.description }}</span>
+        </span>
+        <span class="presentation-action" aria-hidden="true">
+          <span>{{ c.deck.open }}</span>
+          <span class="round-icon">
+            <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'play' }"></ng-container>
+          </span>
+        </span>
+      </button>
+    </section>
+
+    <section class="situations section" aria-labelledby="situations-title">
+      <img
+        class="situations-image"
+        src="assets/landing/waterfront.webp"
+        width="1280"
+        height="853"
+        loading="lazy"
+        alt=""
+      />
+      <div class="situations-copy">
+        <h2 id="situations-title">{{ c.situations.title }}</h2>
+        <ul class="situations-list">
+          @for (item of c.situations.items; track $index) {
+            <li>
+              <span class="situation-dot" aria-hidden="true"></span>
+              <div>
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.text }}</p>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="verify-band" aria-labelledby="landing-verify-title">
+      <span class="verify-icon">
+        <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'shield' }"></ng-container>
+      </span>
+      <div>
+        <h2 id="landing-verify-title">{{ c.verify.title }}</h2>
+        <p>{{ c.verify.text }}</p>
+      </div>
+      <a class="button button-primary" routerLink="/verify">
+        {{ c.verify.action }}
+        <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'arrow' }"></ng-container>
+      </a>
+    </section>
+
+    <section class="faq section" aria-labelledby="landing-faq-title">
+      <h2 id="landing-faq-title">{{ c.faq.title }}</h2>
+      <div class="faq-list">
+        @for (item of c.faq.items; track $index) {
+          <div class="faq-item">
+            <h3>
+              <button
+                class="faq-question"
+                type="button"
+                [attr.aria-expanded]="expandedFaq() === $index"
+                [attr.aria-controls]="'landing-faq-answer-' + $index"
+                (click)="toggleFaq($index)"
+              >
+                <span>{{ item.title }}</span>
+                <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'plus' }"></ng-container>
+              </button>
+            </h3>
+            <div
+              class="faq-answer"
+              [id]="'landing-faq-answer-' + $index"
+              [class.is-expanded]="expandedFaq() === $index"
+              [attr.inert]="expandedFaq() === $index ? null : ''"
+            >
+              <div class="faq-answer-body">
+                <p>{{ item.text }}</p>
+                @if (item.download) {
+                  <a class="text-link" [href]="androidDownloadUrl" download="e-stream-android.apk">
+                    {{ c.hero.download }}
+                    <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'download' }"></ng-container>
+                  </a>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <p class="article-link">
+      <a class="text-link" [href]="articleUrl()">
+        {{ c.article }}
+        <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'external' }"></ng-container>
+      </a>
+    </p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <a class="brand" [href]="sectionHref('landing-start')">
+        <img class="brand-mark" src="assets/images/e-stream-logotype.svg" alt="" width="30" height="28" />
+        E-stream
+      </a>
+      <a class="text-link" href="mailto:support@e-stream.app">
+        {{ c.contact }}
+        <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'external' }"></ng-container>
+      </a>
+    </div>
+  </footer>
+
+  <org-presentation-dialog #presentation [copy]="c.deck" [language]="languageTag()"></org-presentation-dialog>
+}

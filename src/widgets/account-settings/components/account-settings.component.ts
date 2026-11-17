@@ -1,391 +1,239 @@
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { firstValueFrom, Observable, Subscription, filter } from 'rxjs';
-import { TextDirective } from '@shared/directives';
+import { RouterLink } from '@angular/router';
+import { firstValueFrom, map } from 'rxjs';
 import { AvatarComponent } from '@features';
-import { AuthService, ConfirmPopupService, LangService, NotificationService } from '@shared/services';
+import { copyText } from '@shared/helpers';
+import { LangTextI } from '@shared/interfaces';
+import { AuthService, LangService } from '@shared/services';
 import { AppStoreFacade } from '@store';
-import { LangTextI, StoreUserIN } from '@shared/interfaces';
-import { LOGOUT_POPUP_TEXT } from '@shared/constants';
+import { PROFILE_NAVIGATION } from '../../../pages/profile/profile-navigation';
+import { PROFILE_TEXT } from '../../../pages/profile/profile.text';
+import { ACCOUNT_SETTINGS_TEXT } from './account-settings.text';
+
+interface Feedback {
+  kind: 'error' | 'success';
+  message: LangTextI | string;
+}
 
 @Component({
   selector: 'org-account-settings',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TextDirective, AvatarComponent],
+  imports: [NgTemplateOutlet, ReactiveFormsModule, RouterLink, AvatarComponent],
   templateUrl: './account-settings.component.html',
   styleUrl: './account-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AccountSettingsComponent implements OnInit, OnDestroy {
-  private formBuilder = inject(FormBuilder);
-  private confirmPopupService = inject(ConfirmPopupService);
-  private langService = inject(LangService);
-  private notificationService = inject(NotificationService);
-  private cdr = inject(ChangeDetectorRef);
-  private authService = inject(AuthService);
-  private appStoreFacade = inject(AppStoreFacade);
+export class AccountSettingsComponent implements OnInit {
+  private readonly formBuilder = inject(FormBuilder).nonNullable;
+  private readonly auth = inject(AuthService);
+  private readonly store = inject(AppStoreFacade);
+  private readonly language = inject(LangService);
+  private readonly document = inject(DOCUMENT);
+  private readonly destroyRef = inject(DestroyRef);
 
-  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  readonly copy = ACCOUNT_SETTINGS_TEXT;
+  readonly profile = PROFILE_TEXT;
+  readonly title = PROFILE_NAVIGATION.settings.label;
 
-  private subscription = new Subscription();
-  private popupText = this.langService.textByLanguage(LOGOUT_POPUP_TEXT);
-  private copySuccessText = this.langService.textByLanguage({
-    ENG: 'Key ID copied',
-    ESP: 'Key ID copiado',
-    RUS: 'Key ID скопирован'
+  readonly user = toSignal(this.store.userData$.pipe(
+    map(user => user.username || user.email || user.keyId ? user : null)
+  ));
+  readonly loadStatus = toSignal(this.store.userLoadStatus$);
+  readonly copyFeedback = signal<'copied' | 'copyError' | null>(null);
+  readonly avatarFeedback = signal<Feedback | null>(null);
+  readonly usernameFeedback = signal<Feedback | null>(null);
+  readonly emailFeedback = signal<Feedback | null>(null);
+  readonly passwordFeedback = signal<Feedback | null>(null);
+  readonly savingAvatar = signal(false);
+  readonly savingUsername = signal(false);
+  readonly savingEmail = signal(false);
+  readonly savingPassword = signal(false);
+  readonly showPasswords = signal(false);
+  readonly identityBusy = computed(() => this.savingAvatar() || this.savingUsername() || this.loadStatus() === 'loading');
+
+  readonly deletionDelay = computed(() => {
+    const minutes = this.user()?.videoDeletionDelayMinutes;
+    if (typeof minutes !== 'number' || !Number.isFinite(minutes) || minutes < 0) return null;
+    if (minutes === 0) return this.text(this.copy.immediateDeletion);
+
+    if (minutes % 1440 === 0) return this.formatDuration(minutes / 1440, 'day');
+    if (minutes % 60 === 0) return this.formatDuration(minutes / 60, 'hour');
+    return this.formatDuration(minutes, 'minute');
   });
-  private copyErrorText = this.langService.textByLanguage({
-    ENG: 'Unable to copy Key ID',
-    ESP: 'No se pudo copiar el Key ID',
-    RUS: 'Не удалось скопировать Key ID'
-  });
 
-  public userData$: Observable<StoreUserIN> = this.appStoreFacade.userData$;
-
-  public usernameForm = this.formBuilder.group({
+  readonly usernameForm = this.formBuilder.group({
     newUsername: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z0-9_]+$/)]]
   });
-  public emailForm = this.formBuilder.group({
+
+  readonly emailForm = this.formBuilder.group({
     newEmail: ['', [Validators.required, Validators.email]]
   });
-  public passwordForm = this.formBuilder.group({
+
+  readonly passwordForm = this.formBuilder.group({
     currentPassword: ['', Validators.required],
     newPassword: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', Validators.required]
   });
 
-  public image: string | ArrayBuffer | null | undefined = null;
-  public fileName = 'Файл не выбран';
-  public usernameErrorMessage = '';
-  public emailErrorMessage = '';
-  public currentPasswordErrorMessage = '';
-  public passwordErrorMessage = '';
-  public isUsernameSubmitting = false;
-  public isEmailSubmitting = false;
-  public isPasswordSubmitting = false;
+  ngOnInit(): void {
+    this.store.userData$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(user => {
+      if (this.usernameForm.pristine) this.usernameForm.controls.newUsername.setValue(user.username ?? '', { emitEvent: false });
+      if (this.emailForm.pristine) this.emailForm.controls.newEmail.setValue(user.email ?? '', { emitEvent: false });
+    });
 
-  public ngOnInit(): void {
-    this.appStoreFacade.getUserData();
-
-    this.subscription.add(
-      this.userData$.subscribe(userData => {
-        if (!this.usernameForm.dirty) {
-          this.usernameForm.patchValue({ newUsername: userData?.username ?? '' }, { emitEvent: false });
-        }
-
-        if (!this.emailForm.dirty) {
-          this.emailForm.patchValue({ newEmail: userData?.email ?? '' }, { emitEvent: false });
-        }
-      })
-    );
+    this.store.getUserData();
   }
 
-  public onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file: File = input.files[0];
-      this.fileName = file.name;
-
-      const reader = new FileReader();
-
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        this.image = e.target?.result;
-        this.cdr.markForCheck();
-
-        if (typeof this.image === 'string') {
-          this.appStoreFacade.saveImage(this.image);
-        }
-      };
-
-      reader.readAsDataURL(file);
-    } else {
-      this.fileName = 'Файл не выбран';
-    }
+  text(label: LangTextI | string): string {
+    return typeof label === 'string' ? label : this.language.resolveText(label);
   }
 
-  public triggerFileInput(): void {
-    this.fileInput.nativeElement.click();
+  reload(): void {
+    this.store.getUserData(true);
   }
 
-  public async submitUsername(currentUsername?: string | null): Promise<void> {
-    if (this.isUsernameSubmitting) {
+  async selectPhoto(input: HTMLInputElement): Promise<void> {
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file || this.identityBusy()) return;
+
+    if (file.type && !file.type.startsWith('image/')) {
+      this.avatarFeedback.set({ kind: 'error', message: this.copy.photoInvalid });
       return;
     }
 
-    this.usernameErrorMessage = '';
-
-    const newUsername = String(this.usernameForm.get('newUsername')?.value ?? '').trim();
-
-    if (!newUsername) {
-      this.usernameErrorMessage = this.translate({
-        ENG: 'Enter a new login',
-        ESP: 'Introduce un nuevo usuario',
-        RUS: 'Введите новый логин'
-      });
-      return;
-    }
-
-    if (newUsername.length < 4 || newUsername.length > 20) {
-      this.usernameErrorMessage = this.translate({
-        ENG: 'Login must be 4-20 characters long',
-        ESP: 'El usuario debe tener entre 4 y 20 caracteres',
-        RUS: 'Логин должен быть длиной от 4 до 20 символов'
-      });
-      return;
-    }
-
-    if (!/^[a-zA-Z0-9_]+$/.test(newUsername)) {
-      this.usernameErrorMessage = this.translate({
-        ENG: 'Use only letters, numbers and underscore',
-        ESP: 'Usa solo letras, números y guion bajo',
-        RUS: 'Используйте только буквы, цифры и нижнее подчёркивание'
-      });
-      return;
-    }
-
-    if (newUsername === (currentUsername ?? '')) {
-      this.usernameErrorMessage = this.translate({
-        ENG: 'This login already matches the current one',
-        ESP: 'Este usuario ya coincide con el actual',
-        RUS: 'Этот логин уже совпадает с текущим'
-      });
-      return;
-    }
-
-    this.isUsernameSubmitting = true;
-
+    this.savingAvatar.set(true);
+    this.avatarFeedback.set(null);
     try {
-      const response = await firstValueFrom(this.authService.changeUsername(newUsername));
-      this.notificationService.show(
-        response?.message ||
-          this.translate({
-            ENG: 'Login updated',
-            ESP: 'Usuario actualizado',
-            RUS: 'Логин обновлён'
-          })
-      );
-      this.usernameForm.markAsPristine();
-      this.appStoreFacade.getUserData();
+      const image = await this.readPhoto(file);
+      await firstValueFrom(this.auth.saveImage(image).pipe(takeUntilDestroyed(this.destroyRef)));
+      this.store.getUserData(true);
+      this.avatarFeedback.set({ kind: 'success', message: this.copy.photoSaved });
     } catch (error) {
-      this.usernameErrorMessage = this.extractErrorMessage(
-        error,
-        this.translate({
-          ENG: 'Unable to update login',
-          ESP: 'No se pudo actualizar el usuario',
-          RUS: 'Не удалось обновить логин'
-        })
-      );
+      this.avatarFeedback.set({
+        kind: 'error',
+        message: error instanceof HttpErrorResponse && error.status === 413 ? this.copy.photoTooLarge : this.copy.photoFailed
+      });
     } finally {
-      this.isUsernameSubmitting = false;
+      this.savingAvatar.set(false);
     }
   }
 
-  public async submitEmail(currentEmail?: string | null): Promise<void> {
-    if (this.isEmailSubmitting) {
+  async submitUsername(currentUsername: string | null): Promise<void> {
+    if (this.identityBusy()) return;
+
+    const control = this.usernameForm.controls.newUsername;
+    const username = control.value.trim();
+    control.setValue(username);
+    if (username === (currentUsername ?? '')) return;
+
+    if (control.invalid) {
+      this.usernameFeedback.set({ kind: 'error', message: this.copy.usernameInvalid });
       return;
     }
 
-    this.emailErrorMessage = '';
-
-    const newEmail = String(this.emailForm.get('newEmail')?.value ?? '').trim();
-
-    if (!newEmail) {
-      this.emailErrorMessage = this.translate({
-        ENG: 'Enter a new email',
-        ESP: 'Introduce un nuevo correo',
-        RUS: 'Введите новый email'
-      });
-      return;
-    }
-
-    if (!newEmail.includes('@')) {
-      this.emailErrorMessage = this.translate({
-        ENG: 'Enter a valid email address',
-        ESP: 'Introduce un correo válido',
-        RUS: 'Введите корректный email'
-      });
-      return;
-    }
-
-    if (newEmail === (currentEmail ?? '')) {
-      this.emailErrorMessage = this.translate({
-        ENG: 'This email already matches the current one',
-        ESP: 'Este correo ya coincide con el actual',
-        RUS: 'Этот email уже совпадает с текущим'
-      });
-      return;
-    }
-
-    this.isEmailSubmitting = true;
-
+    this.savingUsername.set(true);
+    this.usernameFeedback.set(null);
     try {
-      const response = await firstValueFrom(this.authService.changeEmail(newEmail));
-      this.notificationService.show(
-        response?.message ||
-          this.translate({
-            ENG: 'Verification email sent to the new address',
-            ESP: 'Correo de verificación enviado a la nueva dirección',
-            RUS: 'Письмо для подтверждения отправлено на новый адрес'
-          }),
-        4000
-      );
-      this.emailForm.patchValue({ newEmail: currentEmail ?? '' });
-      this.emailForm.markAsPristine();
+      const response = await firstValueFrom(this.auth.changeUsername(username).pipe(takeUntilDestroyed(this.destroyRef)));
+      this.usernameForm.reset({ newUsername: response?.username ?? username });
+      this.store.getUserData(true);
+      this.usernameFeedback.set({ kind: 'success', message: this.copy.usernameSaved });
     } catch (error) {
-      this.emailErrorMessage = this.extractErrorMessage(
-        error,
-        this.translate({
-          ENG: 'Unable to update email',
-          ESP: 'No se pudo actualizar el correo',
-          RUS: 'Не удалось обновить email'
-        })
-      );
+      this.usernameFeedback.set({ kind: 'error', message: this.apiError(error, this.copy.usernameFailed) });
     } finally {
-      this.isEmailSubmitting = false;
+      this.savingUsername.set(false);
     }
   }
 
-  public async submitPassword(): Promise<void> {
-    if (this.isPasswordSubmitting) {
+  async submitEmail(currentEmail: string | null): Promise<void> {
+    if (this.savingEmail()) return;
+
+    const control = this.emailForm.controls.newEmail;
+    const email = control.value.trim();
+    control.setValue(email);
+    if (email.toLowerCase() === (currentEmail ?? '').toLowerCase()) return;
+
+    if (control.invalid) {
+      this.emailFeedback.set({ kind: 'error', message: this.copy.emailInvalid });
       return;
     }
 
-    this.currentPasswordErrorMessage = '';
-    this.passwordErrorMessage = '';
-
-    const currentPassword = String(this.passwordForm.get('currentPassword')?.value ?? '');
-    const newPassword = String(this.passwordForm.get('newPassword')?.value ?? '');
-    const confirmPassword = String(this.passwordForm.get('confirmPassword')?.value ?? '');
-
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      this.passwordErrorMessage = this.translate({
-        ENG: 'Fill in all password fields',
-        ESP: 'Completa todos los campos de contraseña',
-        RUS: 'Заполните все поля пароля'
-      });
-      return;
-    }
-
-    if (newPassword.length < 8) {
-      this.passwordErrorMessage = this.translate({
-        ENG: 'New password must contain at least 8 characters',
-        ESP: 'La nueva contraseña debe tener al menos 8 caracteres',
-        RUS: 'Новый пароль должен содержать минимум 8 символов'
-      });
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      this.passwordErrorMessage = this.translate({
-        ENG: 'New passwords do not match',
-        ESP: 'Las nuevas contraseñas no coinciden',
-        RUS: 'Новые пароли не совпадают'
-      });
-      return;
-    }
-
-    this.isPasswordSubmitting = true;
-
+    this.savingEmail.set(true);
+    this.emailFeedback.set(null);
     try {
-      const response = await firstValueFrom(this.authService.changePassword(currentPassword, newPassword));
-      this.notificationService.show(
-        response?.message ||
-          this.translate({
-            ENG: 'Password updated',
-            ESP: 'Contraseña actualizada',
-            RUS: 'Пароль обновлён'
-          })
-      );
+      await firstValueFrom(this.auth.changeEmail(email).pipe(takeUntilDestroyed(this.destroyRef)));
+      this.emailForm.reset({ newEmail: currentEmail ?? '' });
+      this.emailFeedback.set({ kind: 'success', message: this.copy.emailSent });
+    } catch (error) {
+      this.emailFeedback.set({ kind: 'error', message: this.apiError(error, this.copy.emailFailed) });
+    } finally {
+      this.savingEmail.set(false);
+    }
+  }
+
+  async submitPassword(): Promise<void> {
+    if (this.savingPassword()) return;
+
+    const { currentPassword, newPassword, confirmPassword } = this.passwordForm.getRawValue();
+    if (this.passwordForm.invalid || newPassword !== confirmPassword) {
+      this.passwordForm.markAllAsTouched();
+      let message = this.copy.passwordMismatch;
+      if (!currentPassword || !newPassword || !confirmPassword) message = this.copy.passwordRequired;
+      else if (this.passwordForm.controls.newPassword.invalid) message = this.copy.passwordHint;
+      this.passwordFeedback.set({ kind: 'error', message });
+      return;
+    }
+
+    this.savingPassword.set(true);
+    this.passwordFeedback.set(null);
+    try {
+      await firstValueFrom(this.auth.changePassword(currentPassword, newPassword).pipe(takeUntilDestroyed(this.destroyRef)));
       this.passwordForm.reset();
-      this.passwordForm.markAsPristine();
+      this.showPasswords.set(false);
+      this.passwordFeedback.set({ kind: 'success', message: this.copy.passwordSaved });
     } catch (error) {
-      const message = this.extractErrorMessage(
-        error,
-        this.translate({
-          ENG: 'Unable to update password',
-          ESP: 'No se pudo actualizar la contraseña',
-          RUS: 'Не удалось обновить пароль'
-        })
-      );
-
-      if (/current password/i.test(message) || /Текущий пароль/i.test(message)) {
-        this.currentPasswordErrorMessage = message;
-      } else {
-        this.passwordErrorMessage = message;
-      }
+      this.passwordFeedback.set({ kind: 'error', message: this.apiError(error, this.copy.passwordFailed) });
     } finally {
-      this.isPasswordSubmitting = false;
+      this.savingPassword.set(false);
     }
   }
 
-  public async copyKeyId(keyId?: string | null): Promise<void> {
-    if (!keyId) {
-      return;
-    }
-
+  async copyKeyId(keyId: string): Promise<void> {
     try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(keyId);
-      } else {
-        this.copyByTextarea(keyId);
-      }
-
-      this.notificationService.show(this.copySuccessText());
+      await copyText(this.document, keyId);
+      this.copyFeedback.set('copied');
     } catch {
-      this.notificationService.showError(this.copyErrorText());
+      this.copyFeedback.set('copyError');
     }
   }
 
-  public logout(): void {
-    this.subscription.add(
-      this.confirmPopupService
-        .showPopup(this.popupText())
-        .pipe(filter(Boolean))
-        .subscribe(() => {
-          this.appStoreFacade.logout();
-        })
-    );
+  signOut(dialog: HTMLDialogElement): void {
+    dialog.close();
+    this.store.logout();
   }
 
-  public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  private readPhoto(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = reader.onabort = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
   }
 
-  private copyByTextarea(value: string): void {
-    const textarea = document.createElement('textarea');
-    textarea.value = value;
-    textarea.setAttribute('readonly', 'true');
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
+  private formatDuration(value: number, unit: 'day' | 'hour' | 'minute'): string {
+    return new Intl.NumberFormat(this.text(this.copy.locale), { style: 'unit', unit, unitDisplay: 'long' }).format(value);
   }
 
-  private translate(text: LangTextI): string {
-    return this.langService.resolveText(text);
-  }
-
-  private extractErrorMessage(error: unknown, fallback: string): string {
-    if (error instanceof HttpErrorResponse) {
-      return String(error.error?.error || error.message || fallback);
+  private apiError(error: unknown, fallback: LangTextI): LangTextI | string {
+    if (error instanceof HttpErrorResponse && error.status < 500 && typeof error.error?.error === 'string') {
+      return error.error.error;
     }
-
-    if (typeof error === 'object' && error && 'error' in error) {
-      const nestedError = (error as { error?: { error?: string } }).error?.error;
-      if (nestedError) {
-        return nestedError;
-      }
-    }
-
-    if (error instanceof Error && error.message) {
-      return error.message;
-    }
-
     return fallback;
   }
 }

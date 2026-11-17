@@ -1,240 +1,118 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostBinding,
-  HostListener,
-  Input,
-  OnDestroy,
-  Output,
-  Signal,
-  ViewChild,
-  computed,
-  inject
-} from '@angular/core';
-import { CommonModule, DOCUMENT } from '@angular/common';
-import { LogoComponent, OverflowMarqueeComponent } from '@features';
-import { NavigationEnd, Router, RouterModule, UrlTree } from '@angular/router';
+import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, TemplateRef, ViewChild, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, map, startWith } from 'rxjs';
-import { LangComponent } from '@features/lang';
-import { ImageDirective, TextDirective } from '@shared/directives';
-import { MOBILE_BREAKPOINT, PRESENTATION_URLS } from '@shared/constants';
-import { AuthService, FontScaleService, LangService, WindowEventsService } from '@shared/services';
-import { AppStoreFacade } from '@store';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { SiteLanguageSelectComponent } from '@features/lang';
 import { LangTextI } from '@shared/interfaces';
-import { AppDrawerComponent } from '../../app-drawer';
+import { AuthService, FontScaleService, LangService } from '@shared/services';
+import { filter, map, tap } from 'rxjs';
+import { PROFILE_NAVIGATION } from '../../../pages/profile/profile-navigation';
+import { PROFILE_TEXT } from '../../../pages/profile/profile.text';
+import { HEADER_PAGE_TITLES, HEADER_TEXT } from './header.text';
+import { ProfileNavigationComponent } from './profile-navigation.component';
 
-const HEADER_PAGE_TITLES: Array<{ pattern: RegExp; title: LangTextI }> = [
-  {
-    pattern: /^\/profile\/saved-media(?:\/|$)/,
-    title: { ENG: 'Saved media', ESP: 'Medios guardados', RUS: 'Сохранённые медиа' }
-  },
-  {
-    pattern: /^\/profile\/trusted-people(?:\/|$)/,
-    title: { ENG: 'Trusted people', ESP: 'Personas de confianza', RUS: 'Доверенные люди' }
-  },
-  {
-    pattern: /^\/profile\/requests(?:\/|$)/,
-    title: { ENG: 'Requests', ESP: 'Solicitudes', RUS: 'Запросы' }
-  },
-  {
-    pattern: /^\/profile\/notification-settings(?:\/|$)/,
-    title: { ENG: 'Notification settings', ESP: 'Ajustes de notificaciones', RUS: 'Настройки оповещений' }
-  },
-  {
-    pattern: /^\/profile\/account-settings(?:\/|$)/,
-    title: { ENG: 'Account settings', ESP: 'Ajustes de la cuenta', RUS: 'Настройки аккаунта' }
-  },
-  { pattern: /^\/profile(?:\/|$)/, title: { ENG: 'Profile', ESP: 'Perfil', RUS: 'Профиль' } },
-  { pattern: /^\/auth(?:\/|$)/, title: { ENG: 'Authorization', ESP: 'Autorización', RUS: 'Авторизация' } },
-  { pattern: /^\/registration(?:\/|$)/, title: { ENG: 'Registration', ESP: 'Registro', RUS: 'Регистрация' } },
-  {
-    pattern: /^\/password-recovery(?:\/|$)/,
-    title: { ENG: 'Password recovery', ESP: 'Recuperación de contraseña', RUS: 'Восстановление пароля' }
-  },
-  { pattern: /^\/verify(?:\/|$)/, title: { ENG: 'Verification', ESP: 'Verificación', RUS: 'Верификация' } },
-  {
-    pattern: /^\/trusted-profile(?:\/|$)/,
-    title: { ENG: 'Trusted profile', ESP: 'Perfil de confianza', RUS: 'Доверенный профиль' }
-  },
-  {
-    pattern: /^\/settings(?:\/|$)/,
-    title: { ENG: 'Application settings', ESP: 'Ajustes de la aplicación', RUS: 'Настройки приложения' }
-  },
-  { pattern: /^\/capture(?:\/|$)/, title: { ENG: 'Video recorder', ESP: 'Grabadora de vídeo', RUS: 'Видеорегистратор' } }
-];
+interface HeaderMenuContext {
+  $implicit: { close: () => void; trigger: () => HTMLElement };
+}
 
 @Component({
   selector: 'org-header',
   standalone: true,
-  imports: [
-    CommonModule,
-    LogoComponent,
-    OverflowMarqueeComponent,
-    LangComponent,
-    TextDirective,
-    ImageDirective,
-    RouterModule,
-    AppDrawerComponent
-  ],
+  imports: [NgTemplateOutlet, RouterLink, RouterLinkActive, SiteLanguageSelectComponent, ProfileNavigationComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.landing-header]': "layout === 'landing'",
+    '[class.section-header]': "layout === 'profile' || layout === 'admin'"
+  }
 })
-export class HeaderComponent implements OnDestroy {
-  private router = inject(Router);
-  private document = inject(DOCUMENT);
-  private authService = inject(AuthService);
-  private fontScaleService = inject(FontScaleService);
-  private langService = inject(LangService);
-  private windowEventsService = inject(WindowEventsService);
+export class HeaderComponent {
+  private readonly router = inject(Router);
+  private readonly language = inject(LangService);
+  private readonly auth = inject(AuthService);
+  private readonly fontScale = inject(FontScaleService);
 
-  @Input() public showDisplayControls = true;
-  @Output() public fontDecrease = new EventEmitter<void>();
-  @Output() public fontIncrease = new EventEmitter<void>();
-  @ViewChild('menuButton') private menuButton?: ElementRef<HTMLButtonElement>;
+  @Input() layout: 'page' | 'landing' | 'profile' | 'admin' = 'page';
+  @Input() title: string | null = null;
+  @Input() navigationLabel: string | null = null;
+  @Input() primaryNavigation: TemplateRef<unknown> | null = null;
+  @Input() menuNavigation: TemplateRef<HeaderMenuContext> | null = null;
+  @Input() showDisplayControls = true;
 
-  @HostBinding('class.header-hidden') public isHeaderHidden = false;
-  public isMenuOpen = false;
+  @ViewChild('menu', { static: true }) private menu?: ElementRef<HTMLDetailsElement>;
+  @ViewChild('menuToggle', { static: true }) private menuToggle?: ElementRef<HTMLElement>;
 
-  public isMobile$ = this.windowEventsService.isMobile$;
-  public userData$ = inject(AppStoreFacade).userData$;
-  private lastScrollTop = 0;
-  private readonly topRevealOffset = 8;
-  private readonly scrollDeltaThreshold = 4;
-  private keepVisibleAfterFontChangeUntil = 0;
-  private currentUrl$i = toSignal(
-    this.router.events.pipe(
-      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-      map(event => event.urlAfterRedirects),
-      startWith(this.router.url)
-    ),
-    { initialValue: this.router.url }
-  );
-
-  public abbrTitle$i: Signal<string> = this.langService.textByLanguage({
-    ENG: 'Profile settings',
-    ESP: 'Configuración de perfil',
-    RUS: 'Настройки профиля'
-  });
-
-  public presentationUrl$i: Signal<string> = this.langService.textByLanguage(PRESENTATION_URLS);
-  public pageTitle$i: Signal<string> = computed(() => {
-    const path = this.currentUrl$i().split(/[?#]/, 1)[0].replace(/\/+$/, '') || '/';
-    const currentPage = HEADER_PAGE_TITLES.find(page => page.pattern.test(path));
-
-    return currentPage ? this.langService.resolveText(currentPage.title) : 'E-stream';
-  });
-
-  public get isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
-  }
-
-  public get isMainRoute(): boolean {
-    return this.router.url.split(/[?#]/, 1)[0].replace(/\/+$/, '') === '';
-  }
-
-  public get currentFontScale(): string {
-    return `${Math.round(this.fontScaleService.scale * 16)}px`;
-  }
-
-  public goToPath(path: string | UrlTree): void {
-    this.router.navigateByUrl(path);
-  }
-
-  public decreaseFont(): void {
-    this.keepHeaderVisibleDuringFontChange();
-    this.fontScaleService.decrease();
-    this.fontDecrease.emit();
-  }
-
-  public increaseFont(): void {
-    this.keepHeaderVisibleDuringFontChange();
-    this.fontScaleService.increase();
-    this.fontIncrease.emit();
-  }
-
-  public toggleMenu(): void {
-    this.isMenuOpen ? this.closeMenu() : this.openMenu();
-  }
-
-  public openMenu(): void {
-    this.isMenuOpen = true;
-    this.document.body.classList.add('app-drawer-open');
-  }
-
-  public closeMenu(returnFocus = true): void {
-    if (!this.isMenuOpen) {
-      return;
+  readonly copy = HEADER_TEXT;
+  readonly siteCopy = PROFILE_TEXT;
+  readonly profile = PROFILE_NAVIGATION.profile;
+  readonly profileMatch = { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' } as const;
+  readonly menuContext: HeaderMenuContext = {
+    $implicit: {
+      close: () => this.closeMenu(true),
+      trigger: () => this.menuToggle!.nativeElement
     }
+  };
 
-    this.isMenuOpen = false;
-    this.document.body.classList.remove('app-drawer-open');
+  private readonly currentPath = toSignal(this.router.events.pipe(
+    filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+    tap(() => this.closeMenu()),
+    map(event => event.urlAfterRedirects)
+  ), { initialValue: this.router.url });
+  readonly pageTitle = computed(() => {
+    const route = this.currentPath().slice(1).split(/[/?#]/, 1)[0];
+    const title = route === 'verify' ? PROFILE_TEXT.verify : HEADER_PAGE_TITLES[route];
+    return title ? this.text(title) : 'E-stream';
+  });
 
-    if (returnFocus && typeof window !== 'undefined') {
-      window.requestAnimationFrame(() => this.menuButton?.nativeElement.focus());
+  get loggedIn(): boolean {
+    return this.auth.isLoggedIn();
+  }
+
+  get currentFontScale(): string {
+    return `${Math.round(this.fontScale.scale * 16)}px`;
+  }
+
+  text(label: LangTextI): string {
+    return this.language.resolveText(label);
+  }
+
+  changeFontSize(increase: boolean): void {
+    if (increase) this.fontScale.increase();
+    else this.fontScale.decrease();
+  }
+
+  closeMenu(restoreFocus = false): void {
+    const menu = this.menu?.nativeElement;
+    if (!menu?.open) return;
+    menu.open = false;
+    if (restoreFocus) this.menuToggle?.nativeElement.focus({ preventScroll: true });
+  }
+
+  closeAfterLink(event: MouseEvent): void {
+    if (event.composedPath().some(node => node instanceof HTMLAnchorElement && node.hasAttribute('href'))) {
+      this.closeMenu(true);
     }
   }
 
-  @HostListener('document:keydown.escape')
-  public onEscape(): void {
-    this.closeMenu();
+  @HostListener('document:click', ['$event'])
+  @HostListener('document:pointerdown', ['$event'])
+  closeOnOutsideClick(event: Event): void {
+    const menu = this.menu?.nativeElement;
+    if (menu?.open && !event.composedPath().includes(menu)) this.closeMenu();
+  }
+
+  @HostListener('document:keydown.escape', ['$event'])
+  closeOnEscape(event: KeyboardEvent): void {
+    const menu = this.menu?.nativeElement;
+    if (!menu?.open) return;
+    const inside = event.composedPath().includes(menu);
+    this.closeMenu(inside);
+    if (inside) event.preventDefault();
   }
 
   @HostListener('window:resize')
-  public onWindowResize(): void {
-    if (this.isMobileViewport) {
-      this.isHeaderHidden = false;
-      return;
-    }
-
-    this.closeMenu(false);
-  }
-
-  @HostListener('window:scroll')
-  public onWindowScroll(): void {
-    const currentScrollTop = this.windowEventsService.currentScrollTop;
-    const scrollDelta = currentScrollTop - this.lastScrollTop;
-
-    if (this.isMobileViewport) {
-      this.isHeaderHidden = false;
-      this.lastScrollTop = currentScrollTop;
-      return;
-    }
-
-    if (Date.now() < this.keepVisibleAfterFontChangeUntil) {
-      this.isHeaderHidden = false;
-      this.lastScrollTop = currentScrollTop;
-      return;
-    }
-
-    if (currentScrollTop <= this.topRevealOffset) {
-      this.isHeaderHidden = false;
-      this.lastScrollTop = 0;
-      return;
-    }
-
-    if (Math.abs(scrollDelta) < this.scrollDeltaThreshold) {
-      return;
-    }
-
-    this.isHeaderHidden = scrollDelta > 0;
-    this.lastScrollTop = currentScrollTop;
-  }
-
-  private keepHeaderVisibleDuringFontChange(): void {
-    this.isHeaderHidden = false;
-    this.lastScrollTop = this.windowEventsService.currentScrollTop;
-    this.keepVisibleAfterFontChangeUntil = Date.now() + 450;
-  }
-
-  public ngOnDestroy(): void {
-    this.document.body.classList.remove('app-drawer-open');
-  }
-
-  private get isMobileViewport(): boolean {
-    return this.windowEventsService.currentScreenWidth <= MOBILE_BREAKPOINT;
+  closeIfToggleIsHidden(): void {
+    if (!this.menuToggle?.nativeElement.getClientRects().length) this.closeMenu();
   }
 }

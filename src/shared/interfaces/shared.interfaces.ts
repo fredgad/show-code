@@ -2,7 +2,8 @@ export enum LangEnum {
   ENG = 'ENG',
   RUS = 'RUS',
   ESP = 'ESP',
-  EST = 'EST'
+  EST = 'EST',
+  ARM = 'ARM'
 }
 
 export interface LangTextI {
@@ -10,4 +11,5 @@ export interface LangTextI {
   [LangEnum.RUS]: string;
   [LangEnum.ESP]: string;
   [LangEnum.EST]?: string;
+  [LangEnum.ARM]?: string;
 }

@@ -1,0 +1,97 @@
+<dialog #dialog aria-labelledby="trusted-access-title" (cancel)="busy() && $event.preventDefault()">
+  <div class="access-sheet">
+    <h2 id="trusted-access-title">{{ text('settings') }}</h2>
+    @if (target(); as identity) {
+      <div class="access-person">
+        @if (identity.image) {
+          <org-avatar [imageUrl]="identity.image" [size]="46" alt="" [previewEnabled]="false"></org-avatar>
+        } @else {
+          <span class="initial" aria-hidden="true">{{ (identity.username || identity.keyId).slice(0, 1).toUpperCase() }}</span>
+        }
+        <div>
+          <strong>{{ identity.username || identity.keyId }}</strong>
+          <p>{{ text(identity.targetType === 'user' ? 'person' : 'organization') }}</p>
+        </div>
+      </div>
+      @if (current()?.policy; as policy) {
+        <dl class="directions">
+          <div>
+            <dt>{{ text('myData') }}</dt>
+            <dd [class.closed]="policy.access.sharesMyData !== true">
+              {{ text(policy.access.sharesMyData === true ? 'accessOpen' : 'accessClosed') }}
+            </dd>
+          </div>
+          <div>
+            <dt>{{ text(identity.targetType === 'organization' ? 'organizationData' : 'theirData') }}</dt>
+            <dd [class.closed]="policy.access.receivesTheirData !== true">
+              {{ text(policy.access.receivesTheirData === true ? 'accessOpen' : 'accessClosed') }}
+            </dd>
+          </div>
+        </dl>
+        @if (policy.allocationState === 'suspended') {
+          <p class="access-notice error">{{ text('tariffPaused') }}</p>
+        }
+        @if (identity.targetType === 'user' && policy.peerAllocationState === 'suspended') {
+          <p class="access-notice error">{{ text('peerTariff') }}</p>
+        }
+        @if (policy.manualPausedAt) {
+          <p class="access-notice">
+            {{ text('pausedByMe') }}
+            @if (policy.allocationState === 'allocated') { {{ text('reservesSlot') }} }
+            @if (policy.allocationState === 'manual_unallocated') { {{ text('noSlot') }} }
+          </p>
+        }
+        @if (policy.peerManualPausedAt) { <p class="access-notice">{{ text('pausedByPeer') }}</p> }
+        @if (policy.graceEndsAt && policy.allocationState === 'grace') {
+          <div class="grace-row access-notice warning">
+            <span>{{ deadline(policy.graceEndsAt) }}</span>
+            <a class="control" routerLink="/profile/trusted-people/slots" (click)="close()">{{ text('allocation') }}</a>
+          </div>
+        }
+        @if (identity.targetType === 'user' && policy.peerAllocationState === 'grace') {
+          <p class="access-notice warning">{{ text('peerGrace') }}</p>
+        }
+
+        @if (proposal(); as change) {
+          <p class="access-notice warning">{{ question(change) }}</p>
+          <div class="control-row">
+            <button class="control" type="button" [disabled]="busy()" (click)="proposal.set(null)">{{ text('back') }}</button>
+            <button class="control primary" type="button" [disabled]="busy() || loading" (click)="apply(change)">{{ text('confirm') }}</button>
+          </div>
+        } @else {
+          <div class="control-row">
+            @if (policy.actions.canPause) {
+              <button class="control" type="button" [disabled]="busy() || loading" (click)="request('pause')">{{ text('pause') }}</button>
+            }
+            @if (policy.actions.canResume) {
+              <button class="control primary" type="button" [disabled]="busy() || loading" (click)="request('resume')">{{ text('resume') }}</button>
+            }
+          </div>
+          @if (policy.actions.canReceiveSlot && donors().length) {
+            <label class="donor-field">
+              {{ text('donor') }}
+              <select #donorSelect [disabled]="busy() || loading">
+                @for (donor of donors(); track contactIdentity(donor)) {
+                  <option [value]="contactIdentity(donor)">{{ donor.username || donor.keyId }}</option>
+                }
+              </select>
+            </label>
+            <button class="control" type="button" [disabled]="busy() || loading" (click)="request('transfer-slot', donorSelect.value)">{{ text('transfer') }}</button>
+          }
+        }
+      } @else {
+        <p class="access-notice">{{ text('unknown') }}</p>
+        <button class="control" type="button" [disabled]="loading" (click)="refreshCatalog.emit()">{{ text('refresh') }}</button>
+      }
+
+      @if (notice()) { <p class="access-notice" role="status">{{ notice() }}</p> }
+      @if (error()) { <p class="access-notice error" role="alert">{{ error() }}</p> }
+      <div class="control-row sheet-footer">
+        @if (identity.targetType === 'user' && !proposal()) {
+          <button class="control danger" type="button" [disabled]="busy() || loading" (click)="remove(identity)">{{ text('remove') }}</button>
+        }
+        <button class="control" type="button" autofocus [disabled]="busy()" (click)="close()">{{ text('close') }}</button>
+      </div>
+    }
+  </div>
+</dialog>

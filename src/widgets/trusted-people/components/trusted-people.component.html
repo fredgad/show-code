@@ -1,117 +1,225 @@
-<!-- <form class="form-group" [formGroup]="keyIdForm" (keyup.enter)="onSubmit()">
-  <input type="text" id="keyId" formControlName="keyId" autocomplete="keyId" placeholder="KeyId" />
-  <button
-    (click)="onSubmit()"
-    class="btn-primary"
-    [orgText]="{
-        ENG: 'Add trusted person',
-        ESP: 'Agregar un usuario de confianza',
-        RUS: 'Добавить доверенного пользователя',
-      }"
-  >
-    Add a trusted person
-  </button>
-
-  [class.validation-error]="isValidControl('login')"
-  @if (isValidControl('login')) {
-          <p class="error-message">{{getErrorMessage('login')}}</p>
-        }
-</form> -->
-
-<org-trusted-request></org-trusted-request>
-
-<div class="people">
-  <!-- <div
-    class="people-title"
-    [orgText]="{
-    ENG: 'You receive notifications from these users',
-    ESP: 'Recibes notificaciones de estos usuarios',
-    RUS: 'Вы получаете уведомления от этих пользователей',
-  }"
-  >
-    You receive notifications from these users
-  </div> -->
-
-  @for (person of trustedPeople$ | async; track person?.keyId || 'unknown') {
-  <div class="person">
-    <org-avatar class="person-avatar" [imageUrl]="person?.image" [emptyAvatarId]="+person.keyId" [size]="60"></org-avatar>
-
-    <div class="person-text">
-      <div class="person-text_name">{{ person?.username || person?.keyId }}</div>
-      <div class="person-text_email">{{ person?.email || '...' }}</div>
-      <div class="person-text_keyId">{{ person?.keyId }}</div>
-      <div class="person-text_checkbox">
-        <p
-          class="person-text_checkbox--text"
-          [orgText]="{
-              ENG: 'This user receives notifications from you',
-              ESP: 'Este usuario recibe notificaciones tuyas',
-              RUS: 'Этот пользователь получает уведомления от вас',
-            }"
-        >
-          This user receives notifications from you
-        </p>
-        <org-checkbox (change)="onCheckboxChange($event)" [initialValue]="person.displayed"></org-checkbox>
-      </div>
-      <button
-        class="person-text_media"
-        (click)="goToTrustedPersonMedia(person.keyId)"
-        [orgText]="{
-            ENG: 'Saved media',
-            ESP: 'Medios guardados',
-            RUS: 'Сохранённые медиа',
-          }"
-      >
-        Saved media
-      </button>
-    </div>
-
-    <div class="person-delete">
-      <org-delete-button (delete)="onDelete($event, person.keyId)"></org-delete-button>
-    </div>
+<header class="page-header">
+  <div>
+    <h1>{{ title() }}</h1>
+    <p>{{ text('intro') }}</p>
   </div>
-  }
-
-  <!-- @for (person of trustedPeopleList; track person.id) {
-  <div class="person">
-    @if (person.image) {
-    <img class="person-image" [srcPath]="person.image" />
-    } @else {
-    <org-empty-avatar [id]="person.id"></org-empty-avatar>
+  <div class="header-actions">
+    <button class="button" type="button" [disabled]="loading() || working() || catalogLoading() || invitationsLoading()" (click)="refresh()">
+      {{ text('refresh') }}
+    </button>
+    @if (panel() !== 'incoming') {
+      <button class="button primary" type="button" aria-haspopup="dialog" [disabled]="disabled()" (click)="openAdd(addDialog, addKey)">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14" /></svg>
+        {{ text('add') }}
+      </button>
     }
-
-    <div class="person-text">
-      <div class="person-text_name">{{ person.username }}</div>
-      <div class="person-text_email">{{ person.email }}</div>
-      <div class="person-text_checkbox">
-        <p
-          class="person-text_checkbox--text"
-          [orgText]="{
-            ENG: 'This user receives notifications from you',
-            ESP: 'Este usuario recibe notificaciones tuyas',
-            RUS: 'Этот пользователь получает уведомления от вас',
-          }"
-        >
-          This user receives notifications from you
-        </p>
-        <org-checkbox (change)="onCheckboxChange($event)" [initialValue]="person.activeListener"></org-checkbox>
-      </div>
-      <button
-        class="person-text_media"
-        routerLink="/trusted-profile"
-        [orgText]="{
-          ENG: 'Saved media',
-          ESP: 'Medios guardados',
-          RUS: 'Сохранённые медиа',
-        }"
-      >
-        Saved media
-      </button>
-    </div>
-
-    <div class="person-delete">
-      <org-delete-button (delete)="onDelete($event, person.username)"></org-delete-button>
-    </div>
   </div>
-  } -->
-</div>
+</header>
+
+<nav class="segments" [attr.aria-label]="text('sections')">
+  <a [routerLink]="destination.route" [attr.aria-current]="panel() === 'people' ? 'page' : null">
+    {{ text('contacts') }} <span class="count">{{ people().length }}</span>
+  </a>
+  <a
+    [routerLink]="destination.route"
+    [queryParams]="{requests: panel() === 'outgoing' ? 'outgoing' : 'incoming'}"
+    [attr.aria-current]="panel() !== 'people' ? 'page' : null"
+  >
+    {{ text('requests') }} <span class="count">{{ incomingCount() + outgoing().length }}</span>
+  </a>
+</nav>
+
+@if (panel() === 'people' && catalog(); as state) {
+  @if (state.summary.combinedLimit !== null) {
+    <p class="slot-usage">{{ occupied(state.summary.allocatedCount, state.summary.combinedLimit) }}</p>
+  }
+  @if (state.summary.graceCount) {
+    <div class="grace-banner">
+      <div>
+        <strong>{{ text('grace') }}</strong>
+        @if (state.summary.nextDeadlineAt; as end) {
+          <p><time [attr.datetime]="end">{{ deadline(end) }}</time></p>
+        }
+      </div>
+      <a class="button" routerLink="/profile/trusted-people/slots">{{ text('allocation') }}</a>
+    </div>
+  }
+}
+
+@if (panel() !== 'people') {
+  <nav class="request-directions" [attr.aria-label]="text('requestTypes')">
+    <a [routerLink]="destination.route" [queryParams]="{requests: 'incoming'}" [attr.aria-current]="panel() === 'incoming' ? 'page' : null">
+      {{ text('incoming') }} <span class="count">{{ incomingCount() }}</span>
+    </a>
+    <a [routerLink]="destination.route" [queryParams]="{requests: 'outgoing'}" [attr.aria-current]="panel() === 'outgoing' ? 'page' : null">
+      {{ text('outgoing') }} <span class="count">{{ outgoing().length }}</span>
+    </a>
+  </nav>
+}
+
+@if (notice()) { <p class="notice" role="status">{{ notice() }}</p> }
+@if (status() === 'error') { <p class="notice error" role="alert">{{ text('loadError') }}</p> }
+@if (panel() === 'incoming' && invitationsError()) { <p class="notice error" role="alert">{{ text('operatorInvitesError') }}</p> }
+
+<ng-template #identity let-person>
+  @if (person.image) {
+    <org-avatar [imageUrl]="person.image" [size]="46" [previewEnabled]="false" alt=""></org-avatar>
+  } @else {
+    <span class="initial" aria-hidden="true">{{ name(person).slice(0, 1).toUpperCase() }}</span>
+  }
+  <div class="person-details">
+    <h2>{{ name(person) }}</h2>
+    @if (person.email) { <p>{{ person.email }}</p> }
+    @if (person.targetType === 'organization') { <p>{{ text('organization') }}</p> }
+  </div>
+</ng-template>
+
+<ng-template #copyButton let-id let-inDialog="inDialog">
+  <button class="copy-key" type="button" [attr.aria-label]="text('copyKey') + ' ' + id" (click)="copyKey(id, inDialog)">
+    <code>{{ id }}</code>
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+      <use [attr.href]="'assets/icons/profile.svg#' + (copiedKey() === id ? 'check' : 'copy')" />
+    </svg>
+    <span class="sr-only" role="status">{{ copiedKey() === id ? text('copied') : '' }}</span>
+  </button>
+</ng-template>
+
+@if (visiblePeople().length) {
+  <ul class="cards" [attr.aria-busy]="loading()">
+    @for (person of visiblePeople(); track cardIdentity(person)) {
+      <li class="person-card"
+        [class.access-blocked]="panel() === 'people' && hasClosedAccess(person)"
+        [class.access-grace]="panel() === 'people' && person.policy?.allocationState === 'grace'">
+        <div class="card-top">
+          @if (detailRoute(person); as destination) {
+            <a class="identity" [routerLink]="destination" [attr.aria-label]="text('openProfile') + ' · ' + name(person)">
+              <ng-container *ngTemplateOutlet="identity; context: { $implicit: person }"></ng-container>
+              @if (panel() === 'people') {
+                <svg class="icon detail-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
+              }
+            </a>
+          } @else {
+            <div class="identity"><ng-container *ngTemplateOutlet="identity; context: { $implicit: person }"></ng-container></div>
+          }
+          @if (panel() === 'people') {
+            <button
+              class="access-button"
+              type="button"
+              aria-haspopup="dialog"
+              [attr.aria-label]="text('settings') + ' · ' + name(person)"
+              [attr.title]="text('settings')"
+              (click)="accessSettings.open(person)"
+            >
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#settings" /></svg>
+            </button>
+          }
+        </div>
+
+        @if (person.keyId) {
+          <ng-container *ngTemplateOutlet="copyButton; context: { $implicit: person.keyId }"></ng-container>
+        }
+
+        @if (panel() === 'people') {
+          @if (hasClosedAccess(person)) { <p class="access-status blocked">{{ text('accessClosed') }}</p> }
+          @if (person.policy?.graceEndsAt; as end) {
+            @if (person.policy?.allocationState === 'grace') {
+              <p class="access-status grace"><time [attr.datetime]="end">{{ deadline(end) }}</time></p>
+            }
+          }
+          @if (!person.policy) { <p class="access-status">{{ text('unknown') }}</p> }
+        }
+
+        @if (panel() === 'incoming') {
+          @if (detailRoute(person); as destination) {
+            <p class="request-detail">{{ text(person.requiresContract ? 'contractInvite' : 'organizationRequest') }}</p>
+            <a class="button primary" [routerLink]="destination">
+              {{ text(person.requiresContract ? 'openContract' : 'openRequest') }}
+            </a>
+          } @else {
+            @if (person.operatorInviteId) { <p class="request-detail">{{ text('operatorInvite') }}</p> }
+            <div class="card-actions">
+              <button class="button danger" type="button" aria-haspopup="dialog" [disabled]="disabled()" (click)="openConfirmation(actionDialog, 'decline', person)">
+                {{ text('decline') }}
+              </button>
+              <button class="button primary" type="button" aria-haspopup="dialog" [disabled]="disabled()" (click)="openConfirmation(actionDialog, 'accept', person)">
+                {{ text('accept') }}
+              </button>
+            </div>
+          }
+        } @else if (panel() === 'outgoing') {
+          <div class="card-actions">
+            <button class="button danger" type="button" aria-haspopup="dialog" [disabled]="disabled()" (click)="openConfirmation(actionDialog, 'cancel', person)">
+              {{ text('cancel') }}
+            </button>
+          </div>
+        }
+      </li>
+    }
+  </ul>
+} @else if (loading() || (panel() === 'incoming' && invitationsLoading())) {
+  <p class="empty" role="status">{{ text('loading') }}</p>
+} @else if (status() === 'ready' && (panel() !== 'incoming' || !invitationsError())) {
+  <div class="empty">
+    <svg class="icon empty-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <use [attr.href]="'assets/icons/profile.svg#' + (panel() === 'people' ? 'trusted' : 'requests')" />
+    </svg>
+    @switch (panel()) {
+      @case ('people') {
+        <h2>{{ text('noContacts') }}</h2>
+        <p>{{ text('noContactsHint') }}</p>
+      }
+      @case ('incoming') { <h2>{{ text('noIncoming') }}</h2> }
+      @case ('outgoing') { <h2>{{ text('noOutgoing') }}</h2> }
+    }
+  </div>
+}
+
+<dialog #addDialog aria-labelledby="add-trusted-person-title" (cancel)="working() && $event.preventDefault()">
+  <form class="dialog-content" (submit)="submitAdd($event, addDialog, addKey)">
+    <div>
+      <h2 id="add-trusted-person-title">{{ text('add') }}</h2>
+      <p>{{ text('addHelp') }}</p>
+    </div>
+    @if (ownKey(); as keyId) {
+      <div class="own-key">
+        <span>{{ text('yourKey') }}</span>
+        <ng-container *ngTemplateOutlet="copyButton; context: { $implicit: keyId, inDialog: true }"></ng-container>
+      </div>
+    }
+    <label class="input-label">
+      {{ text('theirKey') }}
+      <input #addKey type="text" autocomplete="off" autocapitalize="none" spellcheck="false" required autofocus [disabled]="working()" />
+    </label>
+    @if (dialogError()) { <p class="notice error" role="alert">{{ dialogError() }}</p> }
+    <div class="dialog-actions">
+      <button class="button" type="button" [disabled]="working()" (click)="addDialog.close()">{{ text('close') }}</button>
+      <button class="button primary" type="submit" [disabled]="working()">{{ text('send') }}</button>
+    </div>
+  </form>
+</dialog>
+
+<org-trusted-access-settings
+  #accessSettings
+  [catalog]="catalog()"
+  [loading]="catalogLoading()"
+  (refreshCatalog)="refreshCatalog()"
+  (changed)="catalogChanged($event)"
+  (removeContact)="openConfirmation(actionDialog, 'remove', $event)"
+></org-trusted-access-settings>
+
+<dialog #actionDialog aria-labelledby="trusted-action-title" (cancel)="working() && $event.preventDefault()" (close)="confirmation.set(null)">
+  <form class="dialog-content" (submit)="submitConfirmation($event, actionDialog)">
+    @if (confirmation(); as selected) {
+      <h2 id="trusted-action-title">{{ confirmationTitle(selected.action, selected.person) }}</h2>
+    }
+    @if (dialogError()) { <p class="notice error" role="alert">{{ dialogError() }}</p> }
+    <div class="dialog-actions">
+      <button class="button" type="button" autofocus [disabled]="working()" (click)="actionDialog.close()">{{ text('back') }}</button>
+      @if (confirmation(); as selected) {
+        <button class="button" [class.primary]="selected.action === 'accept'" [class.danger]="selected.action !== 'accept'" type="submit" [disabled]="working()">
+          {{ text(selected.action) }}
+        </button>
+      }
+    </div>
+  </form>
+</dialog>

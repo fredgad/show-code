@@ -1,0 +1,66 @@
+<ng-template #adminLinks let-admin>
+  @if (admin.permissions.users) {
+    <a routerLink="/admin/users" routerLinkActive="selected" ariaCurrentWhenActive="page">{{ text('users') }}</a>
+  }
+  <a routerLink="/admin/payments" routerLinkActive="selected" ariaCurrentWhenActive="page">{{ text('payments') }}</a>
+  <a routerLink="/admin/audit" routerLinkActive="selected" ariaCurrentWhenActive="page">{{ text('audit') }}</a>
+  @if (admin.permissions.users) {
+    <div class="nav-group" role="group" [attr.aria-label]="text('analytics')">
+      <span>{{ text('analytics') }}</span>
+      <a routerLink="/admin/analytics/site" routerLinkActive="selected" ariaCurrentWhenActive="page">{{ text('websiteAnalytics') }}</a>
+      <a routerLink="/admin/analytics/app" routerLinkActive="selected" ariaCurrentWhenActive="page">{{ text('appAnalytics') }}</a>
+    </div>
+  }
+</ng-template>
+
+<ng-template #adminMenu let-menu>
+  <div class="admin-menu">
+    @if (session(); as admin) {
+      <ng-container *ngTemplateOutlet="adminLinks; context: { $implicit: admin }"></ng-container>
+    }
+    <a routerLink="/">{{ text('websiteLink') }}</a>
+    @if (session() || state() === 'adminForbidden') {
+      <button type="button" (click)="menu.close(); signOut()">{{ text('signOut') }}</button>
+    } @else if (state() === 'loginRequired') {
+      <a routerLink="/auth" [queryParams]="{ destination: 'admin' }">{{ text('signIn') }}</a>
+    }
+  </div>
+</ng-template>
+
+<org-header layout="admin" [title]="text('title')" [navigationLabel]="text('navigation')" [menuNavigation]="adminMenu"></org-header>
+
+@if (session(); as admin) {
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <nav [attr.aria-label]="text('navigation')">
+        <ng-container *ngTemplateOutlet="adminLinks; context: { $implicit: admin }"></ng-container>
+      </nav>
+
+      <footer class="sidebar-footer">
+        <strong>{{ admin.username }}</strong>
+        <div><a routerLink="/">{{ text('websiteLink') }}</a><button type="button" (click)="signOut()">{{ text('signOut') }}</button></div>
+      </footer>
+    </aside>
+
+    <main class="workspace">
+      @if (pageAllowed()) {
+        <router-outlet />
+      } @else {
+        <h1>{{ text('adminForbidden') }}</h1>
+        <a routerLink="/admin/payments">{{ text('payments') }}</a>
+      }
+    </main>
+  </div>
+} @else {
+  <main class="gate">
+    <h1>{{ text('title') }}</h1>
+    <p role="status">{{ text(state()) }}</p>
+    @if (state() === 'loginRequired') {
+      <a class="gate-button" routerLink="/auth" [queryParams]="{ destination: 'admin' }">{{ text('signIn') }}</a>
+    } @else if (state() === 'error') {
+      <button class="gate-button" type="button" (click)="load()">{{ text('refresh') }}</button>
+    } @else if (state() === 'adminForbidden') {
+      <button class="gate-button" type="button" (click)="signOut()">{{ text('signOut') }}</button>
+    }
+  </main>
+}

@@ -1,15 +1,17 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { LangService } from '@shared/services';
 import { HeaderComponent } from '@widgets/header';
-import { FooterComponent } from '@widgets/footer';
 import { AccountSettingsComponent } from '@widgets/account-settings';
+import { PROFILE_TEXT } from '../../profile/profile.text';
 
 @Component({
   selector: 'org-settings',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent, AccountSettingsComponent],
+  imports: [HeaderComponent, AccountSettingsComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SettingsComponent {}
+export class SettingsComponent {
+  readonly support = inject(LangService).textByLanguage(PROFILE_TEXT.support);
+}

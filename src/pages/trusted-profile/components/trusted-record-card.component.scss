@@ -1,0 +1,32 @@
+@use 'trusted-profile-controls';
+
+:host { display: block; min-width: 0; }
+
+.record-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: .9rem;
+  overflow: hidden;
+  background: #fffefa;
+}
+.record-card.unread-record { border-color: #9bb8d2; }
+.record-poster { position: relative; aspect-ratio: 16 / 9; background: #193248; isolation: isolate; }
+.watch-poster { position: absolute; inset: 0; display: grid; place-items: center; border: 0; color: #fffefa; background: transparent; cursor: pointer; }
+.watch-poster:focus-visible { outline-offset: -4px; outline-color: #ffdc98; }
+.watch-poster svg { box-sizing: content-box; padding: .77rem; border: 1px solid #ffffff77; border-radius: 50%; fill: currentColor; background: #14283fdd; }
+.watch-poster:hover svg { background: #233e54; }
+.record-duration { position: absolute; inset: auto .55rem .55rem auto; pointer-events: none; padding: .17rem .34rem; border-radius: .3rem; color: white; background: #102435dd; font-size: .75rem; font-weight: 650; }
+.record-meta { min-width: 0; padding: .85rem; }
+.record-heading,
+.record-subtitle,
+.record-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .42rem; }
+.record-heading h3 { overflow-wrap: anywhere; line-height: 1.2; font-size: 1rem; }
+.record-subtitle { margin-top: .3rem; color: var(--muted); font-size: .8rem; }
+.record-note { margin-top: .45rem; color: var(--muted); font-size: .84rem; overflow-wrap: anywhere; }
+.record-actions { margin-top: .75rem; align-items: start; }
+.record-actions .status-chip { min-height: 2.75rem; }
+
+.qr-image { display: block; width: min(100%, 16rem); height: auto; margin: 0 auto; border-radius: .55rem; }

@@ -1,12 +1,18 @@
 @import 'mixins';
 
+:host {
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 100dvh;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin: 12dvh 0 10dvh 0;
+  padding: clamp(1rem, 5vw, 3rem) 1rem;
 
   .container {
     max-width: 400px;

@@ -1,0 +1,33 @@
+@for (group of groups(); track $index) {
+  <div class="nav-group">
+    @if (group.title; as title) {
+      <p class="nav-group-title">{{ text(title) }}</p>
+    }
+    <ul>
+      @for (item of group.items; track item.id) {
+        <li>
+          <a
+            class="nav-item"
+            [routerLink]="item.route"
+            routerLinkActive="is-active"
+            [routerLinkActiveOptions]="item.id === profile.id ? profileMatch : { exact: false }"
+            ariaCurrentWhenActive="page"
+          >
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use [attr.href]="'assets/icons/profile.svg#' + item.icon" /></svg>
+            {{ text(item.label) }}
+          </a>
+        </li>
+      }
+    </ul>
+  </div>
+}
+@if (inMenu) {
+  <a class="nav-item verification" routerLink="/verify" routerLinkActive="is-active" ariaCurrentWhenActive="page">
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#check" /></svg>
+    {{ text(copy.verify) }}
+  </a>
+}
+<button class="nav-item sign-out" type="button" (click)="signOut()">
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons/profile.svg#logout" /></svg>
+  {{ text(copy.signOut) }}
+</button>

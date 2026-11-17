@@ -2,7 +2,7 @@
   <button
     class="lang-select"
     type="button"
-    aria-label="Change language"
+    [attr.aria-label]="langService.uiText('Change language')"
     [attr.aria-expanded]="isOpen"
     (click)="handleLangClick()"
   >
@@ -22,7 +22,7 @@
       class="lang-options_item"
       [class.--current]="currentLang$i() === language"
     >
-      {{ language }}
+      {{ language === 'ARM' ? 'Հայերեն' : language }}
     </button>
     }
   </div>

@@ -1,354 +1,336 @@
-<org-header [showDisplayControls]="true"></org-header>
+<org-header [title]="t('header_title')" [showDisplayControls]="true"></org-header>
 
-<section class="verify-page">
-  <main class="verify-shell">
-    <header class="verify-hero">
-      <h1 class="verify-title">{{ t('title') }}</h1>
-    </header>
+<ng-template #icon let-name>
+  <svg class="verify-icon" viewBox="0 0 24 24" aria-hidden="true">
+    @switch (name) {
+      @case ('upload') {
+        <path d="M12 16V4m0 0 4 4m-4-4L8 8M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4" />
+      }
+      @case ('file') { <path d="M6 3h8l4 4v14H6zM14 3v5h4M9 13h6m-6 4h6" /> }
+      @case ('link') {
+        <path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.1 1.1M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1" />
+      }
+      @case ('shield') { <path d="M12 22s7-3 7-9V5l-7-3-7 3v8c0 6 7 9 7 9zM9 12l2 2 4-4" /> }
+      @case ('check') { <use href="assets/icons/profile.svg#check" /> }
+      @case ('copy') { <use href="assets/icons/profile.svg#copy" /> }
+      @case ('chevron') { <use href="assets/icons/profile.svg#chevron" /> }
+      @case ('clock') { <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /> }
+      @default { <circle cx="12" cy="12" r="9" /><path d="M12 7v5m0 4v.1" /> }
+    }
+  </svg>
+</ng-template>
 
-    <div class="verify-workspace">
-      <section class="verify-panel verify-source" aria-labelledby="verify-source-title">
-        <div class="verify-section-heading">
-          <span class="verify-section-heading_index">01</span>
-          <div>
-            <h2 id="verify-source-title">{{ t('source_title') }}</h2>
-            <p>{{ t('source_description') }}</p>
-          </div>
+<main class="verify-shell">
+  <header class="verify-intro">
+    <h1>{{ t('title') }}</h1>
+    <p>{{ t('description') }}</p>
+  </header>
+
+  <div class="verify-workspace">
+    <div class="verify-flow">
+      <section class="verify-panel" aria-labelledby="verify-source-title">
+        <h2 id="verify-source-title">{{ t('source_title') }}</h2>
+
+        <div class="verify-switch" role="group" [attr.aria-label]="t('source_title')">
+          <button type="button" [attr.aria-pressed]="verificationSource === 'file'" [disabled]="isProcessing" (click)="selectSource('file')">
+            <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'file' }"></ng-container>
+            {{ t('source_file') }}
+          </button>
+          <button type="button" [attr.aria-pressed]="verificationSource === 'url'" [disabled]="isProcessing" (click)="selectSource('url')">
+            <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'link' }"></ng-container>
+            {{ t('source_link') }}
+          </button>
         </div>
 
-        <div
-          class="verify-dropzone"
-          [class.--dragging]="isDragging"
-          [class.--busy]="isProcessing"
-          (dragover)="onDragOver($event)"
-          (dragleave)="onDragLeave($event)"
-          (drop)="onDrop($event)"
-        >
-          <div class="verify-dropzone_icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5" />
-              <path d="M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" />
-            </svg>
-          </div>
-          <div class="verify-dropzone_copy">
-            <p class="verify-dropzone_title">{{ hasFile ? t('drop_replace') : t('drop_empty') }}</p>
-            <p class="verify-dropzone_hint">{{ hasFile ? t('drop_replace_hint') : t('drop_empty_hint') }}</p>
+        @if (verificationSource === 'file') {
+          <div
+            class="verify-dropzone"
+            [class.is-dragging]="isDragging"
+            [class.has-file]="selectedFile"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)"
+          >
+            <input
+              #filePicker
+              type="file"
+              accept="video/mp4,.mp4,.estream,.zip,application/zip,application/x-zip-compressed"
+              hidden
+              [disabled]="isProcessing"
+              (change)="onFileInput($event)"
+            />
+
+            @if (selectedFile; as file) {
+              <span class="verify-icon-tile">
+                <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'file' }"></ng-container>
+              </span>
+              <div class="verify-file">
+                <strong>{{ file.name }}</strong>
+                <p>{{ t(selectedFileKind === 'package' ? 'file_package' : 'file_mp4') }} · {{ formatFileSize(file.size) }}</p>
+              </div>
+              <button class="verify-button" type="button" [disabled]="isProcessing" (click)="filePicker.click()">
+                {{ t('drop_replace') }}
+              </button>
+            } @else {
+              <span class="verify-icon-tile">
+                <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'upload' }"></ng-container>
+              </span>
+              <div>
+                <p class="verify-dropzone-title">{{ t('file_formats') }}</p>
+                <p class="verify-dropzone-hint">{{ t('drop_hint') }}</p>
+              </div>
+              <button class="verify-button primary" type="button" [disabled]="isProcessing" (click)="filePicker.click()">
+                {{ t('choose_file') }}
+              </button>
+            }
           </div>
 
-          <div class="verify-picker">
-            <label class="verify-method" [class.--disabled]="isProcessing">
-              <span class="verify-method_icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <rect x="3" y="5" width="18" height="14" rx="3" />
-                  <path d="m10 9 5 3-5 3z" />
-                </svg>
-              </span>
-              <span class="verify-method_copy">
-                <strong>{{ t('choose_mp4') }}</strong>
-                <small>{{ t('mp4_method_text') }}</small>
-              </span>
-              <span class="verify-method_arrow" aria-hidden="true">&#8599;</span>
-              <input
-                class="verify-picker_input"
-                type="file"
-                accept="video/mp4,.mp4"
-                [disabled]="isProcessing"
-                (change)="onFileInput($event, 'mp4')"
-              />
-            </label>
-
-            <label class="verify-method --package" [class.--disabled]="isProcessing">
-              <span class="verify-method_icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M6 3h9l3 3v15H6z" />
-                  <path d="M15 3v4h4M9 11h6M9 15h6" />
-                </svg>
-              </span>
-              <span class="verify-method_copy">
-                <span class="verify-method_title-row">
-                  <strong>{{ t('choose_package') }}</strong>
-                  <em>{{ t('recommended') }}</em>
-                </span>
-                <small>{{ t('package_method_text') }}</small>
-              </span>
-              <span class="verify-method_arrow" aria-hidden="true">&#8599;</span>
-              <input
-                class="verify-picker_input"
-                type="file"
-                [disabled]="isProcessing"
-                (change)="onFileInput($event, 'package')"
-              />
-            </label>
-          </div>
-        </div>
-
-        <div class="verify-url">
-          <div class="verify-url_divider"><span>{{ t('url_divider') }}</span></div>
-          <label class="verify-url_label" for="verify-source-url">{{ t('url_label') }}</label>
-          <div class="verify-url_controls">
-            <div class="verify-url_field">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.1 1.1" />
-                <path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1" />
-              </svg>
+          @if (selectedFile) {
+            <div class="verify-actions">
+              <button class="verify-button primary" type="button" [disabled]="isProcessing" (click)="verifySelectedFile()">
+                {{ isProcessing ? t('verify_busy') : t('verify_file') }}
+              </button>
+              <button class="verify-button" type="button" [disabled]="isProcessing" (click)="clearSelection()">
+                {{ t('clear') }}
+              </button>
+            </div>
+          }
+        } @else {
+          <form class="verify-url" novalidate (submit)="$event.preventDefault(); verifyFromUrl()">
+            <label for="verify-source-url">{{ t('url_label') }}</label>
+            <div class="verify-url-controls">
               <input
                 id="verify-source-url"
-                class="verify-url_input"
                 type="url"
                 inputmode="url"
                 autocomplete="url"
+                autocapitalize="none"
+                spellcheck="false"
                 [value]="sourceUrl"
                 [disabled]="isProcessing"
                 [placeholder]="t('url_placeholder')"
-                [attr.aria-describedby]="'verify-url-hint'"
+                [attr.aria-describedby]="errorMessage ? 'verify-url-hint verify-error' : 'verify-url-hint'"
                 (input)="onSourceUrlInput($event)"
-                (keydown.enter)="verifyFromUrl()"
               />
+              <button class="verify-button primary" type="submit" [disabled]="!canVerifyUrl">
+                {{ isProcessing ? t('verify_busy') : t('verify_url') }}
+              </button>
             </div>
-            <button
-              class="verify-button --primary verify-url_button"
-              type="button"
-              [disabled]="!canVerifyUrl"
-              (click)="verifyFromUrl()"
-            >
-              {{ isProcessing && verificationSource === 'url' ? t('url_loading') : t('verify_url') }}
-            </button>
+            <p id="verify-url-hint">{{ t('url_hint') }}</p>
+          </form>
+        }
+
+        @if (errorMessage) {
+          <div id="verify-error" class="verify-feedback error" role="alert">
+            <ng-container *ngTemplateOutlet="icon"></ng-container>
+            <p>{{ errorMessage }}</p>
           </div>
-          <p id="verify-url-hint" class="verify-url_hint">{{ t('url_hint') }}</p>
-        </div>
+        }
+        @if (isProcessing) {
+          <div class="verify-feedback" role="status">
+            <span class="verify-spinner" aria-hidden="true"></span>
+            <div>
+              <strong>{{ t('processing_title') }}</strong>
+              <p>{{ processingText }}</p>
+            </div>
+          </div>
+        }
       </section>
 
-      <aside class="verify-guide">
-        <section class="verify-guide_card" aria-labelledby="verify-guide-title">
-          <div class="verify-section-heading --compact">
-            <span class="verify-section-heading_index">02</span>
+      @if (verifyResult; as result) {
+        <section class="verify-result" [attr.data-tone]="statusTone" aria-labelledby="verify-result-title">
+          <header class="verify-result-header">
+            <span class="verify-icon-tile">
+              <ng-container *ngTemplateOutlet="icon; context: { $implicit: statusTone === 'success' ? 'check' : statusTone === 'pending' ? 'clock' : 'notice' }"></ng-container>
+            </span>
             <div>
-              <h2 id="verify-guide-title">{{ t('how_title') }}</h2>
+              <h2 #resultHeading id="verify-result-title" tabindex="-1">{{ statusTitle }}</h2>
+              <p class="verify-result-file">{{ verifiedFileName }}</p>
             </div>
-          </div>
+          </header>
 
-          <ol class="verify-steps">
-            <li class="verify-step">
-              <span class="verify-step_marker">1</span>
-              <div>
-                <strong>{{ t('how_local_title') }}</strong>
-                <p>{{ t('how_local_text') }}</p>
-              </div>
-            </li>
-            <li class="verify-step">
-              <span class="verify-step_marker">2</span>
-              <div>
-                <strong>{{ t('how_server_title') }}</strong>
-                <p>{{ t('how_server_text') }}</p>
-              </div>
-            </li>
-            <li class="verify-step">
-              <span class="verify-step_marker">3</span>
-              <div>
-                <strong>{{ t('how_result_title') }}</strong>
-                <p>{{ t('how_result_text') }}</p>
-              </div>
-            </li>
-          </ol>
-        </section>
+          @if (statusHint) { <p class="verify-result-description">{{ statusHint }}</p> }
 
-        <section class="verify-warning">
-          <div class="verify-warning_icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 4 3 20h18z" />
-              <path d="M12 9v5m0 3v.1" />
-            </svg>
-          </div>
-          <div>
-            <strong>{{ t('messenger_warning_title') }}</strong>
-            <p>{{ t('messenger_warning_text') }}</p>
-          </div>
-        </section>
-      </aside>
-    </div>
-
-    <section class="verify-feedback" aria-live="polite">
-      @if (selectedFile) {
-        <div class="verify-file">
-          <div class="verify-file_icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M6 3h9l3 3v15H6z" />
-              <path d="M15 3v4h4" />
-            </svg>
-          </div>
-          <div class="verify-file_copy">
-            <p class="verify-file_label">{{ t('selected_file') }}</p>
-            <p class="verify-file_name">{{ selectedFile.name }}</p>
-            <p class="verify-file_meta">{{ verificationModeText }} · {{ selectedFile.size | number }} {{ t('bytes') }}</p>
-            <p class="verify-file_hint">{{ selectedFileHelpText }}</p>
-            @if (verificationSource === 'url') {
-              <p class="verify-file_source">
-                <span>{{ t('source_url') }}</span>
-                <strong>{{ sourceUrl }}</strong>
-              </p>
-            }
-          </div>
-
-          <div class="verify-actions">
-            <button class="verify-button --primary" type="button" [disabled]="isProcessing" (click)="verifySelectedFile()">
-              {{ isProcessing ? t('verify_busy') : t('verify_file') }}
-            </button>
-            <button class="verify-button --ghost" type="button" [disabled]="isProcessing" (click)="clearSelection()">
-              {{ t('clear') }}
-            </button>
-          </div>
-        </div>
-      }
-
-      @if (errorMessage) {
-        <div class="verify-error" role="alert">
-          <span class="verify-error_icon" aria-hidden="true">!</span>
-          <p>{{ errorMessage }}</p>
-        </div>
-      }
-
-      @if (isProcessing) {
-        <div class="verify-pending" role="status">
-          <span class="verify-pending_spinner" aria-hidden="true"></span>
-          <div>
-            <p class="verify-pending_title">{{ t('processing_title') }}</p>
-            <p class="verify-pending_text">{{ processingText }}</p>
-          </div>
-        </div>
-      }
-
-      @if (verifyResult) {
-        <div
-          class="verify-result"
-          [class.--success]="statusTone === 'success'"
-          [class.--danger]="statusTone === 'danger'"
-          [class.--pending]="statusTone === 'pending'"
-        >
-          <div class="verify-result_header">
-            <span class="verify-result_icon" aria-hidden="true"></span>
-            <div class="verify-result_heading">
-              <p class="verify-result_label">{{ t('status_label') }}</p>
-              <h2 class="verify-result_title">{{ statusTitle }}</h2>
-            </div>
-            <span class="verify-result_badge">{{ statusBadge }}</span>
-          </div>
-
-          @if (verifyResult.reason) {
-            <p class="verify-result_reason">{{ verifyResult.reason }}</p>
-          }
-
-          <div class="verify-grid">
-            <div class="verify-item">
-              <span class="verify-item_label">{{ t('matched_by') }}</span>
-              <strong>{{ matchedByText() }}</strong>
-            </div>
-            <div class="verify-item">
-              <span class="verify-item_label">{{ t('computed_hash') }}</span>
-              <strong class="verify-item_hash">{{ lastHashHex || t('na') }}</strong>
-            </div>
-            <div class="verify-item">
-              <span class="verify-item_label">{{ evidenceIdLabel }}</span>
-              <strong>{{ extractedEvidenceId || t('not_detected') }}</strong>
-            </div>
-            <div class="verify-item">
-              <span class="verify-item_label">{{ t('issuer') }}</span>
-              <strong>{{ verifyResult.evidence?.issuer || t('na') }}</strong>
-            </div>
-          </div>
-
-          @if (verifyResult.evidence) {
-            <div class="verify-details">
-              <div class="verify-item">
-                <span class="verify-item_label">{{ t('evidence_id') }}</span>
-                <strong>{{ verifyResult.evidence.evidenceId }}</strong>
-              </div>
-              <div class="verify-item">
-                <span class="verify-item_label">{{ t('recorded_start') }}</span>
-                <strong>{{ verifyResult.evidence.recordedAtStart ? (verifyResult.evidence.recordedAtStart | date:'medium') : t('na') }}</strong>
-              </div>
-              <div class="verify-item">
-                <span class="verify-item_label">{{ t('recorded_end') }}</span>
-                <strong>{{ verifyResult.evidence.recordedAtEnd ? (verifyResult.evidence.recordedAtEnd | date:'medium') : t('na') }}</strong>
-              </div>
-              <div class="verify-item">
-                <span class="verify-item_label">{{ t('sealed_at') }}</span>
-                <strong>{{ verifyResult.evidence.sealedAt ? (verifyResult.evidence.sealedAt | date:'medium') : t('pending') }}</strong>
-              </div>
-              <div class="verify-item">
-                <span class="verify-item_label">{{ t('signature') }}</span>
-                <strong>
-                  {{ verifyResult.evidence.signing.algorithm || t('na') }}
-                  @if (verifyResult.evidence.signing.keyId) {
-                    <span>({{ verifyResult.evidence.signing.keyId }})</span>
-                  }
-                </strong>
-              </div>
-              <div class="verify-item">
-                <span class="verify-item_label">{{ t('location') }}</span>
-                <strong>
-                  @if (hasLocation) {
-                    <span>{{ verifyResult.evidence.location?.lat }}, {{ verifyResult.evidence.location?.lng }}</span>
-                  } @else {
-                    <span>{{ t('na') }}</span>
-                  }
-                </strong>
-              </div>
-            </div>
-
-            @if (verifyResult.evidence.derivation; as derivation) {
-              <section class="verify-derivation" aria-labelledby="verify-derivation-title">
-                <div class="verify-derivation_header">
-                  <span class="verify-derivation_icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24">
-                      <path d="m4 4 16 16M4 20 20 4" />
-                      <circle cx="6.5" cy="6.5" r="2.5" />
-                      <circle cx="6.5" cy="17.5" r="2.5" />
-                    </svg>
-                  </span>
-                  <div>
-                    <p class="verify-derivation_eyebrow">{{ t('fragment_label') }}</p>
-                    <h3 id="verify-derivation-title">{{ t('fragment_title') }}</h3>
-                    <p>{{ t('fragment_description') }}</p>
-                  </div>
-                </div>
-
-                <div class="verify-derivation_grid">
-                  <div class="verify-item">
-                    <span class="verify-item_label">{{ t('fragment_source_interval') }}</span>
-                    <strong>
-                      {{ formatFragmentOffset(derivation.rootStartMs) }}
-                      –
-                      {{ formatFragmentOffset(derivation.rootEndMs) }}
-                    </strong>
-                  </div>
-                  <div class="verify-item">
-                    <span class="verify-item_label">{{ t('fragment_original_duration') }}</span>
-                    <strong>
-                      {{ derivation.rootDurationMs ? formatFragmentOffset(derivation.rootDurationMs) : t('na') }}
-                    </strong>
-                  </div>
-                  <div class="verify-item">
-                    <span class="verify-item_label">{{ t('fragment_created_at') }}</span>
-                    <strong>
-                      {{ derivation.transformedAt ? (derivation.transformedAt | date:'medium') : t('na') }}
-                    </strong>
-                  </div>
-                  <div class="verify-item">
-                    <span class="verify-item_label">{{ t('fragment_original_author') }}</span>
-                    <strong>{{ originalAuthorText }}</strong>
-                  </div>
-                  <div class="verify-item">
-                    <span class="verify-item_label">{{ t('fragment_origin') }}</span>
-                    <strong>{{ t('fragment_origin_verified') }}</strong>
-                  </div>
-                </div>
+          @if (result.status === 'valid') {
+            @if (result.evidence?.captureManifest; as capture) {
+              <section class="verify-record-note" [class.is-warning]="capture.completeness !== 'complete'">
+                <h3>{{ t(capture.completeness === 'complete' ? 'capture_complete' : capture.completeness === 'incomplete' ? 'capture_incomplete' : 'capture_uploading') }}</h3>
+                <p>{{ t('capture_integrity_note') }}</p>
+                @if (capture.gaps.length) {
+                  <ul>
+                    @for (gap of capture.gaps; track $index) {
+                      <li>
+                        {{ t(gap.kind === 'capture_pause' ? 'capture_pause' : 'capture_missing') }}
+                        @if (gap.startedAt) { · {{ formatDate(gap.startedAt) }} }
+                        @if (gap.endedAt) { – {{ formatDate(gap.endedAt) }} }
+                        @if (gap.videoOffsetMs !== undefined) { · {{ formatSeconds(gap.videoOffsetMs / 1000) }} }
+                      </li>
+                    }
+                  </ul>
+                }
               </section>
             }
-          }
-        </div>
-      }
-    </section>
-  </main>
-</section>
 
-<org-footer></org-footer>
+            @if (result.evidence?.derivation; as derivation) {
+              <section class="verify-record-note">
+                <h3>
+                  {{ t(derivation.type === 'qr_watermark' ? 'qr_version_title' : 'fragment_title') }}
+                  @if (derivation.type === 'qr_watermark' && derivation.isFragment === true) { · {{ t('fragment_title') }} }
+                </h3>
+                <p>{{ t(derivation.type === 'qr_watermark' ? 'qr_version_description' : 'fragment_description') }}</p>
+                <dl class="verify-metadata compact">
+                  @if (derivation.type === 'trim' || derivation.isFragment === true) {
+                    <div>
+                      <dt>{{ t('fragment_original_duration') }}</dt>
+                      <dd>{{ derivation.rootDurationMs ? formatDurationMs(derivation.rootDurationMs) : t('na') }}</dd>
+                    </div>
+                  }
+                  <div>
+                    <dt>{{ t(derivation.type === 'qr_watermark' ? 'qr_version_created_at' : 'fragment_created_at') }}</dt>
+                    <dd>{{ formatDate(derivation.transformedAt) }}</dd>
+                  </div>
+                </dl>
+              </section>
+            }
+
+            <details class="verify-disclosure">
+              <summary>
+                <span>
+                  {{ t('camera_app_check') }}
+                  <small>{{ t(cameraVerificationText.status) }}</small>
+                </span>
+                <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'chevron' }"></ng-container>
+              </summary>
+              <p class="verify-disclosure-text">{{ t(cameraVerificationText.detail) }}</p>
+              @if (cameraAndroidProof; as proof) {
+                <dl class="verify-metadata">
+                  <div>
+                    <dt>{{ t('camera_android_signed_segments') }}</dt>
+                    <dd>{{ proof.verifiedSegments }} / {{ proof.segmentCount }}</dd>
+                  </div>
+                  @if (proof.invalidSegments > 0) {
+                    <div>
+                      <dt>{{ t('camera_android_invalid_segments') }}</dt>
+                      <dd>{{ proof.invalidSegments }}</dd>
+                    </div>
+                  }
+                  @if (proof.attestedAt) {
+                    <div>
+                      <dt>{{ t('camera_android_attested_at') }}</dt>
+                      <dd>{{ formatDate(proof.attestedAt) }}</dd>
+                    </div>
+                  }
+                </dl>
+              }
+            </details>
+          }
+
+          <details class="verify-disclosure">
+            <summary>
+              {{ t('technical_details') }}
+              <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'chevron' }"></ng-container>
+            </summary>
+            <dl class="verify-metadata">
+              <div>
+                <dt>{{ t('matched_by') }}</dt>
+                <dd>{{ matchedByText() }}</dd>
+              </div>
+              <div>
+                <dt>{{ evidenceIdLabel }}</dt>
+                <dd>{{ extractedEvidenceId || t('not_detected') }}</dd>
+              </div>
+              @if (result.status === 'valid' && result.evidence; as evidence) {
+                <div>
+                  <dt>{{ t('evidence_id') }}</dt>
+                  <dd>{{ evidence.evidenceId }}</dd>
+                </div>
+                <div>
+                  <dt>{{ t('issuer') }}</dt>
+                  <dd>{{ evidence.issuer || t('na') }}</dd>
+                </div>
+                @if (!evidence.derivation) {
+                  <div>
+                    <dt>{{ t('recorded_start') }}</dt>
+                    <dd>{{ formatDate(evidence.recordedAtStart) }}</dd>
+                  </div>
+                  <div>
+                    <dt>{{ t('recorded_end') }}</dt>
+                    <dd>{{ formatDate(evidence.recordedAtEnd) }}</dd>
+                  </div>
+                }
+                <div>
+                  <dt>{{ t('sealed_at') }}</dt>
+                  <dd>{{ evidence.sealedAt ? formatDate(evidence.sealedAt) : t('pending') }}</dd>
+                </div>
+                <div>
+                  <dt>{{ t('signature') }}</dt>
+                  <dd>
+                    {{ evidence.signing.algorithm || t('na') }}
+                    @if (evidence.signing.keyId) { ({{ evidence.signing.keyId }}) }
+                  </dd>
+                </div>
+                <div>
+                  <dt>{{ t('location') }}</dt>
+                  <dd>{{ formatLocation(evidence.location) }}</dd>
+                </div>
+              }
+              @if (verificationSource === 'url') {
+                <div class="full-width">
+                  <dt>{{ t('source_url') }}</dt>
+                  <dd>{{ sourceUrl }}</dd>
+                </div>
+              }
+              @if (result.reason) {
+                <div class="full-width">
+                  <dt>{{ t('server_reason') }}</dt>
+                  <dd>{{ result.reason }}</dd>
+                </div>
+              }
+              <div class="full-width hash-detail">
+                <dt>{{ t('computed_hash') }} · SHA-256</dt>
+                <dd><code>{{ lastHashHex || t('na') }}</code></dd>
+                @if (lastHashHex) {
+                  <dd class="hash-actions">
+                    <button class="verify-button" type="button" (click)="copyHash()">
+                      <ng-container *ngTemplateOutlet="icon; context: { $implicit: hashCopyStatus === 'hash_copied' ? 'check' : 'copy' }"></ng-container>
+                      {{ t('copy_hash') }}
+                    </button>
+                    @if (hashCopyStatus) { <span role="status">{{ t(hashCopyStatus) }}</span> }
+                  </dd>
+                }
+              </div>
+            </dl>
+          </details>
+        </section>
+      }
+    </div>
+
+    <aside class="verify-guide" aria-labelledby="verify-guide-title">
+      <section class="verify-guide-card">
+        <span class="verify-icon-tile">
+          <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'shield' }"></ng-container>
+        </span>
+        <h2 id="verify-guide-title">{{ t('how_title') }}</h2>
+        <div class="verify-guide-point">
+          <strong>{{ t('how_local_title') }}</strong>
+          <p>{{ t('how_local_text') }}</p>
+        </div>
+        <div class="verify-guide-point">
+          <strong>{{ t('how_server_title') }}</strong>
+          <p>{{ t('how_server_text') }}</p>
+        </div>
+      </section>
+      <details class="verify-disclosure sharing-tip">
+        <summary>
+          {{ t('messenger_warning_title') }}
+          <ng-container *ngTemplateOutlet="icon; context: { $implicit: 'chevron' }"></ng-container>
+        </summary>
+        <p class="verify-disclosure-text">{{ t('messenger_warning_text') }}</p>
+      </details>
+    </aside>
+  </div>
+</main>
+
+<footer class="verify-shell verify-footer">
+  <a href="mailto:support@e-stream.app">{{ support() }}</a>
+</footer>

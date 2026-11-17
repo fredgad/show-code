@@ -1,25 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HeaderComponent, FooterComponent } from '@widgets';
-import { ImageDirective, TextDirective } from '@shared/directives';
 import { MockBuilder } from 'ng-mocks';
-import { CommonModule } from '@angular/common';
-import { CheckboxComponent, ImageModalComponent } from '@features';
+import { LangService } from '@shared/services';
+import { AccountSettingsComponent } from '@widgets/account-settings';
+import { HeaderComponent } from '@widgets/header';
 import { SettingsComponent } from './settings.component';
-import { AppStoreFacade } from '@store';
 
 describe('SettingsComponent', () => {
   let fixture: ComponentFixture<SettingsComponent>;
   let component: SettingsComponent;
 
   beforeEach(() => MockBuilder(SettingsComponent)
-    .keep(CommonModule)
-    .mock(ImageModalComponent)
-    .mock(CheckboxComponent)
+    .keep(LangService)
     .mock(HeaderComponent)
-    .mock(FooterComponent)
-    .mock(ImageDirective)
-    .mock(TextDirective)
-    .mock(AppStoreFacade)
+    .mock(AccountSettingsComponent)
   );
 
   beforeEach(() => {

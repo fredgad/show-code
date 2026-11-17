@@ -7,18 +7,16 @@
   max-height: 65dvh;
   overflow: auto;
 
-  org-video {
-    // display: grid;
-    display: flex;
-    flex-direction: row;
+  .video-item {
     border: 1px solid grey;
     border-radius: 16px;
 
     margin: 8px;
     padding: 8px;
 
-    &:nth-child(odd) {
-      // background: $super-transparent-grey;
+    org-video {
+      display: flex;
+      flex-direction: row;
     }
   }
 }

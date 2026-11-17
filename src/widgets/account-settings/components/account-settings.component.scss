@@ -1,438 +1,379 @@
-@import 'mixins';
-
 :host {
   display: block;
-  width: 100%;
 }
 
 .account-settings {
+  display: grid;
+  max-width: 56rem;
+  gap: clamp(.85rem, 2vw, 1.25rem);
+}
+
+h1 {
+  margin: 0 0 .2rem;
+  font-size: clamp(1.8rem, 4vw, 2.65rem);
+  font-weight: 750;
+  letter-spacing: -.05em;
+  line-height: 1.1;
+}
+
+h1,
+.identity-details,
+.key-block,
+.profile-fields > form,
+.password-fields > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.identity-card,
+.panel {
+  padding: clamp(1rem, 2.5vw, 1.6rem);
+  border-radius: .95rem;
+  min-width: 0;
+}
+
+.identity-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(10rem, .6fr);
+  align-items: center;
+  gap: clamp(.85rem, 2.5vw, 1.55rem);
+  color: #fffdf7;
+  background: radial-gradient(ellipse at 95% 0%, #284e65, transparent 67%), var(--navy);
+}
+
+.identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  outline: 1px solid #f9daa557;
+  outline-offset: 3px;
+  background: var(--amber);
+  color: var(--navy);
+}
+
+.avatar span {
+  font-size: 1.65rem;
+  font-weight: 750;
+}
+
+.identity-details h2 {
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  font-weight: 720;
+  letter-spacing: -.035em;
+  line-height: 1.18;
+}
+
+.identity-details p {
+  color: #d5dfe8;
+  margin-block: .18rem 0;
+  font-size: .9rem;
+}
+
+.icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.key-block > span {
+  display: block;
+  margin-bottom: .35rem;
+  color: #e6edf2;
+  font-size: .82rem;
+  font-weight: 650;
+}
+
+.key-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: .55rem .8rem;
+  border: 1px solid #ffe2ac80;
+  border-radius: .55rem;
+  color: #ffe2ac;
+  background: #10273b80;
+  text-align: start;
+  cursor: pointer;
+}
+
+.key-button code {
+  font-size: .96rem;
+  font-weight: 650;
+}
+
+.key-button:hover { background: #2e4b62; }
+.key-feedback { color: #ffe2ac; font-size: .8rem; }
+.key-feedback:not(:empty) { margin-top: .4rem; }
+
+.panel {
+  border: 1px solid var(--line);
+  background: #fdfcf9;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  margin-bottom: 1rem;
+  font-size: clamp(1.05rem, 2vw, 1.24rem);
+  font-weight: 720;
+  letter-spacing: -.02em;
+  line-height: 1.25;
+}
+
+.section-heading .icon { color: #3b5a73; }
+
+.profile-fields,
+.password-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2.4vw, 1.5rem);
+}
+
+.profile-fields > form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  align-items: stretch;
+}
+
+form label {
+  display: block;
+  margin-bottom: .35rem;
+  font-size: .92rem;
+  font-weight: 660;
+}
+
+form input:not([hidden]) {
   width: 100%;
-  box-sizing: border-box;
-  padding: 24px;
-  color: $text-color;
+  min-height: 2.85rem;
+  padding: .65rem .78rem;
+  border: 1px solid #aebbc4;
+  border-radius: .55rem;
+  color: var(--ink);
+  background: #fff;
+  font: inherit;
+  font-size: max(1rem, 16px);
+}
 
-  @include w-mobile {
-    padding: 16px 0;
-    gap: 18px;
-  }
+form input[aria-invalid='true'] { border-color: #a33f4b; }
 
-  &-hero,
-  &-panel {
-    border: 1px solid rgba($prime-grey, 0.2);
-    border-radius: 22px;
-    background-color: rgba($white, 0.98);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.05);
-  }
+form input[readonly]:not([hidden]) {
+  background: #f1f2ee;
+}
 
-  &-hero {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-    align-items: start;
-    gap: 28px;
-    padding: 24px;
-    background-image:
-      radial-gradient(circle at top right, rgba($prime-blue, 0.08), transparent 38%),
-      linear-gradient(180deg, rgba($white, 1), rgba($prime-blue, 0.03));
+.hint {
+  margin-top: .45rem;
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.42;
+}
 
-    @include w-mobile {
-      padding: 18px;
-    }
+.button,
+.text-button,
+.recovery-link,
+summary {
+  min-height: 2.75rem;
+  font-family: inherit;
+  font-size: .92rem;
+  font-weight: 650;
+}
 
-    &_media {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-      max-width: 240px;
-    }
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .55rem .95rem;
+  border: 1px solid #bcc8cf;
+  border-radius: .55rem;
+  color: var(--ink);
+  background: #fdfcf9;
+  text-align: center;
+  cursor: pointer;
+}
 
-    &_avatar {
-      border-radius: 50%;
-      box-shadow: 0 14px 28px rgba($prime-blue, 0.18);
-    }
+.button:hover { background: #edf1f1; }
+.button:disabled { cursor: default; }
 
-    &_actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 12px;
-    }
+.save-button {
+  justify-self: start;
+  align-self: start;
+  border-color: #edbd67;
+  background: var(--amber);
+}
 
-    &_button {
-      min-width: 160px;
-    }
+.save-button:hover:not(:disabled) { background: #f8c263; }
 
-    &_file {
-      max-width: 100%;
-      padding: 8px 12px;
-      border: 1px solid rgba($prime-blue, 0.16);
-      border-radius: 999px;
-      background-color: rgba($white, 0.72);
-      color: $prime-grey;
-      font-size: 14px;
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+.save-button:disabled {
+  border-color: #d6dcd9;
+  background: #edefea;
+  color: #54616a;
+}
 
-    &_info {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 22px;
-      min-width: 0;
-    }
+.profile-fields > form .save-button { margin-top: auto; }
+.profile-fields .hint,
+.profile-fields .feedback { margin-bottom: .75rem; }
 
-    &_heading {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+.text-button {
+  padding: .3rem 0;
+  border: none;
+  background: transparent;
+  color: #214967;
+  text-align: start;
+  text-decoration: underline;
+  text-underline-offset: .2em;
+  cursor: pointer;
+}
 
-    &_eyebrow {
-      font-size: 12px;
-      font-weight: 700;
-      line-height: 1;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: $prime-blue;
-    }
+.photo-button { color: #ffe2ac; }
+.photo-button:disabled { color: #d5dfe8; cursor: default; }
 
-    &_title {
-      font-size: 30px;
-      font-weight: 700;
-      line-height: 1.05;
-      color: $text-color;
-    }
-  }
+.feedback {
+  margin-top: .45rem;
+  padding: .55rem .7rem;
+  border-radius: .45rem;
+  color: #245740;
+  background: #e7f2eb;
+  font-size: .84rem;
+  overflow-wrap: anywhere;
+}
 
-  &-key {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-    width: 100%;
-    padding: 18px 20px;
-    border: 1px solid rgba($prime-grey, 0.16);
-    border-radius: 20px;
-    background:
-      linear-gradient(180deg, rgba($white, 0.98), rgba($prime-blue, 0.03)),
-      rgba($white, 1);
-    text-align: left;
-    cursor: pointer;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+.feedback-error {
+  color: #862d39;
+  background: #f8e9e9;
+}
 
-    &:hover:not(:disabled) {
-      border-color: rgba($prime-blue, 0.28);
-      box-shadow: 0 10px 22px rgba($prime-blue, 0.09);
-      transform: translateY(-1px);
-    }
+.security-panel .section-heading { margin-bottom: .55rem; }
 
-    &:focus-visible {
-      outline: none;
-      border-color: rgba($prime-blue, 0.38);
-      box-shadow: 0 0 0 4px rgba($prime-blue, 0.08);
-    }
+summary,
+.recovery-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .6rem;
+  padding-block: .55rem;
+}
 
-    &:disabled {
-      cursor: default;
-      opacity: 0.7;
-    }
+summary {
+  list-style: none;
+  cursor: pointer;
+}
 
-    @include w-mobile {
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 16px;
-    }
+summary::-webkit-details-marker { display: none; }
+details[open] summary .icon { transform: rotate(180deg); }
 
-    &_meta {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-width: 0;
-    }
+.recovery-link {
+  border-top: 1px solid var(--line);
+  color: #214967;
+}
 
-    &_label {
-      font-size: 12px;
-      font-weight: 700;
-      line-height: 1;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: $prime-grey;
-    }
+.recovery-link:hover { text-decoration: underline; text-underline-offset: .2em; }
 
-    &_value {
-      display: block;
-      min-width: 0;
-      font-size: 24px;
-      font-weight: 700;
-      line-height: 1.1;
-      color: $text-color;
-      overflow-wrap: anywhere;
-    }
+.password-form { padding-bottom: 1rem; }
+.password-form .save-button { margin-top: .9rem; }
 
-    &_action {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      background-color: rgba($prime-blue, 0.06);
-      color: $prime-blue;
+.password-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem 1rem;
+  flex-wrap: wrap;
+  margin-bottom: .4rem;
+}
 
-      @include w-mobile {
-        width: 100%;
-        justify-content: center;
-      }
-    }
+.password-toolbar .hint { margin: 0; }
+.password-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; }
+.password-fields > div { display: flex; flex-direction: column; justify-content: end; }
 
-    &_hint {
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1;
-      white-space: nowrap;
-    }
+.recording-settings,
+.load-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem 1rem;
+  flex-wrap: wrap;
+  margin: 0;
+}
 
-    &_copyIcon {
-      position: relative;
-      display: block;
-      width: 18px;
-      height: 18px;
+.recording-settings dt {
+  flex: 1 1 15rem;
+  font-size: .92rem;
+  font-weight: 630;
+}
 
-      &::before,
-      &::after {
-        content: '';
-        position: absolute;
-        border: 1.5px solid currentColor;
-        border-radius: 4px;
-        background-color: rgba($white, 0.9);
-      }
+.recording-settings dd {
+  margin: 0;
+  color: var(--muted);
+  font-size: .9rem;
+  font-variant-numeric: tabular-nums;
+}
 
-      &::before {
-        top: 2px;
-        left: 5px;
-        width: 10px;
-        height: 12px;
-      }
+.sign-out {
+  justify-self: start;
+  border-color: #d9bfc0;
+  color: #862d39;
+}
 
-      &::after {
-        top: 5px;
-        left: 2px;
-        width: 10px;
-        height: 12px;
-      }
-    }
-  }
+.sign-out:hover { background: #f8e9e9; }
 
-  &-panel {
-    padding: 22px;
+dialog {
+  position: fixed;
+  width: min(26rem, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: .95rem;
+  background: #fdfcf9;
+  color: var(--ink);
+  box-shadow: 0 1rem 3rem #14283c3b;
+}
 
-    @include w-mobile {
-      padding: 18px 14px;
-    }
+dialog::backdrop { background: #14283ca8; }
+.dialog-body { padding: clamp(1rem, 3vw, 1.5rem); }
+.dialog-body h2 { font-size: 1.25rem; font-weight: 720; line-height: 1.25; }
+.dialog-body p { margin-block: .4rem 1.1rem; color: var(--muted); font-size: .92rem; }
 
-    &_header {
-      margin-bottom: 16px;
-    }
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: .55rem;
+}
 
-    &_title {
-      font-size: 20px;
-      font-weight: 700;
-      line-height: 1.1;
-      color: $prime-blue;
-    }
-  }
+.confirm-sign-out { border-color: #862d39; background: #862d39; color: #fffdf7; }
+.confirm-sign-out:hover { background: #712534; }
 
-  &-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
+:focus-visible { outline: 2px solid #3265a2; outline-offset: 3px; }
+.identity-card :focus-visible { outline-color: #ffe2ac; }
 
-  &-field {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
-    align-items: stretch;
-    padding: 16px 18px;
-    border: 1px solid rgba($transparent-grey, 0.28);
-    border-radius: 18px;
-    background:
-      linear-gradient(180deg, rgba($white, 1), rgba($prime-blue, 0.03)),
-      rgba($white, 1);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+@media (max-width: 42rem) {
+  .identity-card,
+  .profile-fields,
+  .password-fields { grid-template-columns: minmax(0, 1fr); }
 
-    &:focus-within {
-      border-color: rgba($prime-green, 0.5);
-      box-shadow: 0 0 0 4px rgba($prime-green, 0.12);
-    }
+  .identity { gap: .8rem; }
+  .key-block { padding-top: .7rem; border-top: 1px solid #d5dfe836; }
 
-    @include w-mobile {
-      padding: 14px;
-      gap: 12px;
-    }
-
-    &_intro {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-width: 0;
-    }
-
-    &_label {
-      font-size: 15px;
-      font-weight: 600;
-      line-height: 1.35;
-      color: $text-color;
-    }
-
-    &_caption {
-      font-size: 13px;
-      line-height: 1.45;
-      color: rgba($text-color, 0.72);
-    }
-
-    &_stack {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-width: 0;
-      width: 100%;
-    }
-
-    &_control {
-      position: relative;
-      display: flex;
-      align-items: center;
-      min-width: 0;
-      width: 100%;
-    }
-
-    input {
-      width: 100%;
-      height: 48px;
-      padding: 0 16px;
-      border: 1px solid rgba($prime-grey, 0.24);
-      border-radius: 12px;
-      background-color: rgba($white, 0.96);
-      color: $text-color;
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-
-      &:focus {
-        border-color: rgba($prime-blue, 0.42);
-        box-shadow: 0 0 0 4px rgba($prime-blue, 0.08);
-      }
-    }
-
-    &_submit {
-      min-width: 190px;
-      height: 48px;
-      align-self: flex-start;
-
-      &:disabled {
-        cursor: not-allowed;
-        opacity: 0.7;
-      }
-
-      @include w-mobile {
-        width: 100%;
-      }
-    }
-
-    &_error {
-      font-size: 13px;
-      line-height: 1.4;
-      color: $red-color;
-    }
-  }
-
-  &-password {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-
-    &_grid {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      max-width: 560px;
-    }
-
-    &_field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-width: 0;
-    }
-
-    &_label {
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1.35;
-      color: $text-color;
-    }
-
-    input {
-      width: 100%;
-      height: 48px;
-      padding: 0 16px;
-      border: 1px solid rgba($prime-grey, 0.24);
-      border-radius: 12px;
-      background-color: rgba($white, 0.96);
-      color: $text-color;
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
-      &:focus {
-        border-color: rgba($prime-blue, 0.42);
-        box-shadow: 0 0 0 4px rgba($prime-blue, 0.08);
-      }
-    }
-
-    &_note {
-      font-size: 13px;
-      line-height: 1.45;
-      color: rgba($text-color, 0.72);
-    }
-
-    &_error {
-      margin-top: -4px;
-    }
-
-    &_submit {
-      align-self: flex-start;
-      min-width: 190px;
-
-      &:disabled {
-        cursor: not-allowed;
-        opacity: 0.7;
-      }
-
-      @include w-mobile {
-        width: 100%;
-      }
-    }
-  }
-
-  &-logout {
-    display: flex;
-    justify-content: flex-end;
-
-    @include w-mobile {
-      justify-content: flex-start;
-    }
-
-    &_button {
-      min-width: 180px;
-
-      @include w-mobile {
-        width: 100%;
-      }
-    }
-  }
+  .profile-fields > form + form { padding-top: 1rem; border-top: 1px solid var(--line); }
+  .profile-fields .save-button,
+  .password-form .save-button,
+  .sign-out { width: 100%; }
+  .dialog-actions .button { flex: 1 1 auto; }
 }

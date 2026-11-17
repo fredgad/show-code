@@ -1,0 +1,74 @@
+svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.65;
+}
+
+.control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  min-height: 2.75rem;
+  max-width: 100%;
+  padding: .53rem .82rem;
+  border: 1px solid var(--line);
+  border-radius: .6rem;
+  color: var(--ink);
+  background: #fffefa;
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 650;
+  text-align: center;
+  cursor: pointer;
+}
+.control:hover { background: #eef1ef; }
+.control:disabled { opacity: .62; cursor: wait; }
+.control.primary { background: var(--amber); color: var(--ink); border-color: var(--amber); }
+.control.primary:hover { background: #ffda95; }
+.control.danger { background: #9a2930; border-color: #9a2930; color: white; }
+.control.danger:hover { background: #81222a; }
+.control.compact { font-size: .82rem; gap: .38rem; }
+.control.glyph { width: 2.75rem; padding: .5rem; }
+
+:where(a, button, [role='tabpanel']):focus-visible {
+  outline: 2px solid #486fa4;
+  outline-offset: 3px;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .17rem .46rem;
+  border-radius: 999px;
+  background: #e9f1ec;
+  color: #2d624b;
+  font-size: .75rem;
+  font-weight: 720;
+}
+.status-chip.restricted { color: #8d3037; background: #f9eceb; }
+.status-chip.new { color: #224462; background: #e6eef9; }
+
+dialog {
+  position: fixed;
+  box-sizing: border-box;
+  width: min(100% - 1.5rem, 27rem);
+  max-height: calc(100dvh - 1.5rem);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--paper);
+  color: var(--ink);
+  overflow: auto;
+}
+dialog::backdrop { background: #102337a8; }
+.dialog-content { display: grid; gap: .8rem; padding: clamp(.95rem, 3vw, 1.4rem); }
+.dialog-content h2 { overflow-wrap: anywhere; font-size: clamp(1.05rem, 3vw, 1.45rem); }
+.dialog-actions { display: flex; align-items: center; gap: .6rem; justify-content: flex-end; flex-wrap: wrap; }

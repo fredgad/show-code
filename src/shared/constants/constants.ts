@@ -9,12 +9,13 @@ export const APP_API_URL = '';
 
 export const MOBILE_BREAKPOINT: number = 768;
 
-export const LANGUAGES_LIST: LangEnum[] = [LangEnum.ENG, LangEnum.ESP, LangEnum.EST, LangEnum.RUS];
+export const LANGUAGES_LIST: LangEnum[] = [LangEnum.ENG, LangEnum.ESP, LangEnum.EST, LangEnum.ARM, LangEnum.RUS];
 
 export const PRESENTATION_URLS: LangTextI = {
   ENG: 'https://presentation.e-stream.app/en',
   ESP: 'https://presentation.e-stream.app/es',
   EST: 'https://presentation.e-stream.app/et',
+  ARM: 'https://presentation.e-stream.app/hy',
   RUS: 'https://presentation.e-stream.app/ru'
 };
 

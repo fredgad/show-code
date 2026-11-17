@@ -11,17 +11,13 @@ export const authFailure = createAction('[App] Auth failure', props<{ err: strin
 
 export const logout = createAction('[App] Logout');
 
-export const getUserData = createAction('[App] Get user data');
+export const getUserData = createAction('[App] Get user data', (refresh = false) => ({ refresh }));
 export const getUserDataSuccess = createAction('[App] Get user data success', props<{ data: StoreUserIN }>());
 export const getUserDataFailure = createAction('[App] Get user data failure', props<{ error: string }>());
 
 export const getTrustedUsersByKeyIds = createAction('[App] Get trusted users by keyIds', props<{ keyIds: string[] }>());
 export const getTrustedUsersByKeyIdsSuccess = createAction('[App] Get trusted users by keyIds success', props<{ data: StoreUserIN[] }>());
 export const getTrustedUsersByKeyIdsFailure = createAction('[App] Get trusted users by keyIds failure', props<{ error: string }>());
-
-export const saveImage = createAction('[App] Save image', props<{ image: string }>());
-export const saveImageSuccess = createAction('[App] Save image success');
-export const saveImageFailure = createAction('[App] Save image failure', props<{ error: string }>());
 
 export const addUserByKeyId = createAction('[App] Add user by keyId', props<{ keyId: string }>());
 export const addUserByKeyIdSuccess = createAction('[App] Add user by keyId success');

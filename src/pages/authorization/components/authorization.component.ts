@@ -89,7 +89,6 @@ export class AuthorizationComponent implements OnInit, AfterViewInit {
         password: this.authForm.value.password
       };
 
-      console.log('Authhorization data:', userValue);
       this.appStoreFacade.auth(userValue);
 
       // this.authService.getUsers().subscribe((users) => {
@@ -100,7 +99,6 @@ export class AuthorizationComponent implements OnInit, AfterViewInit {
     } else {
       // Display an error message or take appropriate action for invalid form
       this.isSubmited = true;
-      console.log(this.authForm.value, this.authForm.get('email'), 'registrationForm');
     }
   }
 

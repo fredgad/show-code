@@ -2,10 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, finalize, forkJoin, map, of, shareReplay, tap } from 'rxjs';
 import { NotificationService } from '../notification/notification.service';
-import { AuthI, RegisterI, TokenI, StoreUserIN, VideoDataI } from '../../interfaces';
+import { AuthI, RegisterI, TokenI, StoreUserIN, TrustedUserPreview, VideoDataI } from '../../interfaces';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { Router } from '@angular/router';
 import { APP_API_URL } from '../../constants';
+
+interface TrustMutationResponse {
+  message?: string;
+  targetType?: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +19,8 @@ export class AuthService {
   private baseUrl = APP_API_URL;
   private userDataCache?: StoreUserIN;
   private userDataRequest$?: Observable<StoreUserIN>;
-  private trustedUsersCache = new Map<string, StoreUserIN>();
-  private trustedUsersRequestByKeyId = new Map<string, Observable<StoreUserIN | undefined>>();
+  private trustedUsersCache = new Map<string, TrustedUserPreview>();
+  private trustedUsersRequestByKeyId = new Map<string, Observable<TrustedUserPreview | undefined>>();
 
   constructor(
     private http: HttpClient,
@@ -30,7 +35,8 @@ export class AuthService {
         // this.notificationService.show('Successfuly registered');
       }),
       catchError(error => {
-        this.notificationService.showError(`Error: ${error}`);
+        const message = error?.error?.code === 'email_in_use' ? error.error.error : null;
+        this.notificationService.showError(message || `Error: ${error}`);
         throw error;
       })
     );
@@ -48,13 +54,13 @@ export class AuthService {
     );
   }
 
-  public getUserData(): Observable<StoreUserIN> {
-    if (this.userDataCache) {
-      return of(this.userDataCache);
-    }
-
+  public getUserData(refresh = false): Observable<StoreUserIN> {
     if (this.userDataRequest$) {
       return this.userDataRequest$;
+    }
+
+    if (!refresh && this.userDataCache) {
+      return of(this.userDataCache);
     }
 
     this.userDataRequest$ = this.http.get<StoreUserIN>(`${this.baseUrl}/api/user/me`).pipe(
@@ -77,14 +83,18 @@ export class AuthService {
     return this.userDataRequest$;
   }
 
-  public getTrustedUsersByKeyIds(keyIds: string[]): Observable<StoreUserIN[]> {
+  public getTrustedUsersByKeyIds(keyIds: string[], useCache = true): Observable<TrustedUserPreview[]> {
     const normalizedKeyIds = [...new Set(keyIds.filter((keyId): keyId is string => !!keyId))];
 
     if (!normalizedKeyIds.length) {
       return of([]);
     }
 
-    const trustedUsersByKeyId = new Map<string, Observable<StoreUserIN | undefined>>();
+    if (!useCache) {
+      return this.fetchTrustedUsers(normalizedKeyIds);
+    }
+
+    const trustedUsersByKeyId = new Map<string, Observable<TrustedUserPreview | undefined>>();
     const missingKeyIds: string[] = [];
 
     normalizedKeyIds.forEach(keyId => {
@@ -106,20 +116,13 @@ export class AuthService {
     });
 
     if (missingKeyIds.length) {
-      const batchRequest$ = this.http.post<StoreUserIN[]>(`${this.baseUrl}/api/user/trusted`, { keyIds: missingKeyIds }).pipe(
-        tap(() => {
-          this.notificationService.show('Successfuly get users');
-        }),
+      const batchRequest$ = this.fetchTrustedUsers(missingKeyIds).pipe(
         tap(users => {
           users.forEach(user => {
             if (user?.keyId) {
               this.trustedUsersCache.set(user.keyId, user);
             }
           });
-        }),
-        catchError(error => {
-          this.notificationService.showError('Error');
-          throw error;
         }),
         finalize(() => {
           missingKeyIds.forEach(keyId => {
@@ -138,19 +141,18 @@ export class AuthService {
     }
 
     return forkJoin(normalizedKeyIds.map(keyId => trustedUsersByKeyId.get(keyId) ?? of(undefined))).pipe(
-      map(users => users.filter((user): user is StoreUserIN => !!user))
+      map(users => users.filter((user): user is TrustedUserPreview => !!user))
     );
+  }
+
+  private fetchTrustedUsers(keyIds: string[]): Observable<TrustedUserPreview[]> {
+    return this.http.post<TrustedUserPreview[]>(`${this.baseUrl}/api/user/trusted`, { keyIds });
   }
 
   public saveImage(imageBase64: string): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/api/user/saveImage`, { image: imageBase64 }).pipe(
       tap(() => {
         this.userDataCache = undefined;
-        this.notificationService.show('Successfuly save image');
-      }),
-      catchError(error => {
-        this.notificationService.showError(`Error: ${error}`);
-        throw error;
       })
     );
   }
@@ -185,6 +187,17 @@ export class AuthService {
 
   public updateLanguage(lang: string): Observable<{ message: string; lang: string }> {
     return this.http.post<{ message: string; lang: string }>(`${this.baseUrl}/api/user/lang`, { lang });
+  }
+
+  public updateVaultFolderLayout(vaultFolderLayout: 'grid' | 'list') {
+    return this.http.patch(`${this.baseUrl}/api/user/preferences`, { vaultFolderLayout }).pipe(tap(() => {
+      if (this.userDataCache) {
+        this.userDataCache = {
+          ...this.userDataCache,
+          preferences: { ...this.userDataCache.preferences, vaultFolderLayout }
+        };
+      }
+    }));
   }
 
   public sendRecoveryCode(email: string): Observable<{ message: string; email: string }> {
@@ -222,7 +235,9 @@ export class AuthService {
 
   public enterAccountSuccess(response: TokenI): void {
     this.saveTokenToStorage(response.token);
-    this.router.navigate(['/profile']);
+    const { root, queryParams } = this.router.parseUrl(this.router.url);
+    const path = root.children['primary']?.segments.map(segment => segment.path).join('/');
+    this.router.navigate([path === 'auth' && queryParams['destination'] === 'admin' ? '/admin' : '/profile']);
   }
 
   public saveTokenToStorage(token: string): void {
@@ -233,55 +248,31 @@ export class AuthService {
     return !!this.storageService.getItem('token');
   }
 
-  public addUserByKeyId(keyId: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/api/user/addUser`, { keyId }).pipe(
-      tap(() => {
-        this.userDataCache = undefined;
-        this.notificationService.show(`Successfuly add user by keyId: ${keyId}.`);
-      }),
-      catchError(error => {
-        this.notificationService.showError(`Error: ${error}`);
-        throw error;
-      })
-    );
+  public addUserByKeyId(keyId: string): Observable<TrustMutationResponse> {
+    return this.mutateTrust('addUser', keyId);
   }
 
-  public cancelRequest(keyId: string): Observable<void> {
-    // Note: cancelRequest route might be missing in backend, using assumption or TODO
-    return this.http.post<void>(`${this.baseUrl}/api/user/cancelRequest`, { keyId }).pipe(
-      tap(() => {
-        this.userDataCache = undefined;
-        this.notificationService.show(`Successfuly cancel request by user with keyId: ${keyId}.`);
-      }),
-      catchError(error => {
-        this.notificationService.showError(`Error: ${error}`);
-        throw error;
-      })
-    );
+  public cancelRequest(keyId: string, direction?: 'incoming' | 'outgoing'): Observable<TrustMutationResponse> {
+    return this.mutateTrust('cancelRequest', keyId, direction);
   }
 
-  public acceptTrustedUser(keyId: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/api/user/acceptUser`, { keyId }).pipe(
-      tap(() => {
-        this.userDataCache = undefined;
-        this.notificationService.show(`Successfuly add trusted user with keyId: ${keyId}.`);
-      }),
-      catchError(error => {
-        this.notificationService.showError(`Error: ${error}`);
-        throw error;
-      })
-    );
+  public acceptTrustedUser(keyId: string): Observable<TrustMutationResponse> {
+    return this.mutateTrust('acceptUser', keyId);
   }
 
-  public removeTrustedUser(keyId: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/api/user/removeUser`, { keyId }).pipe(
+  public removeTrustedUser(keyId: string): Observable<TrustMutationResponse> {
+    return this.mutateTrust('removeUser', keyId);
+  }
+
+  private mutateTrust(
+    route: 'addUser' | 'cancelRequest' | 'acceptUser' | 'removeUser',
+    keyId: string,
+    direction?: 'incoming' | 'outgoing'
+  ): Observable<TrustMutationResponse> {
+    return this.http.post<TrustMutationResponse>(`${this.baseUrl}/api/user/${route}`, { keyId, direction }).pipe(
       tap(() => {
         this.userDataCache = undefined;
-        this.notificationService.show(`Successfuly removed user with keyId: ${keyId} from trusted.`);
-      }),
-      catchError(error => {
-        this.notificationService.showError(`Error: ${error}`);
-        throw error;
+        this.trustedUsersCache.delete(keyId);
       })
     );
   }

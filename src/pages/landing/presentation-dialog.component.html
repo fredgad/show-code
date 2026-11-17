@@ -1,0 +1,28 @@
+<dialog
+  #dialog
+  id="landing-presentation-dialog"
+  class="presentation-dialog"
+  aria-labelledby="landing-presentation-title"
+  (click)="closeFromBackdrop($event)"
+  (close)="restoreFocus()"
+>
+  <header>
+    <h2 id="landing-presentation-title">{{ copy.title }}</h2>
+    <button type="button" [attr.aria-label]="copy.close" autofocus (click)="dialog.close()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+    </button>
+  </header>
+  <div class="stage">
+    @for (url of frameSources(); track url) {
+      <iframe #frame [src]="url" [hidden]="status() !== 'ready'" [attr.title]="copy.title"></iframe>
+    }
+    @if (status() === 'loading') {
+      <p class="status" role="status">{{ copy.loading }}</p>
+    } @else if (status() === 'error') {
+      <div class="status">
+        <p role="status">{{ copy.unavailable }}</p>
+        <button class="retry" type="button" (click)="load()">{{ copy.retry }}</button>
+      </div>
+    }
+  </div>
+</dialog>

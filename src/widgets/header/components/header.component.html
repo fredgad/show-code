@@ -1,108 +1,86 @@
-<header class="header">
-  <org-logo [linkToMain]="true"></org-logo>
-
-  <org-overflow-marquee class="header-page-title" [text]="pageTitle$i()"></org-overflow-marquee>
-
-  <nav class="header-nav" aria-label="Secondary navigation">
-    <a class="header-nav_link" routerLink="/verify">
-      <span
-        [orgText]="{
-          ENG: 'Verification',
-          ESP: 'Verificación',
-          RUS: 'Верификация'
-        }"
-      >
-        Верификация
-      </span>
-    </a>
-    <a class="header-nav_link" [href]="presentationUrl$i()" target="_blank" rel="noopener noreferrer">
-      <span
-        [orgText]="{
-          ENG: 'Presentation',
-          ESP: 'Presentación',
-          RUS: 'Презентация'
-        }"
-      >
-        Презентация
-      </span>
-    </a>
-  </nav>
-
-  <div class="header-buttons">
-    <div class="header-controls">
-      <org-lang></org-lang>
-
-      <div *ngIf="showDisplayControls" class="font-control">
-        <button type="button" class="font-control_btn" (click)="decreaseFont()" aria-label="Decrease font size">−</button>
-        <span class="font-control_value" aria-live="polite">{{ currentFontScale }}</span>
-        <button type="button" class="font-control_btn" (click)="increaseFont()" aria-label="Increase font size">+</button>
-      </div>
+<header class="site-header">
+  <div class="topbar">
+    <div class="brand">
+      <a class="brand-logo" routerLink="/" [attr.aria-label]="text(siteCopy.home)">
+        <img src="assets/images/e-stream-logotype.svg" alt="" width="32" height="30" />
+        @if (layout === 'landing') { E-stream }
+      </a>
+      @switch (layout) {
+        @case ('profile') {
+          <a
+            class="page-title"
+            #profileLink="routerLinkActive"
+            [routerLink]="profile.route"
+            routerLinkActive
+            [routerLinkActiveOptions]="profileMatch"
+            ariaCurrentWhenActive="page"
+          >
+            @if (profileLink.isActive) { <h1>{{ text(profile.label) }}</h1> }
+            @else { {{ text(profile.label) }} }
+          </a>
+        }
+        @case ('admin') {
+          <a class="page-title" routerLink="/admin">{{ title }}</a>
+        }
+        @case ('page') {
+          <span class="page-title">{{ title ?? pageTitle() }}</span>
+        }
+      }
     </div>
 
-    @if (isMainRoute) { @if (!isLoggedIn) {
-    <button
-      class="header-buttons_auth"
-      (click)="goToPath('/auth')"
-      [orgText]="{
-        ENG: 'ENTER',
-        ESP: 'ENTRAR',
-        RUS: 'ВОЙТИ'
-      }"
-    >
-      ENTER
-    </button>
-    } @else {
-    <button class="header-buttons_profile" (click)="goToPath('/profile')" aria-label="Open profile">
-      <img [srcPath]="'empty-avatar.svg'" alt="" />
-    </button>
-    } } @else {
-    <button
-      #menuButton
-      type="button"
-      class="header-buttons_menu"
-      [class.--open]="isMenuOpen"
-      [attr.aria-expanded]="isMenuOpen"
-      aria-controls="app-navigation-drawer"
-      aria-label="Open navigation menu"
-      (click)="toggleMenu()"
-    >
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+    @if (layout === 'landing' || layout === 'page') {
+      <nav class="primary-nav" [attr.aria-label]="navigationLabel ?? text(copy.navigation)">
+        @if (primaryNavigation) {
+          <ng-container *ngTemplateOutlet="primaryNavigation"></ng-container>
+        } @else {
+          <a routerLink="/verify">{{ text(siteCopy.verify) }}</a>
+          <a routerLink="/" fragment="presentation">{{ text(copy.presentation) }}</a>
+        }
+      </nav>
+    }
 
-    @if (!isLoggedIn) {
-    <button
-      class="header-buttons_auth header-buttons_desktop-account"
-      (click)="goToPath('/auth')"
-      [orgText]="{
-        ENG: 'ENTER',
-        ESP: 'ENTRAR',
-        RUS: 'ВОЙТИ'
-      }"
-    >
-      ENTER
-    </button>
-    } @else {
-    <button class="header-buttons_profile header-buttons_desktop-account" (click)="goToPath('/profile')" aria-label="Open profile">
-      <img [srcPath]="'empty-avatar.svg'" alt="" />
-    </button>
-    } }
+    <div class="header-actions">
+      @if (layout === 'profile') {
+        <a class="desktop-verification" routerLink="/verify">{{ text(siteCopy.verify) }}</a>
+      }
+      <org-site-language-select [label]="text(siteCopy.language)"></org-site-language-select>
 
-    <!--
-    <button class="header-buttons--settings" routerLink="/settings">
-      <abbr [title]="abbrTitle$i()">
-        <img [srcPath]="'settings-icon.svg'" />
-      </abbr>
-    </button>
+      @if (layout === 'landing' || layout === 'page') {
+        <a class="account-link" [routerLink]="loggedIn ? '/profile' : '/auth'">
+          {{ text(loggedIn ? copy.account : copy.signIn) }}
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11" /></svg>
+        </a>
+      }
 
-    <button class="header-buttons_auth" (click)="goToPath('/profile')">
-      <img [srcPath]="'empty-avatar.svg'" />
-    </button>
-    -->
+      <details class="header-menu" #menu>
+        <summary #menuToggle [attr.aria-label]="layout === 'profile' ? text(siteCopy.sections) : text(copy.menu)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </summary>
+        <nav [attr.aria-label]="navigationLabel ?? text(layout === 'profile' ? siteCopy.sections : copy.navigation)" (click)="closeAfterLink($event)">
+          @if (menuNavigation) {
+            <ng-container *ngTemplateOutlet="menuNavigation; context: menuContext"></ng-container>
+          } @else {
+            @if (loggedIn || layout === 'profile') {
+              <org-profile-navigation [inMenu]="true" (actionSelected)="closeMenu(true)"></org-profile-navigation>
+            } @else {
+              <a class="menu-link" href="/#how">{{ text(copy.how) }}</a>
+              <a class="menu-link" routerLink="/" fragment="presentation">{{ text(copy.presentation) }}</a>
+              <a class="menu-link" routerLink="/verify">{{ text(copy.verifyRecording) }}</a>
+              <a class="menu-link" routerLink="/auth">{{ text(copy.signIn) }}</a>
+            }
+          }
+          @if (layout === 'page' && showDisplayControls) {
+            <div class="font-control" role="group" [attr.aria-label]="text(copy.fontSize)">
+              <span>{{ text(copy.fontSize) }}</span>
+              <div class="font-buttons">
+                <button type="button" [attr.aria-label]="text(copy.decreaseFont)" (click)="changeFontSize(false)">−</button>
+                <span aria-live="polite">{{ currentFontScale }}</span>
+                <button type="button" [attr.aria-label]="text(copy.increaseFont)" (click)="changeFontSize(true)">+</button>
+              </div>
+            </div>
+          }
+        </nav>
+      </details>
+    </div>
   </div>
 </header>
-
-@if (!isMainRoute) {
-<org-app-drawer [open]="isMenuOpen" (closeRequested)="closeMenu()"></org-app-drawer>
-}

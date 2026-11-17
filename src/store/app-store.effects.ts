@@ -98,8 +98,8 @@ export class AppStoreEffects {
   getUserData$ = createEffect(() =>
     this.actions$.pipe(
       ofType(actions.getUserData),
-      mergeMap(() =>
-        this.authService.getUserData().pipe(
+      mergeMap(({ refresh }) =>
+        this.authService.getUserData(refresh).pipe(
           map(response => actions.getUserDataSuccess({ data: response })),
           catchError(error => of(actions.getUserDataFailure({ error })))
         )
@@ -114,18 +114,6 @@ export class AppStoreEffects {
         this.authService.getTrustedUsersByKeyIds(keyIds).pipe(
           map(response => actions.getTrustedUsersByKeyIdsSuccess({ data: response })),
           catchError(error => of(actions.getTrustedUsersByKeyIdsFailure({ error })))
-        )
-      )
-    )
-  );
-
-  saveImage$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(actions.saveImage),
-      mergeMap(({ image }) =>
-        this.authService.saveImage(image).pipe(
-          map(() => actions.saveImageSuccess()),
-          catchError(error => of(actions.saveImageFailure({ error })))
         )
       )
     )

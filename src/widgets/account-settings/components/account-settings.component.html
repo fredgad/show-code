@@ -1,410 +1,239 @@
-<div *ngIf="userData$ | async as userData" class="account-settings">
-  <section class="account-settings-hero">
-    <div class="account-settings-hero_media">
-      <org-avatar class="account-settings-hero_avatar" [imageUrl]="userData?.image || image" [size]="104"></org-avatar>
+<ng-template #feedback let-state>
+  @if (state) {
+    <p class="feedback" [class.feedback-error]="state.kind === 'error'">{{ text(state.message) }}</p>
+  }
+</ng-template>
 
-      <div class="account-settings-hero_actions">
-        <input type="file" #fileInput hidden (change)="onFileSelected($event)" />
+<div class="account-settings">
+  <h1>{{ text(title) }}</h1>
 
-        @if (userData?.image || image) {
-        <button
-          type="button"
-          (click)="triggerFileInput()"
-          class="btn-secondary account-settings-hero_button"
-          [orgText]="{
-            ENG: 'Change avatar',
-            ESP: 'Cambiar avatar',
-            RUS: 'Изменить аватарку',
-          }"
-        >
-          Change avatar
-        </button>
-        } @else {
-        <button
-          type="button"
-          (click)="triggerFileInput()"
-          class="btn-secondary account-settings-hero_button"
-          [orgText]="{
-            ENG: 'Add avatar',
-            ESP: 'Agregar avatar',
-            RUS: 'Добавить аватарку',
-          }"
-        >
-          Add avatar
-        </button>
-        }
-
-        @if (image && fileName !== 'Файл не выбран') {
-        <div class="account-settings-hero_file">{{ fileName }}</div>
-        }
-      </div>
+  @if (loadStatus() === 'error' || (loadStatus() === 'ready' && !user())) {
+    <div class="panel load-status">
+      <p role="status">{{ text(profile.loadError) }}</p>
+      <button class="button" type="button" (click)="reload()">{{ text(profile.retry) }}</button>
     </div>
+  }
 
-    <div class="account-settings-hero_info">
-      <div class="account-settings-hero_heading">
-        <p
-          class="account-settings-hero_eyebrow"
-          [orgText]="{
-            ENG: 'Profile',
-            ESP: 'Perfil',
-            RUS: 'Профиль',
-          }"
-        >
-          Profile
-        </p>
-        <h2
-          class="account-settings-hero_title"
-          [orgText]="{
-            ENG: 'Account settings',
-            ESP: 'Configuración de la cuenta',
-            RUS: 'Настройки аккаунта',
-          }"
-        >
-          Account settings
-        </h2>
-      </div>
-
-      <button type="button" class="account-settings-key" (click)="copyKeyId(userData.keyId)" [disabled]="!userData.keyId">
-        <span class="account-settings-key_meta">
-          <span
-            class="account-settings-key_label"
-            [orgText]="{
-              ENG: 'Key ID',
-              ESP: 'ID clave',
-              RUS: 'Key ID',
-            }"
-          >
-            Key ID
-          </span>
-          <strong class="account-settings-key_value">{{ userData.keyId }}</strong>
-        </span>
-
-        <span class="account-settings-key_action">
-          <span class="account-settings-key_copyIcon" aria-hidden="true"></span>
-          <span
-            class="account-settings-key_hint"
-            [orgText]="{
-              ENG: 'Copy key',
-              ESP: 'Copiar clave',
-              RUS: 'Скопировать ключ',
-            }"
-          >
-            Copy key
-          </span>
-        </span>
-      </button>
-    </div>
-  </section>
-
-  <section class="account-settings-panel">
-    <div class="account-settings-panel_header">
-      <h3
-        class="account-settings-panel_title"
-        [orgText]="{
-          ENG: 'Profile details',
-          ESP: 'Detalles del perfil',
-          RUS: 'Данные профиля',
-        }"
-      >
-        Profile details
-      </h3>
-    </div>
-
-    <div class="account-settings-fields">
-      <form class="account-settings-field" [formGroup]="usernameForm" (ngSubmit)="submitUsername(userData.username)">
-        <div class="account-settings-field_intro">
-          <p
-            class="account-settings-field_label"
-            [orgText]="{
-              ENG: 'Change your login:',
-              ESP: 'Cambia tu inicio de sesión:',
-              RUS: 'Изменить логин:',
-            }"
-          >
-            Change your login:
-          </p>
-          <p
-            class="account-settings-field_caption"
-            [orgText]="{
-              ENG: 'Use 4-20 characters, latin letters, numbers and underscore.',
-              ESP: 'Usa 4-20 caracteres, letras latinas, números y guion bajo.',
-              RUS: 'Используйте 4-20 символов: латиницу, цифры и нижнее подчёркивание.',
-            }"
-          >
-            Use 4-20 characters, latin letters, numbers and underscore.
-          </p>
-        </div>
-
-        <div class="account-settings-field_stack">
-          <div class="account-settings-field_control">
-            <input type="text" formControlName="newUsername" autocomplete="username" />
+  @if (user(); as account) {
+    <section class="identity-card" [attr.aria-label]="text(profile.account)">
+      <div>
+        <div class="identity">
+          <div class="avatar">
+            @if (account.image) {
+              <org-avatar [imageUrl]="account.image" [size]="64" [alt]="account.username || ''"></org-avatar>
+            } @else {
+              <span aria-hidden="true">{{ (account.username || account.email || 'E').charAt(0).toUpperCase() }}</span>
+            }
           </div>
-          @if (usernameErrorMessage) {
-          <p class="account-settings-field_error">{{ usernameErrorMessage }}</p>
-          }
-        </div>
-
-        <button
-          type="submit"
-          class="btn-primary account-settings-field_submit"
-          [disabled]="isUsernameSubmitting"
-          [orgText]="{
-            ENG: 'Save login',
-            ESP: 'Guardar usuario',
-            RUS: 'Сохранить логин',
-          }"
-        >
-          Save login
-        </button>
-      </form>
-
-      <form class="account-settings-field" [formGroup]="emailForm" (ngSubmit)="submitEmail(userData.email)">
-        <div class="account-settings-field_intro">
-          <p
-            class="account-settings-field_label"
-            [orgText]="{
-              ENG: 'Change your email:',
-              ESP: 'Cambia tu correo electrónico:',
-              RUS: 'Изменить email:',
-            }"
-          >
-            Change your email:
-          </p>
-          <p
-            class="account-settings-field_caption"
-            [orgText]="{
-              ENG: 'A confirmation email will be sent to the new address.',
-              ESP: 'Se enviará un correo de confirmación a la nueva dirección.',
-              RUS: 'На новый адрес будет отправлено письмо для подтверждения.',
-            }"
-          >
-            A confirmation email will be sent to the new address.
-          </p>
-        </div>
-
-        <div class="account-settings-field_stack">
-          <div class="account-settings-field_control">
-            <input type="email" formControlName="newEmail" autocomplete="email" />
+          <div class="identity-details">
+            <h2>{{ account.username || account.email }}</h2>
+            @if (account.username && account.email) {
+              <p>{{ account.email }}</p>
+            }
+            <input #photoInput type="file" accept="image/*" hidden (change)="selectPhoto(photoInput)" />
+            <button type="button" class="text-button photo-button" [disabled]="identityBusy()" (click)="photoInput.click()">
+              {{ text(savingAvatar() ? copy.saving : account.image ? copy.changePhoto : copy.addPhoto) }}
+            </button>
           </div>
-          @if (emailErrorMessage) {
-          <p class="account-settings-field_error">{{ emailErrorMessage }}</p>
-          }
         </div>
-
-        <button
-          type="submit"
-          class="btn-primary account-settings-field_submit"
-          [disabled]="isEmailSubmitting"
-          [orgText]="{
-            ENG: 'Save email',
-            ESP: 'Guardar correo',
-            RUS: 'Сохранить email',
-          }"
-        >
-          Save email
-        </button>
-      </form>
-    </div>
-  </section>
-
-  <section class="account-settings-panel">
-    <div class="account-settings-panel_header">
-      <h3
-        class="account-settings-panel_title"
-        [orgText]="{
-          ENG: 'Security',
-          ESP: 'Seguridad',
-          RUS: 'Безопасность',
-        }"
-      >
-        Security
-      </h3>
-    </div>
-
-    <form class="account-settings-password" [formGroup]="passwordForm" (ngSubmit)="submitPassword()">
-      <div class="account-settings-password_grid">
-        <label class="account-settings-password_field">
-          <span
-            class="account-settings-password_label"
-            [orgText]="{
-              ENG: 'Current password',
-              ESP: 'Contraseña actual',
-              RUS: 'Текущий пароль',
-            }"
-          >
-            Current password
-          </span>
-          <input type="password" formControlName="currentPassword" autocomplete="current-password" />
-          @if (currentPasswordErrorMessage) {
-          <span class="account-settings-field_error">{{ currentPasswordErrorMessage }}</span>
-          }
-        </label>
-
-        <label class="account-settings-password_field">
-          <span
-            class="account-settings-password_label"
-            [orgText]="{
-              ENG: 'New password',
-              ESP: 'Nueva contraseña',
-              RUS: 'Новый пароль',
-            }"
-          >
-            New password
-          </span>
-          <input type="password" formControlName="newPassword" autocomplete="new-password" />
-        </label>
-
-        <label class="account-settings-password_field">
-          <span
-            class="account-settings-password_label"
-            [orgText]="{
-              ENG: 'Repeat new password',
-              ESP: 'Repite la nueva contraseña',
-              RUS: 'Повторите новый пароль',
-            }"
-          >
-            Repeat new password
-          </span>
-          <input type="password" formControlName="confirmPassword" autocomplete="new-password" />
-        </label>
+        <div class="live-feedback" aria-live="polite">
+          <ng-container *ngTemplateOutlet="feedback; context: { $implicit: avatarFeedback() }"></ng-container>
+        </div>
       </div>
 
-      @if (passwordErrorMessage) {
-      <p class="account-settings-field_error account-settings-password_error">{{ passwordErrorMessage }}</p>
+      @if (account.keyId; as keyId) {
+        <div class="key-block">
+          <span>Key ID</span>
+          <button
+            class="key-button"
+            type="button"
+            [attr.aria-label]="text(profile.copy) + ' ' + keyId"
+            (click)="copyKeyId(keyId)"
+          >
+            <code>{{ keyId }}</code>
+            <svg class="icon" aria-hidden="true">
+              <use [attr.href]="copyFeedback() === 'copied' ? 'assets/icons/profile.svg#check' : 'assets/icons/profile.svg#copy'" />
+            </svg>
+          </button>
+          <div class="key-feedback" role="status">
+            @if (copyFeedback(); as state) {
+              {{ text(profile[state]) }}
+            }
+          </div>
+        </div>
       }
+    </section>
 
-      <p
-        class="account-settings-password_note"
-        [orgText]="{
-          ENG: 'Minimum 8 characters. New passwords must match.',
-          ESP: 'Mínimo 8 caracteres. Las nuevas contraseñas deben coincidir.',
-          RUS: 'Минимум 8 символов. Новые пароли должны совпадать.',
-        }"
-      >
-        Minimum 8 characters. New passwords must match.
-      </p>
+    <section class="panel" aria-labelledby="account-details-heading">
+      <h2 class="section-heading" id="account-details-heading">
+        <svg class="icon" aria-hidden="true"><use href="assets/icons/profile.svg#profile" /></svg>
+        {{ text(copy.details) }}
+      </h2>
 
-      <button
-        type="submit"
-        class="btn-primary account-settings-password_submit"
-        [disabled]="isPasswordSubmitting"
-        [orgText]="{
-          ENG: 'Update password',
-          ESP: 'Actualizar contraseña',
-          RUS: 'Обновить пароль',
-        }"
-      >
-        Update password
-      </button>
-    </form>
-  </section>
-
-  <section class="account-settings-panel">
-    <div class="account-settings-panel_header">
-      <h3
-        class="account-settings-panel_title"
-        [orgText]="{
-          ENG: 'Password recovery',
-          ESP: 'Recuperación de contraseña',
-          RUS: 'Восстановление пароля',
-        }"
-      >
-        Password recovery
-      </h3>
-    </div>
-
-    <div class="account-settings-fields">
-      <div class="account-settings-field">
-        <div class="account-settings-field_intro">
-          <p
-            class="account-settings-field_label"
-          [orgText]="{
-            ENG: 'Lost access to the current password?',
-            ESP: '¿Perdiste acceso a la contraseña actual?',
-            RUS: 'Потеряли доступ к текущему паролю?',
-          }"
-        >
-          Lost access to the current password?
-        </p>
-          <p
-            class="account-settings-field_caption"
-            [orgText]="{
-              ENG: 'Open the recovery flow, receive a code by email and set a new password.',
-              ESP: 'Abre el flujo de recuperación, recibe un código por correo y establece una nueva contraseña.',
-              RUS: 'Откройте восстановление, получите код на email и задайте новый пароль.',
-            }"
-          >
-            Open the recovery flow, receive a code by email and set a new password.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          class="btn-primary account-settings-field_submit"
-          [routerLink]="'/password-recovery'"
-          [queryParams]="userData.email ? { email: userData.email } : null"
-          [orgText]="{
-            ENG: 'Open recovery',
-            ESP: 'Abrir recuperación',
-            RUS: 'Открыть восстановление',
-          }"
-        >
-          Open recovery
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <section class="account-settings-panel">
-    <div class="account-settings-panel_header">
-      <h3
-        class="account-settings-panel_title"
-        [orgText]="{
-          ENG: 'General settings',
-          ESP: 'Configuración general',
-          RUS: 'Общие настройки',
-        }"
-      >
-        General settings
-      </h3>
-    </div>
-
-    <div class="account-settings-fields">
-      <div class="account-settings-field">
-        <div class="account-settings-field_intro">
-          <p
-            class="account-settings-field_label"
-            [orgText]="{
-              ENG: 'Video deletion request time:',
-              ESP: 'Tiempo de solicitud para eliminar el video:',
-              RUS: 'Время запроса на удаление видео:',
-            }"
-          >
-            Video deletion request time:
-          </p>
-        </div>
-
-        <div class="account-settings-field_stack">
-          <div class="account-settings-field_control">
-            <input type="text" value="72h" readonly />
+      <div class="profile-fields">
+        <form [formGroup]="usernameForm" (ngSubmit)="submitUsername(account.username)">
+          <label for="account-username">{{ text(copy.username) }}</label>
+          <input
+            id="account-username"
+            type="text"
+            autocomplete="username"
+            autocapitalize="none"
+            [spellcheck]="false"
+            formControlName="newUsername"
+            [readOnly]="savingUsername()"
+            aria-describedby="username-hint username-feedback"
+            [attr.aria-invalid]="usernameFeedback()?.kind === 'error' ? 'true' : null"
+            (input)="usernameFeedback.set(null)"
+          />
+          <p class="hint" id="username-hint">{{ text(copy.usernameHint) }}</p>
+          <div class="live-feedback" aria-live="polite" id="username-feedback">
+            <ng-container *ngTemplateOutlet="feedback; context: { $implicit: usernameFeedback() }"></ng-container>
           </div>
+          <button class="button save-button" type="submit"
+            [disabled]="identityBusy() || usernameForm.controls.newUsername.value.trim() === (account.username ?? '')">
+            {{ text(savingUsername() ? copy.saving : copy.saveUsername) }}
+          </button>
+        </form>
+
+        <form [formGroup]="emailForm" (ngSubmit)="submitEmail(account.email)">
+          <label for="account-email">{{ text(copy.email) }}</label>
+          <input
+            id="account-email"
+            type="email"
+            autocomplete="email"
+            inputmode="email"
+            autocapitalize="none"
+            [spellcheck]="false"
+            formControlName="newEmail"
+            [readOnly]="savingEmail()"
+            aria-describedby="email-hint email-feedback"
+            [attr.aria-invalid]="emailFeedback()?.kind === 'error' ? 'true' : null"
+            (input)="emailFeedback.set(null)"
+          />
+          <p class="hint" id="email-hint">{{ text(copy.emailHint) }}</p>
+          <div class="live-feedback" aria-live="polite" id="email-feedback">
+            <ng-container *ngTemplateOutlet="feedback; context: { $implicit: emailFeedback() }"></ng-container>
+          </div>
+          <button class="button save-button" type="submit"
+            [disabled]="savingEmail() || emailForm.controls.newEmail.value.trim().toLowerCase() === (account.email ?? '').toLowerCase()">
+            {{ text(savingEmail() ? copy.sending : copy.sendEmailLink) }}
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel security-panel" aria-labelledby="account-security-heading">
+      <h2 class="section-heading" id="account-security-heading">
+        <svg class="icon" aria-hidden="true"><use href="assets/icons/profile.svg#admin" /></svg>
+        {{ text(copy.security) }}
+      </h2>
+
+      <details #passwordDisclosure (toggle)="!passwordDisclosure.open && showPasswords.set(false)">
+        <summary>
+          {{ text(copy.changePassword) }}
+          <svg class="icon" aria-hidden="true"><use href="assets/icons/profile.svg#chevron" /></svg>
+        </summary>
+
+        <form class="password-form" [formGroup]="passwordForm" (ngSubmit)="submitPassword()">
+          <input type="text" autocomplete="username" [value]="account.username || account.email || ''" hidden readonly />
+
+          <div class="password-toolbar">
+            <p class="hint" id="password-hint">{{ text(copy.passwordHint) }}</p>
+            <button type="button" class="text-button" (click)="showPasswords.set(!showPasswords())"
+              aria-controls="account-current-password account-new-password account-confirm-password">
+              {{ text(showPasswords() ? copy.hidePasswords : copy.showPasswords) }}
+            </button>
+          </div>
+
+          <div class="password-fields">
+            <div>
+              <label for="account-current-password">{{ text(copy.currentPassword) }}</label>
+              <input
+                id="account-current-password"
+                [type]="showPasswords() ? 'text' : 'password'"
+                autocomplete="current-password"
+                autocapitalize="none"
+                [spellcheck]="false"
+                formControlName="currentPassword"
+                [readOnly]="savingPassword()"
+                aria-describedby="password-feedback"
+                [attr.aria-invalid]="passwordForm.controls.currentPassword.touched && passwordForm.controls.currentPassword.invalid ? 'true' : null"
+                (input)="passwordFeedback.set(null)"
+              />
+            </div>
+
+            <div>
+              <label for="account-new-password">{{ text(copy.newPassword) }}</label>
+              <input
+                id="account-new-password"
+                [type]="showPasswords() ? 'text' : 'password'"
+                autocomplete="new-password"
+                autocapitalize="none"
+                [spellcheck]="false"
+                formControlName="newPassword"
+                [readOnly]="savingPassword()"
+                aria-describedby="password-hint password-feedback"
+                [attr.aria-invalid]="passwordForm.controls.newPassword.touched && passwordForm.controls.newPassword.invalid ? 'true' : null"
+                (input)="passwordFeedback.set(null)"
+              />
+            </div>
+
+            <div>
+              <label for="account-confirm-password">{{ text(copy.confirmPassword) }}</label>
+              <input
+                id="account-confirm-password"
+                [type]="showPasswords() ? 'text' : 'password'"
+                autocomplete="new-password"
+                autocapitalize="none"
+                [spellcheck]="false"
+                formControlName="confirmPassword"
+                [readOnly]="savingPassword()"
+                aria-describedby="password-feedback"
+                [attr.aria-invalid]="passwordForm.controls.confirmPassword.touched && passwordForm.controls.confirmPassword.invalid ? 'true' : null"
+                (input)="passwordFeedback.set(null)"
+              />
+            </div>
+          </div>
+
+          <div class="live-feedback" aria-live="polite" id="password-feedback">
+            <ng-container *ngTemplateOutlet="feedback; context: { $implicit: passwordFeedback() }"></ng-container>
+          </div>
+          <button class="button save-button" type="submit" [disabled]="savingPassword()">
+            {{ text(savingPassword() ? copy.saving : copy.changePassword) }}
+          </button>
+        </form>
+      </details>
+
+      <a class="recovery-link" routerLink="/password-recovery" [queryParams]="account.email ? { email: account.email } : null">
+        {{ text(copy.forgotPassword) }}
+        <svg class="icon" aria-hidden="true"><use href="assets/icons/profile.svg#next" /></svg>
+      </a>
+    </section>
+
+    @if (deletionDelay(); as delay) {
+      <dl class="panel recording-settings">
+        <dt>{{ text(copy.deletionDelay) }}</dt>
+        <dd>{{ delay }}</dd>
+      </dl>
+    }
+
+    <button class="button sign-out" type="button" (click)="signOutDialog.showModal()">
+      <svg class="icon" aria-hidden="true"><use href="assets/icons/profile.svg#logout" /></svg>
+      {{ text(copy.signOut) }}
+    </button>
+
+    <dialog #signOutDialog aria-labelledby="sign-out-title" aria-describedby="sign-out-prompt"
+      (click)="$event.target === signOutDialog && signOutDialog.close()">
+      <div class="dialog-body">
+        <h2 id="sign-out-title">{{ text(copy.signOut) }}</h2>
+        <p id="sign-out-prompt">{{ text(copy.signOutPrompt) }}</p>
+        <div class="dialog-actions">
+          <button class="button" type="button" (click)="signOutDialog.close()" autofocus>{{ text(copy.cancel) }}</button>
+          <button class="button confirm-sign-out" type="button" (click)="signOut(signOutDialog)">{{ text(profile.signOut) }}</button>
         </div>
       </div>
-    </div>
-  </section>
-
-  <div class="account-settings-logout">
-    <button
-      type="button"
-      (click)="logout()"
-      class="btn-err account-settings-logout_button"
-      [orgText]="{
-        ENG: 'Logout',
-        ESP: 'Salir',
-        RUS: 'Выйти из аккаунта',
-      }"
-    >
-      Выйти из аккаунта
-    </button>
-  </div>
+    </dialog>
+  } @else if (loadStatus() !== 'error' && loadStatus() !== 'ready') {
+    <p class="panel load-status" role="status">{{ text(profile.loading) }}</p>
+  }
 </div>

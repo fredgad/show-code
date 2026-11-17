@@ -1,0 +1,87 @@
+:host {
+  display: flex;
+}
+
+label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  font-size: 0.9rem;
+  font-weight: 590;
+  white-space: nowrap;
+}
+
+label:hover {
+  background: #eeefeb;
+}
+
+select {
+  appearance: none;
+  min-height: inherit;
+  padding: 0 1.7rem 0 2.25rem;
+  border: 0;
+  border-radius: inherit;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+select:focus-visible {
+  outline: 2px solid #3265a2;
+  outline-offset: 3px;
+}
+
+svg {
+  position: absolute;
+  width: 1.25em;
+  height: 1.25em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.globe {
+  left: 0.7rem;
+}
+
+.chevron {
+  right: 0.55rem;
+  width: 0.9em;
+}
+
+@media (max-width: 24rem) {
+  label {
+    justify-content: center;
+    width: 2.75rem;
+  }
+
+  label:has(select:focus-visible) {
+    outline: 2px solid #3265a2;
+    outline-offset: 3px;
+  }
+
+  select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 0;
+    opacity: 0;
+  }
+
+  .globe {
+    left: auto;
+  }
+
+  .chevron {
+    display: none;
+  }
+}

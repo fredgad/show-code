@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { ImageDirective } from '@shared/directives';
 import { Router } from '@angular/router';
+import { LangService } from '@shared/services';
 
 @Component({
   selector: 'org-logo',
@@ -13,6 +14,7 @@ import { Router } from '@angular/router';
 })
 export class LogoComponent {
   private router = inject(Router);
+  public langService = inject(LangService);
   
   @Input() public linkToMain: boolean = false;
   @Input() public isTitle: boolean = true;

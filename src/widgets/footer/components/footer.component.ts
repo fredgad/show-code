@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { LangService } from '@shared/services';
 
 @Component({
   selector: 'org-footer',
@@ -8,4 +9,6 @@ import { CommonModule } from '@angular/common';
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss',
 })
-export class FooterComponent {}
+export class FooterComponent {
+  public langService = inject(LangService);
+}

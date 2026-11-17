@@ -23,6 +23,8 @@ export const selectIsAuth = createSelector(selectToken, token => !!token);
 
 export const selectUserData = createSelector(selectFeature, state => state.user);
 
+export const selectUserLoadStatus = createSelector(selectFeature, state => state.userLoadStatus);
+
 export const selectUserIncomingReq = createSelector(selectUserData, state => state.incomingReq);
 
 export const selectUserOutgoingReq = createSelector(selectUserData, state => state.outgoingReq);
